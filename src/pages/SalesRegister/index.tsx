@@ -1,0 +1,549 @@
+import React, { useRef, useCallback, useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+
+import { Box } from '@chakra-ui/core';
+import { FormHandles } from '@unform/core';
+import { Form } from '@unform/web';
+import axios from 'axios';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import * as Yup from 'yup';
+
+import Breadcrumb from '../../components/Breadcrumb';
+import Button from '../../components/Button';
+import Datetime from '../../components/Datetime';
+import Input from '../../components/Input';
+import Menu from '../../components/Menu';
+import Select from '../../components/Select';
+import Textarea from '../../components/Textarea';
+import { useAuth } from '../../context/auth';
+import { useToast } from '../../context/toast';
+import api from '../../services/api';
+import getValidationsErrors from '../../utils/getValidationError';
+import { documentMask } from '../../utils/masks';
+import {
+  Container,
+  Content,
+  Inputs,
+  Separator,
+  InputContainer,
+  Services,
+  ServiceBox,
+} from './styles';
+
+export interface IUnit {
+  id: number;
+  name: string;
+}
+
+interface IServices {
+  id: number;
+  name: string;
+  price: number;
+  enabled: boolean;
+}
+
+interface IFormData {
+  unitId: string;
+  car: string;
+  carColor: string;
+  carModel: string;
+  carPlate: string;
+  cpf: string;
+  sourceCar: string;
+  availabilityDate: string;
+  deliveryDate: string;
+  name: string;
+  comments?: string;
+}
+
+const SalesRegister = () => {
+  const history = useHistory();
+  const { user } = useAuth();
+  const { addToast } = useToast();
+
+  const formRef = useRef<FormHandles>(null);
+
+  const [document, setDocument] = useState('');
+  const [loadingButton, setLoadingButton] = useState(false);
+
+  const [services, setServices] = useState<IServices[]>([]);
+  const [selectedServices, setSelectedServices] = useState<number[]>([]);
+
+  const selectOptions: Array<{ value: string; label: string }> = [
+    { value: 'NEW', label: '0 KM' },
+    { value: 'USED', label: 'Semi-novo' },
+    { value: 'WORKSHOP', label: 'Oficina' },
+  ];
+  const [unitSelectOptions, setUnitSelectOptions] = useState<
+    Array<{ value: number; label: string }>
+  >([]);
+
+  useEffect(() => {
+    api.get('services').then(response => {
+      const responseServices: IServices[] = response.data;
+
+      setServices(responseServices);
+    });
+
+    api
+      .get(`units/${user?.profile.company_id}`)
+      .then(response => {
+        const unities: IUnit[] = response.data;
+
+        const unitiesOptions: Array<{
+          value: number;
+          label: string;
+        }> = unities.map(unit => ({ value: unit.id, label: unit.name }));
+
+        setUnitSelectOptions(unitiesOptions);
+      })
+      .catch(() => {
+        history.push('/services');
+      });
+  }, [history, user]);
+
+  const handleSelectService = useCallback(
+    (id: number) => {
+      const alreadySelected = selectedServices.findIndex(item => item === id);
+
+      if (alreadySelected >= 0) {
+        const filteredItems = selectedServices.filter(item => item !== id);
+
+        setSelectedServices(filteredItems);
+      } else {
+        setSelectedServices([...selectedServices, id]);
+      }
+    },
+    [selectedServices],
+  );
+
+  const handleSubmit = useCallback(
+    async (data: IFormData, { reset }) => {
+      setLoadingButton(true);
+
+      const responseCompanyBudget = await api.post(
+        '/sales/getcompanysalebudget',
+        { companyId: user?.profile.company_id, services: selectedServices },
+      );
+
+      const { companyPrice } = responseCompanyBudget.data;
+
+      const responseCostBudget = await api.post('/sales/getsalebudget', {
+        services: selectedServices,
+      });
+
+      const { costPrice } = responseCostBudget.data;
+
+      try {
+        formRef.current?.setErrors({});
+
+        const cpfWithoutPoint = data.cpf.replace('.', '');
+
+        const formattedCpf = cpfWithoutPoint.replace('.', '').replace('-', '');
+
+        const schema = Yup.object().shape({
+          unitId: Yup.string().required('Por favor selecione a unidade.'),
+          car: Yup.string().required('Carro obrigatório'),
+          carColor: Yup.string().required('Cor do carro obrigatório'),
+          carModel: Yup.string().required('Modelo do carro obrigatório'),
+          carPlate: Yup.string()
+            .required('Placa do carro obrigatório')
+            .min(7, 'Mínimo de 7 caracteres')
+            .max(8, 'Máximo de 8 caracteres'),
+          cpf: Yup.string()
+            .required('Cpf obrigatório')
+            .matches(
+              /^([0-9]{3}\.?[0-9]{3}\.?[0-9]{3}-?[0-9]{2}|[0-9]{2}\.?[0-9]{3}\.?[0-9]{3}\/?[0-9]{4}-?[0-9]{2})$/,
+              'O documento deve ter 11 ou 14 dígitos.',
+            ),
+          name: Yup.string().required('Nome obrigatório'),
+          sourceCar: Yup.string().required('Origem do carro obrigatório'),
+          deliveryDate: Yup.string().required('Data de entrega obrigatória'),
+          comments: Yup.string(),
+          availabilityDate: Yup.string().required(
+            'Data de disponibilidade obrigatória',
+          ),
+        });
+
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+
+        if (selectedServices.length <= 0) {
+          addToast({ title: 'Nenhum serviço selecionado.', type: 'error' });
+          throw new Error('Services are required.');
+        }
+
+        let createSaleData;
+
+        if (data.comments) {
+          createSaleData = {
+            unitId: data.unitId,
+            deliveryDate: data.deliveryDate,
+            availabilityDate: data.availabilityDate,
+            companyPrice,
+            costPrice,
+            source: data.sourceCar,
+            name: data.name,
+            cpf: formattedCpf,
+            comments: data.comments,
+            car: data.car,
+            carModel: data.carModel,
+            carPlate: data.carPlate,
+            carColor: data.carColor,
+          };
+        } else {
+          createSaleData = {
+            unitId: data.unitId,
+            deliveryDate: data.deliveryDate,
+            availabilityDate: data.availabilityDate,
+            companyPrice,
+            costPrice,
+            source: data.sourceCar,
+            name: data.name,
+            cpf: formattedCpf,
+            car: data.car,
+            carModel: data.carModel,
+            carPlate: data.carPlate,
+            carColor: data.carColor,
+          };
+        }
+
+        const responseCreatedSale = await api.post('sales', createSaleData);
+
+        if (responseCreatedSale.status === 200) {
+          const createServiceSaleData = {
+            saleId: responseCreatedSale.data.id,
+            serviceIds: selectedServices,
+          };
+
+          const responseCreatedServiceSale = await api.post(
+            'service-sales',
+            createServiceSaleData,
+          );
+
+          if (responseCreatedServiceSale.status === 200) {
+            addToast({
+              title: 'Sucesso',
+              type: 'success',
+              description: 'Pedido registrado com sucesso.',
+            });
+            setLoadingButton(false);
+            setSelectedServices([]);
+
+            reset();
+            setDocument('');
+            const adminPhone = '+553188783666';
+            const apiKey = '410794';
+
+            let msg = '';
+
+            responseCreatedServiceSale.data.forEach(
+              (serv: { service: { name: string } }, index: number) => {
+                if (index === 0) {
+                  msg += `${serv.service.name}`;
+                } else {
+                  msg += `%0a${serv.service.name}`;
+                }
+              },
+            );
+
+            const wppMessage = `*Novo%20pedido%20realizado:*%0a%0a*n°:*%20${`${responseCreatedSale.data.seller.company.client_identifier}${responseCreatedSale.data.unit.client_identifier}${responseCreatedSale.data.client_identifier}`}%0a%0a*Data%20de%20disponibilidade:*%20${format(
+              new Date(responseCreatedSale.data.availability_date),
+              "dd'/'MM'/'yyyy '-' HH:mm'h'",
+              { locale: ptBR },
+            )}%0a%0a*Data%20de%20entrega:*%20${format(
+              new Date(responseCreatedSale.data.delivery_date),
+              "dd'/'MM'/'yyyy '-' HH:mm'h'",
+              { locale: ptBR },
+            )}%0a%0a*Data%20do%20registro%20da%20venda:*%20${format(
+              new Date(responseCreatedSale.data.request_date),
+              "dd'/'MM'/'yyyy '-' HH:mm'h'",
+              { locale: ptBR },
+            )}%0a%0a*Vendedor(a):*%20${
+              responseCreatedSale.data.seller.name
+            }%0a%0a*Concessionária:*%20${
+              responseCreatedSale.data.seller.company.name
+            }%0a%0a*Unidade:*%20${
+              responseCreatedSale.data.unit?.name
+            }%0a%0a*Carro:*%20${responseCreatedSale.data.car.brand}%20${
+              responseCreatedSale.data.car.model
+            }%20${responseCreatedSale.data.car.color},%20placa%20${
+              responseCreatedSale.data.car.plate
+            }%0a%0a*Serviços:*%0a${msg}%0a%0a*Observações:*%20${
+              responseCreatedSale.data.comments
+            }`;
+
+            const urlToSendMessage = `https://api.callmebot.com/whatsapp.php?phone=${adminPhone}&text=${wppMessage}&apikey=${apiKey}`;
+
+            axios.get(urlToSendMessage);
+          } else {
+            addToast({
+              title: 'Erro',
+              type: 'error',
+              description:
+                'Não foi possível registrar esse pedido, tente novamente.',
+            });
+
+            setLoadingButton(false);
+          }
+        }
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          if (selectedServices.length <= 0) {
+            addToast({ title: 'Nenhum serviço selecionado.', type: 'error' });
+          }
+
+          const errors = getValidationsErrors(err);
+
+          formRef.current?.setErrors(errors);
+          setLoadingButton(false);
+          return;
+        }
+
+        addToast({
+          title: 'Erro',
+          description:
+            'Não foi possível registrar essa venda, tente novamente.',
+          type: 'error',
+        });
+        setLoadingButton(false);
+      }
+    },
+    [addToast, selectedServices, user],
+  );
+
+  return (
+    <>
+      <Container>
+        <Menu />
+        <Breadcrumb text="Registro de vendas" />
+        <Content
+          marginLeft="auto"
+          marginRight="auto"
+          width="100%"
+          marginTop="26px"
+          maxWidth={{
+            xs: '90vw',
+            sm: '90vw',
+            md: '80vw',
+            lg: '78vw',
+            xl: '90vw',
+          }}
+        >
+          <Form ref={formRef} onSubmit={handleSubmit}>
+            <Select
+              height="34px"
+              backgroundColor="#424242"
+              color="White"
+              name="unitId"
+              placeholder="Selecione a unidade"
+              containerProps={{
+                marginTop: '16px',
+                marginRight: 8,
+                width: '100%',
+                height: '37px',
+                border: '2px solid',
+                borderColor: '#585858',
+                backgroundColor: '#424242',
+              }}
+            >
+              {unitSelectOptions.map(opt => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </Select>
+
+            <Separator>
+              <span>Dados do cliente</span>
+              <div />
+            </Separator>
+
+            <Inputs marginTop="20px">
+              <InputContainer>
+                <div className="labels">
+                  <span>Nome:</span>
+                  <span>*</span>
+                </div>
+                <Input
+                  className="input"
+                  id="name"
+                  type="name"
+                  name="name"
+                  style={{ width: '30px' }}
+                />
+              </InputContainer>
+
+              <InputContainer>
+                <div className="labels">
+                  <span>Cpf:</span>
+                  <span>*</span>
+                </div>
+                <Input
+                  className="input"
+                  id="cpf"
+                  type="cpf"
+                  name="cpf"
+                  style={{ width: '30px' }}
+                  onChange={e => setDocument(e.target.value)}
+                  value={documentMask(document)}
+                />
+              </InputContainer>
+
+              <InputContainer>
+                <div className="labels">
+                  <span>Carro:</span>
+                  <span>*</span>
+                </div>
+                <Input
+                  className="input"
+                  id="car"
+                  type="car"
+                  name="car"
+                  style={{ width: '30px' }}
+                />
+              </InputContainer>
+
+              <InputContainer>
+                <div className="labels">
+                  <span>Modelo:</span>
+                  <span>*</span>
+                </div>
+                <Input
+                  className="input"
+                  id="carModel"
+                  type="carModel"
+                  name="carModel"
+                  style={{ width: '30px' }}
+                />
+              </InputContainer>
+            </Inputs>
+
+            <Inputs style={{ marginTop: '16px' }}>
+              <InputContainer>
+                <div className="labels">
+                  <span>Placa:</span>
+                  <span>*</span>
+                </div>
+                <Input
+                  className="input"
+                  id="carPlate"
+                  type="carPlate"
+                  name="carPlate"
+                  style={{ width: '30px' }}
+                />
+              </InputContainer>
+
+              <InputContainer>
+                <div className="labels">
+                  <span>Cor do carro:</span>
+                  <span>*</span>
+                </div>
+                <Input
+                  className="input"
+                  id="carColor"
+                  type="carColor"
+                  name="carColor"
+                  style={{ width: '30px' }}
+                />
+              </InputContainer>
+
+              <div className="SelectContainer">
+                <div className="labels">
+                  <span>Origem do carro:</span>
+                  <span>*</span>
+                </div>
+                <Select
+                  height="34px"
+                  backgroundColor="#424242"
+                  color="White"
+                  name="sourceCar"
+                  placeholder="Origem do carro"
+                  containerProps={{
+                    marginTop: '16px',
+                    marginRight: 8,
+                    width: '100%',
+                    height: '37px',
+                    border: '2px solid',
+                    borderColor: '#585858',
+                    backgroundColor: '#424242',
+                  }}
+                >
+                  {selectOptions.map(opt => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+
+              <Box flex={1} fontSize="18px" marginRight="18px">
+                <span style={{ marginBottom: '6px' }}>Observações:</span>
+                <Textarea name="comments" style={{ marginTop: '12px' }} />
+              </Box>
+            </Inputs>
+
+            <Separator>
+              <span>Datas </span>
+              <div />
+            </Separator>
+
+            <div className="DateTimesContainer">
+              <div className="DateTimeContainer">
+                <div className="labels">
+                  <span>Data e hora de disponibilidade:</span>
+                  <span>*</span>
+                </div>
+                <Datetime name="availabilityDate" />
+              </div>
+
+              <div className="DateTimeContainer">
+                <div className="labels">
+                  <span>Data e hora de entrega:</span>
+                  <span>*</span>
+                </div>
+                <Datetime name="deliveryDate" />
+              </div>
+            </div>
+
+            <Separator>
+              <span>Serviços </span>
+              <div />
+            </Separator>
+            <Services
+              templateColumns={{
+                xs: '29% 29% 29%',
+                sm: '23% 23% 23% 23%',
+                md: '17% 17% 17% 17% 17%',
+                lg: '18% 18% 18% 18% 18%',
+                xl: '15.6% 15.6% 15.6% 15.6% 15.6% 15.6%',
+              }}
+            >
+              {services.map(service => (
+                <ServiceBox
+                  onClick={() => handleSelectService(service.id)}
+                  className={
+                    selectedServices.includes(service.id) ? 'selected' : ''
+                  }
+                  key={service.id}
+                >
+                  <span>{service.name}</span>
+                </ServiceBox>
+              ))}
+            </Services>
+
+            <div className="buttons_container">
+              <Button isDisabled={!!loadingButton} type="submit">
+                Salvar
+              </Button>
+            </div>
+          </Form>
+        </Content>
+      </Container>
+    </>
+  );
+};
+
+export default SalesRegister;
