@@ -1,7 +1,7 @@
 {
   "name": "nanotech",
   "version": "1.0.0",
-  "author": "Matheus Fraga",
+  "author": "Matheus Fraga <@Mlfraga>",
   "private": true,
   "scripts": {
     "start": "react-scripts start",
