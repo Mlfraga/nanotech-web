@@ -158,7 +158,7 @@ const Sales = () => {
           seller: sale.seller.name,
           customer: sale.person.name,
           comments: sale.comments,
-          car: sale.car.model,
+          car: `${sale.car.brand} ${sale.car.model}`,
           carPlate: sale.car.plate,
           company_value: sale.company_value,
           cost_value: sale.cost_value,

@@ -47,7 +47,9 @@ interface IAuthContextData {
     };
   };
   buttons: IButton[];
-  signIn(credentials: ISignInCredentials): Promise<void>;
+  signIn(
+    credentials: ISignInCredentials,
+  ): Promise<{ user: { first_login: boolean } }>;
   signOut(): void;
 }
 
@@ -305,6 +307,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     localStorage.setItem('@TotalClean:user', JSON.stringify(user));
 
     setData({ access_token, refresh_token, user, buttons });
+    return response.data;
   }, []);
 
   const signOut = useCallback(() => {

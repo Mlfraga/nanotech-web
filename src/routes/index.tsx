@@ -3,6 +3,7 @@ import { Switch } from 'react-router-dom';
 
 import Companies from '../pages/Companies';
 import CompaniesRegister from '../pages/CompaniesRegister';
+import FirstLogin from '../pages/FirstLogin';
 import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
 import Reports from '../pages/Reports';
@@ -24,6 +25,12 @@ import Route from './Route';
 const Routes: React.FC = () => (
   <Switch>
     <Route path="/" exact component={Login} />
+    <Route
+      path="/first-login"
+      component={FirstLogin}
+      isPrivate
+      permissions={['MANAGER', 'SELLER']}
+    />
     <Route path="/services" component={Services} isPrivate />
     <Route path="/service/vitrificacao" component={Service} isPrivate />
     <Route

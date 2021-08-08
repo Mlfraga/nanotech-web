@@ -41,14 +41,25 @@ const Login = () => {
           abortEarly: false,
         });
 
-        await signIn({
+        const res = await signIn({
           username: data.username,
           password: data.password,
         });
 
-        history.push('/services');
-
         addToast({ title: 'Login realizado', type: 'success' });
+
+        if (res.user.first_login) {
+          history.push({
+            pathname: '/first-login',
+            state: {
+              comingFromLogin: true,
+            },
+          });
+
+          return;
+        }
+
+        history.push('/services');
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationsErrors(err);
