@@ -174,7 +174,7 @@ const SetCompanyPrices = () => {
           </Grid>
           <Buttons>
             <Button type="submit">Salvar</Button>
-            <Button skipButton>Pular</Button>
+            {/* <Button skipButton>Pular</Button> */}
           </Buttons>
         </Form>
       </Content>

@@ -25,12 +25,7 @@ import Route from './Route';
 const Routes: React.FC = () => (
   <Switch>
     <Route path="/" exact component={Login} />
-    <Route
-      path="/first-login"
-      component={FirstLogin}
-      isPrivate
-      permissions={['MANAGER', 'SELLER']}
-    />
+    <Route path="/first-login" component={FirstLogin} isPrivate />
     <Route path="/services" component={Services} isPrivate />
     <Route path="/service/vitrificacao" component={Service} isPrivate />
     <Route

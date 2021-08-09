@@ -41,8 +41,11 @@ const FirstLogin: React.FC = () => {
       formRef.current?.setErrors({});
 
       const schema = Yup.object().shape({
-        password: Yup.string().required('Senha obrigatória'),
+        password: Yup.string()
+          .min(8, 'A senha deve conter no mínimo 8 caracteres.')
+          .required('Senha obrigatória'),
         confirmPassword: Yup.string()
+          .min(8, 'A senha deve conter no mínimo 8 caracteres.')
           .required()
           .oneOf(
             [Yup.ref('password')],
