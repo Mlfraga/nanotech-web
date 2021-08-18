@@ -180,8 +180,8 @@ const SalesRegister = () => {
         if (data.comments) {
           createSaleData = {
             unitId: data.unitId,
-            deliveryDate: data.deliveryDate,
-            availabilityDate: data.availabilityDate,
+            deliveryDate: new Date(data.deliveryDate).toISOString(),
+            availabilityDate: new Date(data.availabilityDate).toISOString(),
             companyPrice,
             costPrice,
             source: data.sourceCar,
@@ -196,8 +196,8 @@ const SalesRegister = () => {
         } else {
           createSaleData = {
             unitId: data.unitId,
-            deliveryDate: data.deliveryDate,
-            availabilityDate: data.availabilityDate,
+            deliveryDate: new Date(data.deliveryDate).toISOString(),
+            availabilityDate: new Date(data.availabilityDate).toISOString(),
             companyPrice,
             costPrice,
             source: data.sourceCar,
