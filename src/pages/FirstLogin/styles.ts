@@ -39,7 +39,7 @@ export const ButtonsContainer = styled(Flex)`
 `;
 
 export const Container = styled(ChakraBox)`
-  @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap');
+  /* @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap'); */
   height: 100vh;
   display: flex;
   align-items: center;

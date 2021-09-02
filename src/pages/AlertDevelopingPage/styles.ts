@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import backgroundPattern from '../../assets/Pattern-Developing-Page.svg';
 
 export const Container = styled.div`
-  @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap');
+  /* @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap'); */
   height: 100vh;
   display: flex;
   flex-direction: column;

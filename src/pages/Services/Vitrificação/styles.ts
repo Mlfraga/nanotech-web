@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 const Container = styled.div`
-  @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap');
+  /* @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap'); */
 
   height: 100%;
 

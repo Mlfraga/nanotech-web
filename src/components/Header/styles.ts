@@ -3,7 +3,7 @@ import { shade } from 'polished';
 import styled from 'styled-components';
 
 export const Container = styled(Box)`
-  @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap');
+  /* @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap'); */
 
   z-index: 1000;
   display: flex;

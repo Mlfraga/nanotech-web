@@ -39,8 +39,8 @@ export const RegisterSuccessPage = styled.div`
 `;
 
 export const Container = styled.div`
-  @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap');
-  @import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap');
+  /* @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap');
+  @import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap'); */
 
   height: 100vh;
   width: 100%;
