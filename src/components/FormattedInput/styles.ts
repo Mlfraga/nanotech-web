@@ -8,8 +8,8 @@ interface IContainerProps {
 }
 
 export const Container = styled.div<IContainerProps>`
-  @import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap');
-  @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap');
+  /* @import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap'); */
 
   background: ${shade(0.5, '#383838')};
   border-radius: 10px;
