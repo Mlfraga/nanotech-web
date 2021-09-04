@@ -2,6 +2,7 @@ import React from 'react';
 import { Switch } from 'react-router-dom';
 
 import Companies from '../pages/Companies';
+import CompaniesPrices from '../pages/CompaniesPrices';
 import CompaniesRegister from '../pages/CompaniesRegister';
 import FirstLogin from '../pages/FirstLogin';
 import Login from '../pages/Login';
@@ -79,6 +80,13 @@ const Routes: React.FC = () => (
     <Route
       path="/companies"
       component={Companies}
+      isPrivate
+      permissions={['ADMIN']}
+    />
+    <Route
+      exact
+      path="/company/prices/:id"
+      component={CompaniesPrices}
       isPrivate
       permissions={['ADMIN']}
     />

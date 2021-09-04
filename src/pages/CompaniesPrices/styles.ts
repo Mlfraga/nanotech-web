@@ -2,8 +2,8 @@ import { Box as ChakraBox } from '@chakra-ui/core';
 import styled from 'styled-components';
 
 export const Container = styled(ChakraBox)`
-  /* @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap'); */
-  height: 100vh;
+  height: 100%;
+  max-height: 100vh;
 
   @media (min-width: 1224px) {
     padding-left: 80px;
@@ -12,27 +12,27 @@ export const Container = styled(ChakraBox)`
 `;
 
 export const Content = styled(ChakraBox)`
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-
   .boxTitle {
     display: grid;
-    grid-template-columns: 30% 16% 19% 33%;
+    grid-template-columns: 30% 16% 20% 2.5% 30%;
     align-items: center;
     justify-content: center;
 
     margin-top: 25px;
-    margin-top: 25px;
     background: #282828;
     height: 60px;
     border-radius: 15px;
+
+    span {
+      font: 16px 'Ubuntu', sans-serif;
+      font-weight: bold;
+    }
   }
 
   .button {
     margin-top: 30px;
     float: right;
-    width: 250px;
+    width: 300px;
   }
 `;
 
@@ -73,46 +73,46 @@ export const List = styled(ChakraBox)`
     background: #525252;
     border-radius: 20px;
   }
+`;
 
-  .box {
-    display: grid;
-    grid-template-columns: 30% 16% 20% 2.5% 30%;
+export const Box = styled.div`
+  display: grid;
+  grid-template-columns: 30% 16% 20% 2.5% 30%;
+  align-items: center;
+  justify-content: center;
+
+  background: #303030;
+  height: 60px;
+  border-radius: 15px;
+
+  & + div {
+    margin-top: 16px;
+  }
+  span {
+    display: flex;
     align-items: center;
-    justify-content: center;
+    font: 15px 'Ubuntu', sans-serif;
+    font-weight: 400;
 
-    background: #303030;
-    height: 60px;
-    border-radius: 15px;
-
-    & + div {
-      margin-top: 16px;
-    }
-    span {
-      display: flex;
-      align-items: center;
-      font: 15px 'Ubuntu', sans-serif;
-      font-weight: 400;
-
-      div.unabled {
-        margin-right: 8px;
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        background: #ff6f60;
-      }
-
-      div.enabled {
-        margin-right: 8px;
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        background: #94ec94;
-      }
+    div.unabled {
+      margin-right: 8px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ff6f60;
     }
 
-    span {
-      font: 15px 'Ubuntu', sans-serif;
-      font-weight: 400;
+    div.enabled {
+      margin-right: 8px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #94ec94;
     }
+  }
+
+  span {
+    font: 15px 'Ubuntu', sans-serif;
+    font-weight: 400;
   }
 `;

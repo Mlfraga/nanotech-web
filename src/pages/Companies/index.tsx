@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FaArrowAltCircleDown, FaArrowAltCircleUp } from 'react-icons/fa';
-import { FiEdit } from 'react-icons/fi';
+import { FiEdit, FiTag } from 'react-icons/fi';
 import { RiAddFill } from 'react-icons/ri';
 import { useHistory, Link } from 'react-router-dom';
 
@@ -10,6 +10,7 @@ import {
   Tooltip,
   Skeleton,
   Stack,
+  Flex,
 } from '@chakra-ui/core';
 
 import Breadcrumb from '../../components/Breadcrumb';
@@ -98,22 +99,44 @@ const Companies = () => {
         id: company.id,
         name: company.name,
         telephone: company.telephone,
-        cnpj: company.cnpj,
+        cnpj: company.cnpj.replace(
+          /^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/,
+          '$1 $2 $3/$4-$5',
+        ),
         client_identifier: company.client_identifier,
-        button: (
-          <Tooltip
-            aria-label="Alterar dados da concessionária"
-            label="Alterar dados da concessionária"
-          >
-            <ChakraButton
-              onClick={() => handleOpenUpdateCompanyModal(company)}
-              _hover={{ background: '#353535', border: 0 }}
-              _focusWithin={{ border: 0 }}
-              background="#282828"
+        buttons: (
+          <Flex justifyContent="space-between">
+            <Tooltip
+              aria-label="Alterar dados da concessionária"
+              label="Alterar dados da concessionária"
             >
-              <FiEdit />
-            </ChakraButton>
-          </Tooltip>
+              <ChakraButton
+                onClick={() => handleOpenUpdateCompanyModal(company)}
+                _hover={{ background: '#353535', border: 0 }}
+                _focusWithin={{ border: 0 }}
+                background="#282828"
+              >
+                <FiEdit />
+              </ChakraButton>
+            </Tooltip>
+            <Tooltip
+              aria-label="Visualizar preços da concessionária"
+              label="Visualizar preços da concessionária"
+            >
+              <ChakraButton
+                onClick={() => history.push(`company/prices/${company.id}`)}
+                _hover={{
+                  background: '#353535',
+                  border: 0,
+                  marginLeft: '12px',
+                }}
+                _focusWithin={{ border: 0 }}
+                background="#282828"
+              >
+                <FiTag color="#fff" />
+              </ChakraButton>
+            </Tooltip>
+          </Flex>
         ),
         units: company.unities.map(unit => ({
           id: unit.id,
@@ -141,7 +164,12 @@ const Companies = () => {
           ),
         })),
       })),
-    [companies, handleOpenUpdateUnitData, handleOpenUpdateCompanyModal],
+    [
+      companies,
+      history,
+      handleOpenUpdateUnitData,
+      handleOpenUpdateCompanyModal,
+    ],
   );
 
   return (
@@ -242,7 +270,7 @@ const Companies = () => {
                     <span>{company.telephone}</span>
                     <span>{company.cnpj}</span>
                     <span>{company.client_identifier}</span>
-                    {company.button}
+                    {company.buttons}
 
                     <ChakraFlex marginRight={8} justifyContent="flex-end">
                       {openedCompanies.includes(company.id) ? (

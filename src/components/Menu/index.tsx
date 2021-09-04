@@ -84,7 +84,7 @@ const Sidebar: React.FC<ISidebarProps> = ({ disableButton = false }) => {
                   _hover={{
                     background: '#454545',
                   }}
-                  borderBottom={
+                  border={
                     selected === button.route ? '2px solid #355a9d' : '#323232'
                   }
                   onClick={() => {

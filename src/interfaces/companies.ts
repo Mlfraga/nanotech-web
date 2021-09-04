@@ -15,6 +15,6 @@ export interface IFormattedCompany {
   telephone: string;
   cnpj: string;
   client_identifier: string;
-  button: JSX.Element;
+  buttons: JSX.Element;
   units: Array<IFormattedUnit>;
 }

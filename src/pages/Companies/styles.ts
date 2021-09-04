@@ -85,7 +85,7 @@ export const Box = styled.div`
     padding-left: 10px;
     display: grid;
     width: 100%;
-    grid-template-columns: 15% 20% 20% 20% 5% 20%;
+    grid-template-columns: 15% 20% 20% 20% 10% 15%;
     align-items: center;
     justify-content: center;
 
