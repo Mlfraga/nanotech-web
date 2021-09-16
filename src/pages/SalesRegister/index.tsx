@@ -4,9 +4,6 @@ import { useHistory } from 'react-router-dom';
 import { Box } from '@chakra-ui/core';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
-import axios from 'axios';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 import * as Yup from 'yup';
 
 import Breadcrumb from '../../components/Breadcrumb';
@@ -234,50 +231,6 @@ const SalesRegister = () => {
 
             reset();
             setDocument('');
-            const adminPhone = '+553188783666';
-            const apiKey = '410794';
-
-            let msg = '';
-
-            responseCreatedServiceSale.data.forEach(
-              (serv: { service: { name: string } }, index: number) => {
-                if (index === 0) {
-                  msg += `${serv.service.name}`;
-                } else {
-                  msg += `%0a${serv.service.name}`;
-                }
-              },
-            );
-
-            const wppMessage = `*Novo%20pedido%20realizado:*%0a%0a*n°:*%20${`${responseCreatedSale.data.seller.company.client_identifier}${responseCreatedSale.data.unit.client_identifier}${responseCreatedSale.data.client_identifier}`}%0a%0a*Data%20de%20disponibilidade:*%20${format(
-              new Date(responseCreatedSale.data.availability_date),
-              "dd'/'MM'/'yyyy '-' HH:mm'h'",
-              { locale: ptBR },
-            )}%0a%0a*Data%20de%20entrega:*%20${format(
-              new Date(responseCreatedSale.data.delivery_date),
-              "dd'/'MM'/'yyyy '-' HH:mm'h'",
-              { locale: ptBR },
-            )}%0a%0a*Data%20do%20registro%20da%20venda:*%20${format(
-              new Date(responseCreatedSale.data.request_date),
-              "dd'/'MM'/'yyyy '-' HH:mm'h'",
-              { locale: ptBR },
-            )}%0a%0a*Vendedor(a):*%20${
-              responseCreatedSale.data.seller.name
-            }%0a%0a*Concessionária:*%20${
-              responseCreatedSale.data.seller.company.name
-            }%0a%0a*Unidade:*%20${
-              responseCreatedSale.data.unit?.name
-            }%0a%0a*Carro:*%20${responseCreatedSale.data.car.brand}%20${
-              responseCreatedSale.data.car.model
-            }%20${responseCreatedSale.data.car.color},%20placa%20${
-              responseCreatedSale.data.car.plate
-            }%0a%0a*Serviços:*%0a${msg}%0a%0a*Observações:*%20${
-              responseCreatedSale.data.comments
-            }`;
-
-            const urlToSendMessage = `https://api.callmebot.com/whatsapp.php?phone=${adminPhone}&text=${wppMessage}&apikey=${apiKey}`;
-
-            axios.get(urlToSendMessage);
           } else {
             addToast({
               title: 'Erro',
