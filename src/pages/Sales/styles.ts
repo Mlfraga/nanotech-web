@@ -129,6 +129,8 @@ export const Box = styled(ChakraBox)`
       align-items: center;
       font: 15px 'Ubuntu', sans-serif;
       font-weight: 200;
+      overflow-wrap: anywhere;
+
       div {
         margin-right: 6px;
         border-radius: 50%;
