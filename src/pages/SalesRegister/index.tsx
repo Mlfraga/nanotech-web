@@ -2,6 +2,7 @@ import React, { useRef, useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { Box } from '@chakra-ui/core';
+import { Tooltip } from '@chakra-ui/core';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
@@ -33,11 +34,15 @@ export interface IUnit {
   name: string;
 }
 
-interface IServices {
-  id: number;
-  name: string;
+interface ICompanyServices {
+  id: string;
   price: number;
-  enabled: boolean;
+  service: {
+    id: string;
+    name: string;
+    price: number;
+    enabled: boolean;
+  };
 }
 
 interface IFormData {
@@ -64,8 +69,10 @@ const SalesRegister = () => {
   const [document, setDocument] = useState('');
   const [loadingButton, setLoadingButton] = useState(false);
 
-  const [services, setServices] = useState<IServices[]>([]);
-  const [selectedServices, setSelectedServices] = useState<number[]>([]);
+  const [companyServices, setCompanyServices] = useState<ICompanyServices[]>(
+    [],
+  );
+  const [selectedServices, setSelectedServices] = useState<string[]>([]);
 
   const selectOptions: Array<{ value: string; label: string }> = [
     { value: 'NEW', label: '0 KM' },
@@ -77,11 +84,14 @@ const SalesRegister = () => {
   >([]);
 
   useEffect(() => {
-    api.get('services').then(response => {
-      const responseServices: IServices[] = response.data;
+    api
+      .get(`company-services/by-company/${user?.profile.company_id}`)
+      .then(response => {
+        const responseServices: ICompanyServices[] = response.data;
 
-      setServices(responseServices);
-    });
+        console.log(responseServices, 'responseServices');
+        setCompanyServices(responseServices);
+      });
 
     api
       .get(`units/${user?.profile.company_id}`)
@@ -101,7 +111,7 @@ const SalesRegister = () => {
   }, [history, user]);
 
   const handleSelectService = useCallback(
-    (id: number) => {
+    (id: string) => {
       const alreadySelected = selectedServices.findIndex(item => item === id);
 
       if (alreadySelected >= 0) {
@@ -474,16 +484,35 @@ const SalesRegister = () => {
                 xl: '15.6% 15.6% 15.6% 15.6% 15.6% 15.6%',
               }}
             >
-              {services.map(service => (
-                <ServiceBox
-                  onClick={() => handleSelectService(service.id)}
-                  className={
-                    selectedServices.includes(service.id) ? 'selected' : ''
-                  }
-                  key={service.id}
+              {companyServices.map(companyService => (
+                <Tooltip
+                  key={companyService.id}
+                  label={String(
+                    Number(companyService.price).toLocaleString('pt-br', {
+                      style: 'currency',
+                      currency: 'BRL',
+                    }),
+                  )}
+                  aria-label={String(
+                    Number(companyService.price).toLocaleString('pt-br', {
+                      style: 'currency',
+                      currency: 'BRL',
+                    }),
+                  )}
                 >
-                  <span>{service.name}</span>
-                </ServiceBox>
+                  <ServiceBox
+                    onClick={() =>
+                      handleSelectService(companyService.service.id)
+                    }
+                    className={
+                      selectedServices.includes(companyService.service.id)
+                        ? 'selected'
+                        : ''
+                    }
+                  >
+                    <span>{companyService.service.name}</span>
+                  </ServiceBox>
+                </Tooltip>
               ))}
             </Services>
 

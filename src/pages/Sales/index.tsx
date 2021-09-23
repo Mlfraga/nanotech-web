@@ -80,13 +80,15 @@ interface ISaleRequestResponseData {
 }
 
 interface IFormDataFilter {
-  date: Date;
+  deliveryDate: Date;
+  availabilityDate: Date;
   status: string;
 }
 
 interface IFilters {
+  deliveryDate?: Date;
+  availabilityDate?: Date;
   status?: string;
-  date?: Date;
 }
 
 const Sales = () => {
@@ -258,10 +260,12 @@ const Sales = () => {
   );
 
   const handleSearchSale = useCallback(
-    async ({ date, status }: IFormDataFilter) => {
-      let query = {};
-
-      if (!date && !status) {
+    async ({ availabilityDate, deliveryDate, status }: IFormDataFilter) => {
+      console.log(
+        { availabilityDate, deliveryDate, status },
+        '{ availabilityDate, deliveryDate, status }',
+      );
+      if (!availabilityDate && !status && !deliveryDate) {
         addToast({
           title: 'Por favor preencha algum campo para realizar a pesquisa.',
           type: 'error',
@@ -270,23 +274,12 @@ const Sales = () => {
         return;
       }
 
-      if (date && status) {
-        if (status === 'ALL') {
-          query = { date };
-        } else {
-          query = { date, status };
-        }
-      }
+      setFilters({
+        ...(deliveryDate && { deliveryDate }),
+        ...(availabilityDate && { availabilityDate }),
+        ...(status && { status }),
+      });
 
-      if (date && !status) {
-        query = { date };
-      }
-
-      if (status && !date && status !== 'ALL') {
-        query = { status };
-      }
-
-      setFilters(query);
       setCurrentPage(0);
     },
     [addToast],
@@ -370,9 +363,19 @@ const Sales = () => {
           style={{ display: 'flex', marginBottom: '36px' }}
         >
           <DatePicker
-            name="date"
+            name="availabilityDate"
             placeholderText="Filtrar por data de disponibilidade"
             containerProps={{
+              width: 300,
+              height: 10,
+            }}
+          />
+
+          <DatePicker
+            name="deliveryDate"
+            placeholderText="Filtrar por data de entrega"
+            containerProps={{
+              marginLeft: 4,
               width: 300,
               height: 10,
             }}
