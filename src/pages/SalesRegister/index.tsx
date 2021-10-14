@@ -387,7 +387,7 @@ const SalesRegister = () => {
             <Inputs style={{ marginTop: '16px' }}>
               <InputContainer>
                 <div className="labels">
-                  <span>Placa:</span>
+                  <span>Placa ou Chassi:</span>
                   <span>*</span>
                 </div>
                 <Input

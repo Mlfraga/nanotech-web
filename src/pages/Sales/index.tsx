@@ -122,7 +122,7 @@ const Sales = () => {
         const { data } = response;
 
         setSales(data?.items);
-        setTotalPages(data?.total_pages);
+        setTotalPages(data?.total_pages - 1);
         setLoading(false);
       });
   }, [user, currentPage, filters]);
