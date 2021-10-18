@@ -156,7 +156,7 @@ const SalesRegister = () => {
           carModel: Yup.string().required('Modelo do carro obrigatório'),
           carPlate: Yup.string()
             .required('Chassi do carro obrigatório')
-            .length(6, 'O Chassi deve ter 6 dígitos'),
+            .max(7, 'O Chassi deve ter no máximo 7 dígitos'),
           cpf: Yup.string()
             .required('Cpf obrigatório')
             .matches(
@@ -390,7 +390,7 @@ const SalesRegister = () => {
                   <span>*</span>
                 </div>
                 <Input
-                  maxLength={6}
+                  maxLength={7}
                   className="input"
                   id="carPlate"
                   type="carPlate"
