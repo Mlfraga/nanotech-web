@@ -155,9 +155,8 @@ const SalesRegister = () => {
           carColor: Yup.string().required('Cor do carro obrigatório'),
           carModel: Yup.string().required('Modelo do carro obrigatório'),
           carPlate: Yup.string()
-            .required('Placa do carro obrigatório')
-            .min(7, 'Mínimo de 7 caracteres')
-            .max(8, 'Máximo de 8 caracteres'),
+            .required('Chassi do carro obrigatório')
+            .length(6, 'O Chassi deve ter 6 dígitos'),
           cpf: Yup.string()
             .required('Cpf obrigatório')
             .matches(
@@ -387,10 +386,11 @@ const SalesRegister = () => {
             <Inputs style={{ marginTop: '16px' }}>
               <InputContainer>
                 <div className="labels">
-                  <span>Placa ou Chassi:</span>
+                  <span>Chassi:</span>
                   <span>*</span>
                 </div>
                 <Input
+                  maxLength={6}
                   className="input"
                   id="carPlate"
                   type="carPlate"
