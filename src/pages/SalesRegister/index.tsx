@@ -156,7 +156,7 @@ const SalesRegister = () => {
           carModel: Yup.string().required('Modelo do carro obrigatório'),
           carPlate: Yup.string()
             .required('Chassi do carro obrigatório')
-            .max(7, 'O Chassi deve ter no máximo 7 dígitos'),
+            .length(7, 'O Chassi deve ter 7 dígitos'),
           cpf: Yup.string()
             .required('Cpf obrigatório')
             .matches(
