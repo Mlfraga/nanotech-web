@@ -31,10 +31,16 @@ export const Content = styled(ChakraBox)`
   }
   div.updateSaleContainer {
     display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
+    flex-direction: column;
+    /* justify-content: flex-end; */
     align-items: center;
     width: 100%;
+
+    span {
+      margin-bottom: 12px;
+      font-weight: bold;
+      font-size: 18px;
+    }
 
     button {
       & + button {
