@@ -85,6 +85,8 @@ const UpdateSalesModal: React.FC<IUpdateSalesModalProps> = ({
 
       await api.put(`sales/${sale?.id}`, {
         ...data,
+        deliveryDate: new Date(data.deliveryDate).toISOString(),
+        availabilityDate: new Date(data.availabilityDate).toISOString(),
         comments: data.comments.length < 1 ? null : data.comments,
       });
 
