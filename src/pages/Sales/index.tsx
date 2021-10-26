@@ -6,7 +6,7 @@ import React, {
   useMemo,
 } from 'react';
 import { FaArrowAltCircleDown, FaArrowAltCircleUp } from 'react-icons/fa';
-import { FiSearch, FiTrash } from 'react-icons/fi';
+import { FiEdit3, FiSearch, FiTrash } from 'react-icons/fi';
 
 import {
   Button as ChakraButton,
@@ -25,9 +25,10 @@ import { ptBR } from 'date-fns/locale';
 import Breadcrumb from '../../components/Breadcrumb';
 import Button from '../../components/Button';
 import DatePicker from '../../components/DatePicker';
+import AlertDialog from '../../components/Dialogs/Alert';
 import Menu from '../../components/Menu';
+import UpdateSalesModal from '../../components/Modals/UpdateSales';
 import Pagination from '../../components/Pagination';
-// import Header from '../../components/Header';
 import Select from '../../components/Select';
 import { useAuth } from '../../context/auth';
 import { useToast } from '../../context/toast';
@@ -108,6 +109,24 @@ const Sales = () => {
 
   const [filters, setFilters] = useState<IFilters>({});
   const [loading, setLoading] = useState<boolean>(false);
+
+  const [deleteDialogOpened, setDeleteDialogOpened] = useState<boolean>(false);
+  const [openEditSalesModal, setOpenEditSalesModal] = useState<boolean>(false);
+  const [saleToEdit, setSaleToEdit] = useState<
+    ISaleRequestResponseData | undefined
+  >({} as ISaleRequestResponseData);
+
+  const loadSales = async () => {
+    setLoading(true);
+
+    const res = await api.get('sales', { params: { page: currentPage } });
+
+    setSales(res.data.items);
+    setTotalPages(res.data.total_pages);
+    setCurrentPage(res.data.current_page);
+
+    setLoading(false);
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -337,6 +356,7 @@ const Sales = () => {
     }
 
     setDeleteLoading(false);
+    setDeleteDialogOpened(false);
   }, [selectedSales, addToast, currentPage]);
 
   return (
@@ -412,8 +432,8 @@ const Sales = () => {
               _focusWithin={{
                 border: 0,
               }}
-              height="40px"
               backgroundColor="#355a9d"
+              height="40px"
               marginLeft={4}
               type="submit"
             >
@@ -438,6 +458,100 @@ const Sales = () => {
             </ChakraButton>
           </Tooltip>
         </Form>
+
+        {user?.role === 'ADMIN' && (
+          <ChakraBox
+            marginLeft="auto"
+            marginRight="auto"
+            width="100%"
+            marginTop="26px"
+            paddingBottom="16px"
+            maxWidth={{
+              xs: '90vw',
+              sm: '90vw',
+              md: '80vw',
+              lg: '78vw',
+              xl: '90vw',
+            }}
+            className={
+              selectedSales.length < 1
+                ? 'udpdateSaleContainerHide'
+                : 'updateSaleContainer'
+            }
+            hidden={selectedSales.length < 1}
+          >
+            <span>Realizar ações em venda(s) selecionada(s)</span>
+
+            <Form
+              ref={formRef}
+              onSubmit={handleUpdateSale}
+              style={{ display: 'flex', alignItems: 'center' }}
+            >
+              <Select
+                height={8}
+                backgroundColor="#424242"
+                color="White"
+                name="statusSale"
+                containerProps={{
+                  marginRight: 8,
+                  width: 300,
+                  height: 10,
+                  border: '2px solid',
+                  borderColor: '#585858',
+                  backgroundColor: '#424242',
+                }}
+              >
+                <option value="PENDING">Pendente</option>
+                <option value="CONFIRMED">Confirmado</option>
+                <option value="CANCELED">Cancelado</option>
+                <option value="FINISHED">Finalizado</option>
+              </Select>
+              <Button style={{ marginTop: '0px' }} type="submit">
+                Alterar Situação
+              </Button>
+              <Tooltip label="Excluir venda" aria-label="Excluir venda">
+                <ChakraButton
+                  _hover={{
+                    bg: '#5580b9',
+                    color: '#fff',
+                  }}
+                  _focusWithin={{
+                    border: 0,
+                  }}
+                  backgroundColor="#355a9d"
+                  style={{ marginTop: '0px' }}
+                  onClick={() => setDeleteDialogOpened(true)}
+                  isDisabled={deleteLoading}
+                >
+                  <FiTrash />
+                </ChakraButton>
+              </Tooltip>
+              {selectedSales.length === 1 && (
+                <Tooltip label="Editar venda" aria-label="Editar venda">
+                  <ChakraButton
+                    _hover={{
+                      bg: '#5580b9',
+                      color: '#fff',
+                    }}
+                    _focusWithin={{
+                      border: 0,
+                    }}
+                    backgroundColor="#355a9d"
+                    style={{ marginTop: '0px' }}
+                    onClick={() => {
+                      setOpenEditSalesModal(true);
+                      setSaleToEdit(
+                        sales.find(sale => sale.id === selectedSales[0]),
+                      );
+                    }}
+                  >
+                    <FiEdit3 />
+                  </ChakraButton>
+                </Tooltip>
+              )}
+            </Form>
+          </ChakraBox>
+        )}
 
         <Separator>
           <span>Vendas</span>
@@ -673,57 +787,20 @@ const Sales = () => {
             </List>
           </>
         )}
-
-        {user?.role === 'ADMIN' && (
-          <div
-            className={
-              selectedSales.length < 1
-                ? 'udpdateSaleContainerHide'
-                : 'updateSaleContainer'
-            }
-            hidden={selectedSales.length < 1}
-            style={{ marginTop: '16px', marginBottom: '56px' }}
-          >
-            <Form
-              ref={formRef}
-              onSubmit={handleUpdateSale}
-              style={{ display: 'flex', alignItems: 'center' }}
-            >
-              <Select
-                height={8}
-                backgroundColor="#424242"
-                color="White"
-                name="statusSale"
-                containerProps={{
-                  marginRight: 8,
-                  width: 300,
-                  height: 10,
-                  border: '2px solid',
-                  borderColor: '#585858',
-                  backgroundColor: '#424242',
-                }}
-              >
-                <option value="PENDING">Pendente</option>
-                <option value="CONFIRMED">Confirmado</option>
-                <option value="CANCELED">Cancelado</option>
-                <option value="FINISHED">Finalizado</option>
-              </Select>
-              <Button style={{ marginTop: '0px' }} type="submit">
-                Alterar Situação
-              </Button>
-              <Tooltip label="Excluir venda" aria-label="Excluir venda">
-                <Button
-                  style={{ marginTop: '0px' }}
-                  onClick={handleDeleteSales}
-                  isDisabled={deleteLoading}
-                >
-                  <FiTrash />
-                </Button>
-              </Tooltip>
-            </Form>
-          </div>
-        )}
       </Content>
+      <AlertDialog
+        isOpen={deleteDialogOpened}
+        onDelete={handleDeleteSales}
+        setIsOpen={setDeleteDialogOpened}
+        headerText="Excluir Venda"
+        bodyText="Tem certeza que deseja excluir a venda?"
+      />
+      <UpdateSalesModal
+        isOpen={openEditSalesModal}
+        onClose={() => setOpenEditSalesModal(false)}
+        onSave={loadSales}
+        sale={saleToEdit}
+      />
     </Container>
   );
 };

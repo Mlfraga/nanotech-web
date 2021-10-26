@@ -13,14 +13,18 @@ import { Container } from './styles';
 
 type IDateTimeProps = TextFieldProps & {
   name: string;
+  defaultValue?: string;
 };
 
-const DateTime: React.FC<IDateTimeProps> = ({ name }) => {
+const DateTime: React.FC<IDateTimeProps> = ({ name, defaultValue = '' }) => {
   const dateTimeRef = useRef<HTMLDivElement>(null);
   const { fieldName, error, registerField } = useField(name);
-  const [dateValue, setDateValue] = useState<{ value: string }>({ value: '' });
+  const [dateValue, setDateValue] = useState<{ value: string }>({
+    value: defaultValue,
+  });
 
   useEffect(() => {
+    console.log(dateValue, 'dateValue');
     registerField({
       name: fieldName,
       ref: dateValue,
