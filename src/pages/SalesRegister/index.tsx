@@ -30,7 +30,7 @@ import {
 } from './styles';
 
 export interface IUnit {
-  id: number;
+  id: string;
   name: string;
 }
 
@@ -80,7 +80,7 @@ const SalesRegister = () => {
     { value: 'WORKSHOP', label: 'Oficina' },
   ];
   const [unitSelectOptions, setUnitSelectOptions] = useState<
-    Array<{ value: number; label: string }>
+    Array<{ value: string; label: string }>
   >([]);
 
   useEffect(() => {
@@ -99,7 +99,7 @@ const SalesRegister = () => {
         const unities: IUnit[] = response.data;
 
         const unitiesOptions: Array<{
-          value: number;
+          value: string;
           label: string;
         }> = unities.map(unit => ({ value: unit.id, label: unit.name }));
 

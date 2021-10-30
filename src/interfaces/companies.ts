@@ -1,7 +1,7 @@
 import { IFormattedUnit, IUnit } from './unit';
 
 export interface ICompany {
-  id: number;
+  id: string;
   name: string;
   telephone: string;
   cnpj: string;
@@ -10,7 +10,7 @@ export interface ICompany {
 }
 
 export interface IFormattedCompany {
-  id: number;
+  id: string;
   name: string;
   telephone: string;
   cnpj: string;

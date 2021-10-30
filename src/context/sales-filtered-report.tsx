@@ -1,7 +1,7 @@
 import React, { createContext, useCallback, useContext, useState } from 'react';
 
 interface ISales {
-  id: number;
+  id: string;
   availabilityDate: string;
   deliveryDate: string;
   status: string;
@@ -11,7 +11,7 @@ interface ISales {
   seller: {
     name: string;
     company: {
-      id: number;
+      id: string;
       name: string;
       telephone: string;
       cnpj: string;
@@ -25,9 +25,9 @@ interface ISales {
     carPlate: string;
   };
   serviceSale: Array<{
-    id: number;
+    id: string;
     service: {
-      id: number;
+      id: string;
       name: string;
       price: number;
     };

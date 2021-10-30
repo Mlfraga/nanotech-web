@@ -25,7 +25,7 @@ import { Container, Content, Separator, List, Box } from './styles';
 
 const Companies = () => {
   const [companies, setCompanies] = useState<ICompany[]>([]);
-  const [openedCompanies, setOpenedCompanies] = useState<number[]>([]);
+  const [openedCompanies, setOpenedCompanies] = useState<string[]>([]);
 
   const [companyToUpdate, setCompanyToUpdate] = useState<ICompany | undefined>(
     undefined,
@@ -68,14 +68,14 @@ const Companies = () => {
   }, []);
 
   const handleOpenCompanies = useCallback(
-    (id: number) => {
+    (id: string) => {
       setOpenedCompanies([...openedCompanies, id]);
     },
     [openedCompanies],
   );
 
   const handleCloseCompanies = useCallback(
-    (id: number) => {
+    (id: string) => {
       const newOpenedCompanies = openedCompanies.filter(
         companyId => companyId !== id,
       );

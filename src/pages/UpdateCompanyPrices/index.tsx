@@ -16,10 +16,10 @@ import { currencyMasker } from '../../utils/masks';
 import { Container, Content, Separator, List, Box } from './styles';
 
 interface ICompanyService {
-  id: number;
+  id: string;
   price: number;
   service: {
-    id: number;
+    id: string;
     price: number;
     name: string;
   };

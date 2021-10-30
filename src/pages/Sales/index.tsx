@@ -32,10 +32,16 @@ import Pagination from '../../components/Pagination';
 import Select from '../../components/Select';
 import { useAuth } from '../../context/auth';
 import { useToast } from '../../context/toast';
+import { IUser } from '../../interfaces/users';
 import api from '../../services/api';
 import formatMoney from '../../utils/formatMoney';
 import getSaleStatusTranslated from '../../utils/getSaleStatusTranslated';
 import { Container, Content, Separator, List, Box } from './styles';
+
+interface ISelectOptions {
+  id: string;
+  name: string;
+}
 
 interface ISaleRequestResponseData {
   id: string;
@@ -84,6 +90,7 @@ interface IFormDataFilter {
   deliveryDate: Date;
   availabilityDate: Date;
   status: string;
+  seller: string;
 }
 
 interface IFilters {
@@ -101,6 +108,7 @@ const Sales = () => {
   const [sales, setSales] = useState<ISaleRequestResponseData[]>([]);
   const [openedServices, setOpenedServices] = useState<string[]>([]);
   const [selectedSales, setSelectedSales] = useState<string[]>([]);
+  const [sellersOptions, setSellersOptions] = useState<ISelectOptions[]>([]);
 
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
 
@@ -130,6 +138,7 @@ const Sales = () => {
 
   useEffect(() => {
     setLoading(true);
+
     api
       .get('sales', {
         params: {
@@ -144,6 +153,24 @@ const Sales = () => {
         setTotalPages(data?.total_pages - 1);
         setLoading(false);
       });
+
+    if (user.role === 'ADMIN') {
+      api.get<IUser[]>('profiles').then(response => {
+        setSellersOptions(
+          response.data
+            .filter(u => u.id !== user.profile.id && u.user.role !== 'ADMIN')
+            .map(seller => ({ id: seller.id, name: seller.name })),
+        );
+      });
+    }
+
+    if (user.role === 'MANAGER') {
+      api.get<IUser[]>('users/company').then(response => {
+        setSellersOptions(
+          response.data.map(seller => ({ id: seller.id, name: seller.name })),
+        );
+      });
+    }
   }, [user, currentPage, filters]);
 
   const formattedSales = useMemo(
@@ -279,12 +306,14 @@ const Sales = () => {
   );
 
   const handleSearchSale = useCallback(
-    async ({ availabilityDate, deliveryDate, status }: IFormDataFilter) => {
-      console.log(
-        { availabilityDate, deliveryDate, status },
-        '{ availabilityDate, deliveryDate, status }',
-      );
-      if (!availabilityDate && !status && !deliveryDate) {
+    async ({
+      availabilityDate,
+      deliveryDate,
+      status,
+      seller,
+    }: IFormDataFilter) => {
+      console.log(seller);
+      if (!availabilityDate && !status && !deliveryDate && !seller) {
         addToast({
           title: 'Por favor preencha algum campo para realizar a pesquisa.',
           type: 'error',
@@ -297,6 +326,7 @@ const Sales = () => {
         ...(deliveryDate && { deliveryDate }),
         ...(availabilityDate && { availabilityDate }),
         ...(status && { status }),
+        ...(seller && { sellerId: seller }),
       });
 
       setCurrentPage(0);
@@ -422,6 +452,28 @@ const Sales = () => {
             <option value="CANCELED">Cancelado</option>
             <option value="FINISHED">Finalizado</option>
           </Select>
+
+          {user.role !== 'SELLER' && (
+            <Select
+              placeholder="Filtrar por vendedor"
+              height={8}
+              backgroundColor="#424242"
+              color="White"
+              name="seller"
+              containerProps={{
+                marginLeft: 4,
+                width: 225,
+                height: 10,
+                border: '2px solid',
+                borderColor: '#585858',
+                backgroundColor: '#424242',
+              }}
+            >
+              {sellersOptions.map(option => (
+                <option value={option.id}>{option.name}</option>
+              ))}
+            </Select>
+          )}
 
           <Tooltip label="Filtrar vendas" aria-label="Filtrar vendas">
             <ChakraButton

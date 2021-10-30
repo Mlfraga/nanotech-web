@@ -10,7 +10,7 @@ import api from '../../services/api';
 import { Container, Content, Separator, List } from './styles';
 
 interface IFormatRow {
-  id: number;
+  id: string;
   name: string;
   telephone: string;
   enabled: boolean;

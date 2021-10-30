@@ -1,9 +1,9 @@
 export interface IUser {
-  id: number;
+  id: string;
   name: string;
   user: {
     telephone: string;
-    id: number;
+    id: string;
     role: string;
   };
 }

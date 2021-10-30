@@ -19,8 +19,10 @@ import { useHistory, useLocation } from 'react-router-dom';
 import api from '../services/api';
 
 interface IUser {
+  id: string;
   role: 'ADMIN' | 'MANAGER' | 'SELLER';
   profile: {
+    id: string;
     company_id: string;
     unit_id: string;
   };
@@ -39,13 +41,7 @@ interface ISignInCredentials {
 }
 
 interface IAuthContextData {
-  user: {
-    role: 'ADMIN' | 'MANAGER' | 'SELLER';
-    profile: {
-      company_id: string;
-      unit_id: string;
-    };
-  };
+  user: IUser;
   buttons: IButton[];
   signIn(
     credentials: ISignInCredentials,

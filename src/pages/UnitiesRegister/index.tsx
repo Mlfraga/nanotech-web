@@ -17,7 +17,7 @@ import getValidationsErrors from '../../utils/getValidationError';
 import { Container, Content, Separator, InputContainer } from './styles';
 
 interface ICompany {
-  id: number;
+  id: string;
   name: string;
 }
 

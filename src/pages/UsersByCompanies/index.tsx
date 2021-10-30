@@ -15,16 +15,16 @@ import getUserRoleTranslated from '../../utils/getUserRoleTranslated';
 import { Container, Content, Separator, List, Box } from './styles';
 
 interface IFormatRow {
-  id: number;
+  id: string;
   name: string;
   telephone: string;
   profiles: [
     {
-      id: number;
+      id: string;
       name: string;
       telephone: string;
       user: {
-        id: number;
+        id: string;
         role: string;
         telephone: string;
       };
@@ -33,7 +33,7 @@ interface IFormatRow {
 }
 
 interface IFormattedUser {
-  id: number;
+  id: string;
   name: string;
   telephone: string;
   role: string;
@@ -41,7 +41,7 @@ interface IFormattedUser {
 }
 
 interface IFormattedCompany {
-  id: number;
+  id: string;
   name: string;
   telephone: string;
   users: IFormattedUser[];
@@ -49,7 +49,7 @@ interface IFormattedCompany {
 
 const UsersByUnits = () => {
   const [companies, setCompanies] = useState<IFormatRow[]>([]);
-  const [openedCompanies, setOpenedCommpanies] = useState<number[]>([]);
+  const [openedCompanies, setOpenedCommpanies] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
   const [userToUpdate, setUserToUpdate] = useState<IUser | undefined>(
@@ -79,14 +79,14 @@ const UsersByUnits = () => {
   }, []);
 
   const handleOpenUnities = useCallback(
-    (id: number) => {
+    (id: string) => {
       setOpenedCommpanies([...openedCompanies, id]);
     },
     [openedCompanies],
   );
 
   const handleCloseUnities = useCallback(
-    (id: number) => {
+    (id: string) => {
       const newOpenedUnities = openedCompanies.filter(unitId => unitId !== id);
 
       setOpenedCommpanies(newOpenedUnities);

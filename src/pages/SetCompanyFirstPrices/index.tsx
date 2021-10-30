@@ -17,7 +17,7 @@ import { currencyMasker } from '../../utils/masks';
 import { Container, Content, Buttons, PriceBox } from './styles';
 
 interface IServices {
-  id: number;
+  id: string;
   name: string;
   price: number;
   enabled: boolean;

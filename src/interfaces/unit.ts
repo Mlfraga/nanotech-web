@@ -1,11 +1,11 @@
 export interface IUnit {
-  id: number;
+  id: string;
   name: string;
   telephone: string;
   client_identifier: string;
 }
 export interface IFormattedUnit {
-  id: number;
+  id: string;
   name: string;
   telephone: string;
   client_identifier: string;

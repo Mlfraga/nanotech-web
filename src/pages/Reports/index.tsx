@@ -17,15 +17,15 @@ import api from '../../services/api';
 import { Container } from './styles';
 
 interface ICompaniesResponseData {
-  id: number;
+  id: string;
   name: string;
   telephone: string;
   cnpj: string;
-  units: Array<{ id: number; name: string; telephone: string }>;
+  units: Array<{ id: string; name: string; telephone: string }>;
 }
 
 interface IService {
-  id: number;
+  id: string;
   name: string;
   price: number;
   enabled: boolean;

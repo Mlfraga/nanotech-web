@@ -34,7 +34,7 @@ interface IFormData {
 }
 
 interface IUnit {
-  id: number;
+  id: string;
   name: string;
 }
 
@@ -45,7 +45,7 @@ const RegsiterSellers = () => {
   const formRef = useRef<FormHandles>(null);
 
   const [unitSelectOptions, setUnitSelectOptions] = useState<
-    Array<{ value: number; label: string }>
+    Array<{ value: string; label: string }>
   >([]);
 
   useEffect(() => {
@@ -55,7 +55,7 @@ const RegsiterSellers = () => {
         const unities: IUnit[] = response.data;
 
         const unitiesOptions: Array<{
-          value: number;
+          value: string;
           label: string;
         }> = unities.map(unit => ({ value: unit.id, label: unit.name }));
 
