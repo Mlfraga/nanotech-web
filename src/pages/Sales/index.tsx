@@ -6,13 +6,14 @@ import React, {
   useMemo,
 } from 'react';
 import { FaArrowAltCircleDown, FaArrowAltCircleUp } from 'react-icons/fa';
-import { FiEdit3, FiSearch, FiTrash } from 'react-icons/fi';
+import { FiEdit3, FiSearch, FiTrash, FiX } from 'react-icons/fi';
 
 import {
   Button as ChakraButton,
   Tooltip,
   Text,
   Box as ChakraBox,
+  Grid as ChakraGrid,
   Flex as ChakraFlex,
   Skeleton,
   Stack,
@@ -412,68 +413,70 @@ const Sales = () => {
           onSubmit={handleSearchSale}
           style={{ display: 'flex', marginBottom: '36px' }}
         >
-          <DatePicker
-            name="availabilityDate"
-            placeholderText="Filtrar por data de disponibilidade"
-            containerProps={{
-              width: 300,
-              height: 10,
-            }}
-          />
-
-          <DatePicker
-            name="deliveryDate"
-            placeholderText="Filtrar por data de entrega"
-            containerProps={{
-              marginLeft: 4,
-              width: 300,
-              height: 10,
-            }}
-          />
-
-          <Select
-            placeholder="Filtrar por situação"
-            height={8}
-            backgroundColor="#424242"
-            color="White"
-            name="status"
-            containerProps={{
-              marginLeft: 4,
-              width: 225,
-              height: 10,
-              border: '2px solid',
-              borderColor: '#585858',
-              backgroundColor: '#424242',
-            }}
+          <ChakraGrid
+            templateColumns={
+              user.role !== 'SELLER' ? 'repeat(4, 1fr)' : 'repeat(3, 1fr)'
+            }
+            gap="2rem"
           >
-            <option value="ALL">Todos</option>
-            <option value="PENDING">Pendente</option>
-            <option value="CONFIRMED">Confirmado</option>
-            <option value="CANCELED">Cancelado</option>
-            <option value="FINISHED">Finalizado</option>
-          </Select>
+            <DatePicker
+              name="availabilityDate"
+              placeholderText="Filtrar por data de disponibilidade"
+              containerProps={{
+                width: '100%',
+                height: 10,
+              }}
+            />
 
-          {user.role !== 'SELLER' && (
+            <DatePicker
+              name="deliveryDate"
+              placeholderText="Filtrar por data de entrega"
+              containerProps={{
+                width: '100%',
+                height: 10,
+              }}
+            />
+
             <Select
-              placeholder="Filtrar por vendedor"
+              placeholder="Filtrar por situação"
               height={8}
               backgroundColor="#424242"
               color="White"
-              name="seller"
+              name="status"
               containerProps={{
-                marginLeft: 4,
-                width: 225,
                 height: 10,
                 border: '2px solid',
                 borderColor: '#585858',
                 backgroundColor: '#424242',
               }}
             >
-              {sellersOptions.map(option => (
-                <option value={option.id}>{option.name}</option>
-              ))}
+              <option value="ALL">Todos</option>
+              <option value="PENDING">Pendente</option>
+              <option value="CONFIRMED">Confirmado</option>
+              <option value="CANCELED">Cancelado</option>
+              <option value="FINISHED">Finalizado</option>
             </Select>
-          )}
+
+            {user.role !== 'SELLER' && (
+              <Select
+                placeholder="Filtrar por vendedor"
+                height={8}
+                backgroundColor="#424242"
+                color="White"
+                name="seller"
+                containerProps={{
+                  height: 10,
+                  border: '2px solid',
+                  borderColor: '#585858',
+                  backgroundColor: '#424242',
+                }}
+              >
+                {sellersOptions.map(option => (
+                  <option value={option.id}>{option.name}</option>
+                ))}
+              </Select>
+            )}
+          </ChakraGrid>
 
           <Tooltip label="Filtrar vendas" aria-label="Filtrar vendas">
             <ChakraButton
@@ -506,7 +509,7 @@ const Sales = () => {
               marginLeft={4}
               onClick={handleRemoveFilters}
             >
-              Limpar filtros
+              <FiX />
             </ChakraButton>
           </Tooltip>
         </Form>

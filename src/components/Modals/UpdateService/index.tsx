@@ -17,6 +17,7 @@ import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
 
+import { ICompanyPrices } from '../../../pages/CompaniesPrices';
 import api from '../../../services/api';
 import getValidationErrors from '../../../utils/getValidationError';
 import { currencyMasker } from '../../../utils/masks';
@@ -34,14 +35,14 @@ interface IUpdateServicePriceModalProps {
     reason?: 'pressedEscape' | 'clickedOverlay',
   ) => void;
   onSave: () => void | undefined;
-  id?: string;
+  service: ICompanyPrices;
 }
 
 const UpdateServicePriceModal: React.FC<IUpdateServicePriceModalProps> = ({
   isOpen,
   onClose,
   onSave,
-  id,
+  service,
 }) => {
   const formRef = useRef<FormHandles>(null);
   const toast = useToast();
@@ -70,17 +71,10 @@ const UpdateServicePriceModal: React.FC<IUpdateServicePriceModalProps> = ({
 
         await schema.validate(data, { abortEarly: false });
 
-        if (!data.price) {
-          await api.put(`services/${id}`, { name: data.name });
-        }
-
-        if (!data.name) {
-          await api.put(`services/${id}`, { price: data.price });
-        }
-
-        if (data.name && data.price) {
-          await api.put(`services/${id}`, data);
-        }
+        await api.put(`services/${service.id}`, {
+          ...(data.name && { name: data.name }),
+          ...(data.price && { price: data.price }),
+        });
 
         toast({
           status: 'success',
@@ -111,7 +105,7 @@ const UpdateServicePriceModal: React.FC<IUpdateServicePriceModalProps> = ({
         });
       }
     },
-    [id, onClose, onSave, toast],
+    [service, onClose, onSave, toast],
   );
 
   return (
@@ -129,13 +123,18 @@ const UpdateServicePriceModal: React.FC<IUpdateServicePriceModalProps> = ({
           <Form ref={formRef} onSubmit={handleSubmit}>
             <ModalBody paddingBottom={4}>
               <Flex direction="column">
-                <Input placeholder="Nome" name="name" />
+                <Input
+                  placeholder="Nome"
+                  name="name"
+                  defaultValue={service.name}
+                />
 
                 <Input
-                  placeholder="Novo valor"
+                  placeholder="Preço Nanotech"
                   onKeyUp={handleKeyUp}
                   name="price"
                   icon={FiDollarSign}
+                  defaultValue={Number(service.price).toFixed(2)}
                 />
               </Flex>
             </ModalBody>

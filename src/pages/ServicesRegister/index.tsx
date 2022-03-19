@@ -1,5 +1,6 @@
 import React, { useCallback, useRef } from 'react';
 import { FiDollarSign } from 'react-icons/fi';
+import { useHistory, useParams } from 'react-router-dom';
 
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
@@ -17,11 +18,18 @@ import { Container, Content, Separator, InputContainer } from './styles';
 
 interface IFormData {
   name: string;
+  company_id: string;
   price: number;
+}
+
+interface IServicesRegisterRouterParams {
+  company_id: string;
 }
 
 const ServicesRegister = () => {
   const formRef = useRef<FormHandles>(null);
+  const history = useHistory();
+  const { company_id } = useParams<IServicesRegisterRouterParams>();
   const { addToast } = useToast();
 
   const handleKeyUp = useCallback(
@@ -33,7 +41,7 @@ const ServicesRegister = () => {
   );
 
   const handleSubmit = useCallback(
-    async (data, { reset }) => {
+    async data => {
       try {
         formRef.current?.setErrors({});
 
@@ -51,6 +59,7 @@ const ServicesRegister = () => {
         const formData: IFormData = {
           name: data.serviceName,
           price: data.serviceValue,
+          company_id,
         };
 
         const response = await api.post('services', formData);
@@ -62,7 +71,7 @@ const ServicesRegister = () => {
             description: 'O serviço foi cadastrado com sucesso.',
           });
 
-          reset();
+          history.push(`/company/prices/${company_id}`);
         }
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
@@ -71,6 +80,7 @@ const ServicesRegister = () => {
           formRef.current?.setErrors(errors);
           return;
         }
+
         addToast({
           title: 'Não foi possível realizar o caadastro.',
           description:
@@ -79,7 +89,7 @@ const ServicesRegister = () => {
         });
       }
     },
-    [addToast],
+    [addToast, history, company_id],
   );
 
   return (

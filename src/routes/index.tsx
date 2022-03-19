@@ -14,7 +14,6 @@ import Sellers from '../pages/Sellers';
 import SellersRegister from '../pages/SellersRegister';
 import Services from '../pages/Services';
 import Service from '../pages/Services/Vitrificação';
-import ServicesAdmin from '../pages/ServicesAdmin';
 import ServicesRegister from '../pages/ServicesRegister';
 import SetCompanyFirstPrices from '../pages/SetCompanyFirstPrices';
 import UnitiesRegister from '../pages/UnitiesRegister';
@@ -26,17 +25,12 @@ import Route from './Route';
 const Routes: React.FC = () => (
   <Switch>
     <Route path="/" exact component={Login} />
+    <Route path="/home" exact component={Login} />
     <Route path="/first-login" component={FirstLogin} isPrivate />
     <Route path="/services" component={Services} isPrivate />
     <Route path="/service/vitrificacao" component={Service} isPrivate />
     <Route
-      path="/administration-services"
-      component={ServicesAdmin}
-      isPrivate
-      permissions={['ADMIN']}
-    />
-    <Route
-      path="/services-register"
+      path="/services-register/:company_id"
       component={ServicesRegister}
       isPrivate
       permissions={['ADMIN']}

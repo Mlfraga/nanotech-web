@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FiLoader } from 'react-icons/fi';
 import { useHistory } from 'react-router-dom';
 
-import { Box, Flex, Button as ChakraButton } from '@chakra-ui/core';
+import { Box, Flex, Button as ChakraButton, Grid } from '@chakra-ui/core';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 
@@ -52,7 +52,6 @@ const Reports: React.FC = () => {
   const { addToast } = useToast();
 
   const [companies, setCompanies] = useState<ICompaniesResponseData[]>([]);
-  const [services, setServices] = useState<IService[]>([]);
   const [isReportLoading, setIsReportLoading] = useState(false);
 
   useEffect(() => {
@@ -63,12 +62,6 @@ const Reports: React.FC = () => {
         setCompanies(newCompanies);
       });
     }
-
-    api.get('services').then(response => {
-      const newServices: IService[] = response.data;
-
-      setServices(newServices);
-    });
   }, [user.role]);
 
   const handleGetReport = useCallback(
@@ -79,34 +72,45 @@ const Reports: React.FC = () => {
         initialDate: data.initialDate,
         finalDate: data.finalDate,
         ...(data.status && { status: data.status }),
+        ...(data.company && { company: data.company }),
+        ...(user.role !== 'ADMIN' && { company: user.profile.company_id }),
       };
 
-      data.service.split('').length >= 1 &&
-        Object.assign(reqData, {
-          service: data.service,
-        });
+      try {
+        const file = await api.get<IGetReportResponseData>(
+          '/sales/sales-report',
+          {
+            params: reqData,
+          },
+        );
 
-      const file = await api.get<IGetReportResponseData>(
-        '/sales/sales-report',
-        {
-          params: reqData,
-        },
-      );
+        setTimeout(() => {
+          setIsReportLoading(false);
+          formRef.current?.reset();
 
-      setTimeout(() => {
-        setIsReportLoading(false);
-        formRef.current?.reset();
+          window.open(
+            file.data.url_to_download,
+            '_blank',
+            'noopener,noreferrer',
+          );
 
-        window.open(file.data.url_to_download, '_blank', 'noopener,noreferrer');
+          history.push('services');
 
-        history.push('services');
-
+          addToast({
+            title: 'Relatório exportado com sucesso.',
+            description: 'Verifique no local de download escolhido.',
+            type: 'success',
+          });
+        }, 1000);
+      } catch (e) {
         addToast({
-          title: 'Relatório exportado com sucesso.',
-          description: 'Verifique no local de download escolhido.',
-          type: 'success',
+          title: 'Ocorreu um erro ao exportar o relatório.',
+          description: 'Tente novamente mais tarde.',
+          type: 'error',
         });
-      }, 1000);
+
+        setIsReportLoading(false);
+      }
     },
     [addToast, history],
   );
@@ -135,7 +139,7 @@ const Reports: React.FC = () => {
         >
           <Separator text="Filtros" />
           <Form ref={formRef} onSubmit={handleGetReport}>
-            <Flex marginBottom={8}>
+            <Grid templateColumns="repeat(4, 1fr)" paddingY={8} gap={4}>
               {user.role === 'ADMIN' && (
                 <Select
                   name="company"
@@ -144,9 +148,8 @@ const Reports: React.FC = () => {
                   color="White"
                   placeholder="Concessionárias"
                   containerProps={{
-                    marginTop: 6,
                     marginRight: 8,
-                    width: 300,
+                    width: '100%',
                     height: 10,
                     border: '2px solid',
                     borderColor: '#585858',
@@ -161,39 +164,23 @@ const Reports: React.FC = () => {
                 </Select>
               )}
 
-              <Select
-                name="service"
-                height={8}
-                backgroundColor="#424242"
-                color="White"
-                placeholder="Serviços"
+              <DatePicker
+                placeholderText="Data de entrega inicial"
+                name="initialDate"
                 containerProps={{
-                  marginTop: 6,
                   marginRight: 6,
-                  width: 300,
-                  height: 10,
-                  border: '2px solid',
-                  borderColor: '#585858',
-                  backgroundColor: '#424242',
+                  width: '100%',
                 }}
-              >
-                {services.map(service => (
-                  <option value={service.id} key={service.id}>
-                    {service.name}
-                  </option>
-                ))}
-              </Select>
+              />
 
-              <Flex marginTop={6}>
-                <DatePicker
-                  placeholderText="Data inicial"
-                  name="initialDate"
-                  containerProps={{
-                    marginRight: 6,
-                  }}
-                />
-                <DatePicker placeholderText="Data final" name="finalDate" />
-              </Flex>
+              <DatePicker
+                containerProps={{
+                  marginRight: 6,
+                  width: '100%',
+                }}
+                placeholderText="Data de entrega final"
+                name="finalDate"
+              />
 
               <Select
                 name="status"
@@ -202,9 +189,7 @@ const Reports: React.FC = () => {
                 color="White"
                 placeholder="Status"
                 containerProps={{
-                  marginTop: 6,
-                  marginLeft: 6,
-                  width: 300,
+                  width: '100%',
                   height: 10,
                   border: '2px solid',
                   borderColor: '#585858',
@@ -216,7 +201,7 @@ const Reports: React.FC = () => {
                 <option value="CANCELED">Cancelado</option>
                 <option value="FINISHED">Finalizado</option>
               </Select>
-            </Flex>
+            </Grid>
 
             <Flex>
               <ChakraButton

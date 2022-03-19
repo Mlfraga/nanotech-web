@@ -77,6 +77,13 @@ export const Content = styled(ChakraBox)`
   }
 `;
 
+export const InputsContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 0.5rem;
+  width: 100%;
+`;
+
 export const Separator = styled.div`
   width: 100%;
   display: flex;

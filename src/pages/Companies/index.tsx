@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { AiOutlineTool } from 'react-icons/ai';
 import { FaArrowAltCircleDown, FaArrowAltCircleUp } from 'react-icons/fa';
-import { FiEdit, FiTag } from 'react-icons/fi';
+import { FiEdit } from 'react-icons/fi';
 import { RiAddFill } from 'react-icons/ri';
 import { useHistory, Link } from 'react-router-dom';
 
@@ -120,8 +121,8 @@ const Companies = () => {
               </ChakraButton>
             </Tooltip>
             <Tooltip
-              aria-label="Visualizar preços da concessionária"
-              label="Visualizar preços da concessionária"
+              aria-label="Serviços da concessionária"
+              label="Serviços da concessionária"
             >
               <ChakraButton
                 onClick={() => history.push(`company/prices/${company.id}`)}
@@ -133,7 +134,7 @@ const Companies = () => {
                 _focusWithin={{ border: 0 }}
                 background="#282828"
               >
-                <FiTag color="#fff" />
+                <AiOutlineTool color="#fff" />
               </ChakraButton>
             </Tooltip>
           </Flex>

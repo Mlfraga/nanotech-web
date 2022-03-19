@@ -58,4 +58,9 @@ export const Container = styled(Box)<IContainerProps>`
       color: var(--base-color);
     }
   }
+
+  margin-right: 8;
+  width: 100%;
+  border: 2px solid #585858;
+  background-color: #424242;
 `;

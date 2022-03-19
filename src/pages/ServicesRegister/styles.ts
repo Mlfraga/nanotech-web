@@ -83,3 +83,30 @@ export const InputContainer = styled.div`
     }
   }
 `;
+
+export const SelectContainer = styled.div`
+  margin-top: 36px;
+
+  div.labels {
+    margin-top: 6px;
+    background: transparent;
+    border: 0;
+    display: flex;
+    justify-content: space-between;
+
+    span {
+      font: 18px 'Ubuntu', sans-serif;
+      margin-left: 4px;
+      font-weight: 400;
+      color: #eee;
+
+      & + span {
+        color: #ff6f60;
+      }
+    }
+  }
+
+  & + div {
+    margin-left: 46px;
+  }
+`;

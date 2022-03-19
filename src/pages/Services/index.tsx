@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 
 import { Box, Flex, Grid, Text } from '@chakra-ui/core';
 
+import nanoproteçãoImg from '../../assets/nanoproteção.jpg';
 import signInBackgroundImg from '../../assets/sign-in-background-3.jpg';
 import Breadcrumb from '../../components/Breadcrumb';
 import Menu from '../../components/Menu';
@@ -17,25 +18,18 @@ const Services = () => {
   useEffect(() => {
     if (user?.profile.company_id) {
       if (user?.role === 'MANAGER') {
-        let servicesAmount = 0;
+        api.get(`/services/${user.profile.company_id}`).then(response => {
+          const servicesWithoutPriceAmount = response.data.filter(
+            (service: { company_price?: number }) => !service.company_price,
+          ).length;
 
-        api.get('/services').then(response => {
-          servicesAmount = response.data.length;
-        });
-
-        api.get('company-services/company').then(response => {
-          const companyservices = response.data;
-
-          if (
-            companyservices.length === 0 ||
-            companyservices.length < servicesAmount
-          ) {
+          if (servicesWithoutPriceAmount > 0 || response.data.length < 0) {
             history.push('set-prices');
           }
         });
       }
     }
-  }, [history, user]);
+  }, [history, user.profile.company_id, user]);
 
   return (
     <Container>
@@ -55,10 +49,9 @@ const Services = () => {
         marginLeft="auto"
         marginRight="auto"
       >
-        <Grid templateColumns="repeat(4, 1fr)" gap={6} marginTop="26px">
+        <Grid templateColumns="repeat(2, 1fr)" gap={6} marginTop="26px">
           <Box
             w="100%"
-            h="60"
             bg="gray.700"
             borderRadius="md"
             display="flex"
@@ -85,13 +78,12 @@ const Services = () => {
               margin="8px"
             >
               <Text fontSize="16px" color="#CCC">
-                Vitrificação de Pintura
+                Polimento técnico
               </Text>
             </Flex>
           </Box>
           <Box
             w="100%"
-            h="60"
             bg="gray.700"
             borderRadius="md"
             display="flex"
@@ -104,9 +96,9 @@ const Services = () => {
             onClick={() => history.push('/service/vitrificacao')}
           >
             <img
-              style={{ maxWidth: '100%', borderRadius: '8px' }}
+              style={{ maxWidth: '330px', borderRadius: '8px' }}
               className="images"
-              src={signInBackgroundImg}
+              src={nanoproteçãoImg}
               alt="img"
             />
             <Flex
@@ -118,13 +110,12 @@ const Services = () => {
               margin="8px"
             >
               <Text fontSize="16px" color="#CCC">
-                Vitrificação de Pintura
+                Nano Proteção
               </Text>
             </Flex>
           </Box>
           <Box
             w="100%"
-            h="60"
             bg="gray.700"
             borderRadius="md"
             display="flex"
@@ -136,17 +127,6 @@ const Services = () => {
             border="2px solid #626262"
             onClick={() => history.push('/service/vitrificacao')}
           >
-            {/* <iframe
-              style={{ width: '100%', height: '72%' }}
-              src="https://www.youtube.com/embed/DXAQTlfGIYM"
-              title="YouTube video player"
-              frameBorder="0"
-              allow="accelerometer;
-              autoplay; clipboard-write;
-              encrypted-media;
-              gyroscope; picture-in-picture"
-              allowFullScreen
-            /> */}
             <img
               style={{ maxWidth: '100%', borderRadius: '8px' }}
               className="images"
@@ -162,13 +142,12 @@ const Services = () => {
               margin="8px"
             >
               <Text fontSize="16px" color="#CCC">
-                Vitrificação de Pintura
+                Interiores
               </Text>
             </Flex>
           </Box>
           <Box
             w="100%"
-            h="60"
             bg="gray.700"
             borderRadius="md"
             display="flex"
@@ -195,40 +174,7 @@ const Services = () => {
               margin="8px"
             >
               <Text fontSize="16px" color="#CCC">
-                Vitrificação de Pintura
-              </Text>
-            </Flex>
-          </Box>
-          <Box
-            w="100%"
-            h="60"
-            bg="gray.700"
-            borderRadius="md"
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            paddingTop="15px"
-            paddingLeft="15px"
-            paddingRight="15px"
-            border="2px solid #626262"
-            onClick={() => history.push('/service/vitrificacao')}
-          >
-            <img
-              style={{ maxWidth: '100%', borderRadius: '8px' }}
-              className="images"
-              src={signInBackgroundImg}
-              alt="img"
-            />
-            <Flex
-              alignItems="center"
-              paddingY="10px"
-              marginTop="2px"
-              width="100%"
-              height="15px"
-              margin="8px"
-            >
-              <Text fontSize="16px" color="#CCC">
-                Vitrificação de Pintura
+                Vidros
               </Text>
             </Flex>
           </Box>

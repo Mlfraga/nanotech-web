@@ -10,6 +10,7 @@ import Breadcrumb from '../../components/Breadcrumb';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import Menu from '../../components/Menu';
+import { useAuth } from '../../context/auth';
 import { useToast } from '../../context/toast';
 import api from '../../services/api';
 import { currencyMasker } from '../../utils/masks';
@@ -18,15 +19,13 @@ import { Container, Content, Separator, List, Box } from './styles';
 interface ICompanyService {
   id: string;
   price: number;
-  service: {
-    id: string;
-    price: number;
-    name: string;
-  };
+  company_price: number;
+  name: string;
 }
 
 const UpdateCompanyPrices = () => {
   const { addToast } = useToast();
+  const { user } = useAuth();
   const formRef = useRef<FormHandles>(null);
 
   const [companyServices, setCompanyServices] = useState<ICompanyService[]>([]);
@@ -40,17 +39,18 @@ const UpdateCompanyPrices = () => {
   const loadCompanyServices = useCallback(() => {
     setLoading(true);
 
-    api.get('company-services/company').then(response => {
+    api.get(`services/${user.profile.company_id}`).then(response => {
       const { data } = response;
 
       const services: ICompanyService[] = data.map(
         (companyService: ICompanyService) => {
-          const { id, price, service } = companyService;
+          const { id, company_price, price, name } = companyService;
 
           return {
             id,
+            company_price,
             price,
-            service,
+            name,
           };
         },
       );
@@ -58,7 +58,7 @@ const UpdateCompanyPrices = () => {
       setCompanyServices(services);
       setLoading(false);
     });
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     loadCompanyServices();
@@ -93,12 +93,12 @@ const UpdateCompanyPrices = () => {
           return;
         }
 
-        const dataToSubmit = {
-          companyServiceId: companyServiceSelected?.id,
-          price: Number(data.newValue),
-        };
-
-        const response = await api.put('company-services', [dataToSubmit]);
+        const response = await api.put(
+          `services/${companyServiceSelected?.id}`,
+          {
+            company_price: data.newValue,
+          },
+        );
 
         if (response.status === 200) {
           addToast({
@@ -196,21 +196,21 @@ const UpdateCompanyPrices = () => {
             <List height={{ lg: '40vh', xl: '55vh' }}>
               {companyServices?.map(companyService => (
                 <Box key={companyService.id}>
-                  <span>{companyService.service.name}</span>
+                  <span>{companyService?.name}</span>
                   <span>
-                    {Number(companyService.service.price).toLocaleString(
+                    {Number(companyService?.price).toLocaleString('pt-br', {
+                      style: 'currency',
+                      currency: 'BRL',
+                    })}
+                  </span>
+                  <span>
+                    {Number(companyService.company_price).toLocaleString(
                       'pt-br',
                       {
                         style: 'currency',
                         currency: 'BRL',
                       },
                     )}
-                  </span>
-                  <span>
-                    {Number(companyService.price).toLocaleString('pt-br', {
-                      style: 'currency',
-                      currency: 'BRL',
-                    })}
                   </span>
                   <span></span>
                   <MdModeEdit
@@ -232,7 +232,7 @@ const UpdateCompanyPrices = () => {
             <div className="header">
               <h1>Altere o valor do serviço</h1>
               <span className="service-name">
-                {companyServiceSelected?.service.name}
+                {companyServiceSelected?.name}
               </span>
 
               <div className="company-service-data-header">
@@ -242,7 +242,7 @@ const UpdateCompanyPrices = () => {
 
               <div className="company-service-data">
                 <span>
-                  {Number(companyServiceSelected?.price).toLocaleString(
+                  {Number(companyServiceSelected?.company_price).toLocaleString(
                     'pt-br',
                     {
                       style: 'currency',
@@ -251,7 +251,7 @@ const UpdateCompanyPrices = () => {
                   )}
                 </span>
                 <span>
-                  {Number(companyServiceSelected?.service.price).toLocaleString(
+                  {Number(companyServiceSelected?.price).toLocaleString(
                     'pt-br',
                     {
                       style: 'currency',

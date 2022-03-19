@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { FiEdit } from 'react-icons/fi';
 import { useHistory } from 'react-router-dom';
 
@@ -12,7 +12,7 @@ import {
 import Breadcrumb from '../../components/Breadcrumb';
 import Button from '../../components/Button';
 import Menu from '../../components/Menu';
-import UpdateServicePrice from '../../components/Modals/UpdateService';
+// import UpdateService from '../../components/Modals/UpdateService';
 import api from '../../services/api';
 import { Container, Content, Separator, List } from './styles';
 
@@ -26,7 +26,7 @@ interface IFormatRow {
 const AdminServices = () => {
   const [rows, setRows] = useState<IFormatRow[]>([]);
 
-  const [openUpdateService, setOpenUpdateService] = useState<string>();
+  // const [openUpdateService, setOpenUpdateService] = useState<string>();
 
   const history = useHistory();
   const [loading, setLoading] = useState<boolean>(false);
@@ -41,21 +41,21 @@ const AdminServices = () => {
     });
   }, []);
 
-  const getService = useCallback(() => {
-    api.get('services').then(response => {
-      const services: IFormatRow[] = response.data;
+  // const getService = useCallback(() => {
+  //   api.get('services').then(response => {
+  //     const services: IFormatRow[] = response.data;
 
-      setRows(services);
-    });
-  }, []);
+  //     setRows(services);
+  //   });
+  // }, []);
 
-  const handleOpenUpdateServiceModal = useCallback((id: string) => {
-    setOpenUpdateService(id);
-  }, []);
+  // const handleOpenUpdateServiceModal = useCallback((id: string) => {
+  //   setOpenUpdateService(id);
+  // }, []);
 
-  const handleCloseUpdateServiceModal = useCallback(async () => {
-    setOpenUpdateService(undefined);
-  }, []);
+  // const handleCloseUpdateServiceModal = useCallback(async () => {
+  //   setOpenUpdateService(undefined);
+  // }, []);
 
   const rowsFormatted = useMemo(
     () =>
@@ -73,7 +73,7 @@ const AdminServices = () => {
             label="Alterar dados do serviço"
           >
             <CharaButton
-              onClick={() => handleOpenUpdateServiceModal(row.id)}
+              onClick={() => console.log(row.id)}
               _hover={{ background: '#353535', border: 0 }}
               _focusWithin={{ border: 0 }}
               background="#282828"
@@ -83,7 +83,7 @@ const AdminServices = () => {
           </Tooltip>
         ),
       })),
-    [rows, handleOpenUpdateServiceModal],
+    [rows],
   );
 
   return (
@@ -198,13 +198,6 @@ const AdminServices = () => {
             Registrar novo serviço
           </Button>
         </div>
-
-        <UpdateServicePrice
-          isOpen={!!openUpdateService}
-          onClose={handleCloseUpdateServiceModal}
-          onSave={getService}
-          id={openUpdateService}
-        />
       </Content>
     </Container>
   );

@@ -12,9 +12,9 @@ import { Container, Content, Separator, List } from './styles';
 interface IFormatRow {
   id: string;
   name: string;
-  telephone: string;
   enabled: boolean;
   user: {
+    telephone: string;
     email: string;
     role: 'MANAGER' | 'SELLER';
   };
@@ -139,7 +139,7 @@ const Sellers = () => {
               {rows.map(row => (
                 <div className="box">
                   <span>{row.name}</span>
-                  <span>{row.telephone}</span>
+                  <span>{row.user.telephone}</span>
                   <span>{row.user.email}</span>
                   <span>{row.company.name}</span>
                   <span>{row.unit?.name}</span>

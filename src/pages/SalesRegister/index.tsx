@@ -37,9 +37,10 @@ export interface IUnit {
 interface ICompanyServices {
   id: string;
   price: number;
+  company_price: number;
+  name: string;
   service: {
     id: string;
-    name: string;
     price: number;
     enabled: boolean;
   };
@@ -84,14 +85,13 @@ const SalesRegister = () => {
   >([]);
 
   useEffect(() => {
-    api
-      .get(`company-services/by-company/${user?.profile.company_id}`)
-      .then(response => {
-        const responseServices: ICompanyServices[] = response.data;
+    api.get(`services/${user?.profile.company_id}`).then(response => {
+      const responseServices: ICompanyServices[] = response.data;
 
-        console.log(responseServices, 'responseServices');
-        setCompanyServices(responseServices);
-      });
+      setCompanyServices(
+        responseServices.filter(service => !!service.company_price),
+      );
+    });
 
     api
       .get(`units/${user?.profile.company_id}`)
@@ -488,29 +488,33 @@ const SalesRegister = () => {
                 <Tooltip
                   key={companyService.id}
                   label={String(
-                    Number(companyService.price).toLocaleString('pt-br', {
-                      style: 'currency',
-                      currency: 'BRL',
-                    }),
+                    Number(companyService.company_price).toLocaleString(
+                      'pt-br',
+                      {
+                        style: 'currency',
+                        currency: 'BRL',
+                      },
+                    ),
                   )}
                   aria-label={String(
-                    Number(companyService.price).toLocaleString('pt-br', {
-                      style: 'currency',
-                      currency: 'BRL',
-                    }),
+                    Number(companyService.company_price).toLocaleString(
+                      'pt-br',
+                      {
+                        style: 'currency',
+                        currency: 'BRL',
+                      },
+                    ),
                   )}
                 >
                   <ServiceBox
-                    onClick={() =>
-                      handleSelectService(companyService.service.id)
-                    }
+                    onClick={() => handleSelectService(companyService.id)}
                     className={
-                      selectedServices.includes(companyService.service.id)
+                      selectedServices.includes(companyService.id)
                         ? 'selected'
                         : ''
                     }
                   >
-                    <span>{companyService.service.name}</span>
+                    <span>{companyService.name}</span>
                   </ServiceBox>
                 </Tooltip>
               ))}

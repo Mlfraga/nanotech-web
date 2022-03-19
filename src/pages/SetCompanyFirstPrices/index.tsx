@@ -32,28 +32,14 @@ const SetCompanyPrices = () => {
   const [services, setServices] = useState<IServices[]>([]);
 
   useEffect(() => {
-    let newServices: IServices[] = [] as IServices[];
-    let existingServices: IServices[] = [] as IServices[];
-
-    api.get('services').then(response => {
-      existingServices = response.data;
-    });
-
-    api.get('company-services/company').then(response => {
-      const companyservices = response.data;
-
-      const companyServicesIds = companyservices.map(
-        (companyService: { id: string; service_id: string }) =>
-          companyService.service_id,
+    api.get(`/services/${user.profile.company_id}`).then(response => {
+      const servicesWithoutPrice = response.data.filter(
+        (service: { company_price?: number }) => !service.company_price,
       );
 
-      newServices = existingServices.filter(
-        service => !companyServicesIds.includes(service.id),
-      );
-
-      setServices(newServices);
+      setServices(servicesWithoutPrice);
     });
-  }, [history]);
+  }, [history, user.profile.company_id]);
 
   const handleKeyUp = useCallback(
     (event: React.FormEvent<HTMLInputElement>) => {
@@ -99,6 +85,7 @@ const SetCompanyPrices = () => {
             type: 'success',
             description: 'Agora a sua concessionária ja pode registrar vendas.',
           });
+
           history.push('services');
         }
       } catch (err) {

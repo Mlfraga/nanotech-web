@@ -136,12 +136,6 @@ export const AuthProvider: React.FC = ({ children }) => {
               icon: <AiOutlineTool color="#fff" />,
             },
             {
-              name: 'Administrar Serviços',
-              enable: false,
-              route: '/administration-services',
-              icon: <FiTag color="#fff" />,
-            },
-            {
               name: 'Vendas',
               enable: false,
               route: '/sales',
@@ -408,12 +402,6 @@ export const AuthProvider: React.FC = ({ children }) => {
               enable: false,
               route: '/services',
               icon: <AiOutlineTool color="#fff" />,
-            },
-            {
-              name: 'Administrar Serviços',
-              enable: false,
-              route: '/administration-services',
-              icon: <FiTag color="#fff" />,
             },
             {
               name: 'Vendas',
