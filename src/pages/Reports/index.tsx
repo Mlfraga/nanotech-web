@@ -112,7 +112,7 @@ const Reports: React.FC = () => {
         setIsReportLoading(false);
       }
     },
-    [addToast, history],
+    [addToast, history, user.profile.company_id, user.role],
   );
 
   return (
