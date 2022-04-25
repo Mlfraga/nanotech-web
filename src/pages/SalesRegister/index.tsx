@@ -193,7 +193,7 @@ const SalesRegister = () => {
             source: data.sourceCar,
             name: data.name,
             cpf: formattedCpf,
-            comments: data.comments,
+            comments: data?.comments?.replace(/(\r\n|\n|\r)/gm, ' '),
             car: data.car,
             carModel: data.carModel,
             carPlate: data.carPlate,
