@@ -46,19 +46,23 @@ const CompaniesPrices = () => {
   useEffect(() => {
     setLoading(true);
 
-    api.get(`company-services/by-company/${companyId}`).then(response => {
-      const companyServices = response.data;
+    api
+      .get<ICompanyPrices[]>(`company-services/by-company/${companyId}`)
+      .then(response => {
+        const companyServices = response.data;
 
-      setCompanyPrices(companyServices);
+        setCompanyPrices(
+          companyServices.sort((a, b) => a.name.localeCompare(b.name)),
+        );
 
-      api
-        .get<ICompany>(`companies/${companyId}`)
-        .then(({ data: companyData }) => {
-          setCompany(companyData);
-        });
+        api
+          .get<ICompany>(`companies/${companyId}`)
+          .then(({ data: companyData }) => {
+            setCompany(companyData);
+          });
 
-      setLoading(false);
-    });
+        setLoading(false);
+      });
   }, [companyId]);
 
   const getServices = useCallback(() => {

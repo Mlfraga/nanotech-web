@@ -24,7 +24,6 @@ const DateTime: React.FC<IDateTimeProps> = ({ name, defaultValue = '' }) => {
   });
 
   useEffect(() => {
-    console.log(dateValue, 'dateValue');
     registerField({
       name: fieldName,
       ref: dateValue,
