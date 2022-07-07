@@ -52,7 +52,7 @@ const Dialog: React.FC<IDialogProps> = ({
               Cancelar
             </Button>
             <Button variantColor="red" onClick={onDelete} ml={3}>
-              Excluir
+              Confirmar
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

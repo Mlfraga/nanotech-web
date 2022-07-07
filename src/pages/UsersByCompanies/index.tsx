@@ -1,18 +1,28 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { FaArrowAltCircleDown, FaArrowAltCircleUp } from 'react-icons/fa';
 import { FiEdit2 } from 'react-icons/fi';
+import { MdPassword } from 'react-icons/md';
 import { RiAddFill } from 'react-icons/ri';
 import { Link } from 'react-router-dom';
 
 import { Button, Skeleton, Stack, Tooltip } from '@chakra-ui/core';
 
 import Breadcrumb from '../../components/Breadcrumb';
+import AlertDialog from '../../components/Dialogs/Alert';
 import Menu from '../../components/Menu';
 import UpdateUserModal from '../../components/Modals/UpdateUserData';
+import { useToast } from '../../context/toast';
 import { IUser } from '../../interfaces/users';
 import api from '../../services/api';
 import getUserRoleTranslated from '../../utils/getUserRoleTranslated';
-import { Container, Content, Separator, List, Box } from './styles';
+import {
+  Container,
+  Content,
+  Separator,
+  List,
+  Box,
+  AddNewUserLinkContainer,
+} from './styles';
 
 interface IFormatRow {
   id: string;
@@ -38,6 +48,7 @@ interface IFormattedUser {
   telephone: string;
   role: string;
   update_button: JSX.Element;
+  reset_pass_button: JSX.Element;
 }
 
 interface IFormattedCompany {
@@ -48,9 +59,15 @@ interface IFormattedCompany {
 }
 
 const UsersByUnits = () => {
+  const { addToast } = useToast();
+
   const [companies, setCompanies] = useState<IFormatRow[]>([]);
   const [openedCompanies, setOpenedCommpanies] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [resetPassDialogOpened, setResetPassDialogOpened] = useState<boolean>(
+    false,
+  );
+  const [idToResetPassword, setIdToResetPassword] = useState<string>();
 
   const [userToUpdate, setUserToUpdate] = useState<IUser | undefined>(
     undefined,
@@ -68,15 +85,8 @@ const UsersByUnits = () => {
   }, []);
 
   useEffect(() => {
-    setLoading(true);
-
-    api.get('companies').then(response => {
-      const newCompanies: IFormatRow[] = response.data;
-
-      setCompanies(newCompanies);
-      setLoading(false);
-    });
-  }, []);
+    getCompaniesByUsers();
+  }, [getCompaniesByUsers]);
 
   const handleOpenUnities = useCallback(
     (id: string) => {
@@ -101,6 +111,30 @@ const UsersByUnits = () => {
   const handleCloseUpdateUserModal = useCallback(() => {
     setUserToUpdate(undefined);
   }, []);
+
+  const handleResetPassoword = useCallback(async () => {
+    if (idToResetPassword) {
+      try {
+        await api.patch(`users/reset-password/${idToResetPassword}`);
+
+        addToast({
+          title: 'Senha do usuário resetada com sucesso.',
+          type: 'success',
+          description:
+            'No próximo login, o usuário poderá informar sua nova senha.',
+        });
+
+        setResetPassDialogOpened(false);
+        setIdToResetPassword(undefined);
+      } catch (_err) {
+        addToast({
+          title:
+            'Ocorreu um erro ao tentar resetar a senha, por favor entre em contato com o suporte',
+          type: 'error',
+        });
+      }
+    }
+  }, [idToResetPassword, addToast]);
 
   const formattedUsersByCompanies: IFormattedCompany[] = useMemo(
     () =>
@@ -129,6 +163,28 @@ const UsersByUnits = () => {
                   background="#424242"
                 >
                   <FiEdit2 />
+                </Button>
+              </Tooltip>
+            ),
+            reset_pass_button: (
+              <Tooltip
+                aria-label="Resetar senha do usuário"
+                label="Resetar senha do usuário"
+              >
+                <Button
+                  onClick={() => {
+                    setResetPassDialogOpened(true);
+                    setIdToResetPassword(profile.user.id);
+                  }}
+                  _hover={{
+                    backgroundColor: '#404040',
+                    color: '#ccc',
+                    border: 0,
+                  }}
+                  _focusWithin={{ border: 0 }}
+                  background="#424242"
+                >
+                  <MdPassword />
                 </Button>
               </Tooltip>
             ),
@@ -225,13 +281,17 @@ const UsersByUnits = () => {
                   >
                     <span>{company.name}</span>
                     <span>{company.telephone}</span>
-                    <Link
-                      className="createNewCompanyLink"
-                      to={`users-register/?company=${company.id}`}
-                    >
-                      <RiAddFill size={18} /> Adicionar novo usuário a essa
-                      concessionária
-                    </Link>
+
+                    <AddNewUserLinkContainer>
+                      <Link
+                        className="createNewCompanyLink"
+                        to={`users-register/?company=${company.id}`}
+                      >
+                        <RiAddFill size={18} />
+                        Adicionar novo usuário a essa concessionária
+                      </Link>
+                    </AddNewUserLinkContainer>
+
                     {openedCompanies.includes(company.id) ? (
                       <FaArrowAltCircleUp
                         onClick={() => handleCloseUnities(company.id)}
@@ -267,7 +327,10 @@ const UsersByUnits = () => {
                         <span>{person.name}</span>
                         <span>{person.telephone}</span>
                         <span>{getUserRoleTranslated(person.role)}</span>
-                        {person.update_button}
+                        <div className="buttons">
+                          {person.update_button}
+                          {person.reset_pass_button}
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -283,6 +346,13 @@ const UsersByUnits = () => {
         onClose={handleCloseUpdateUserModal}
         onSave={getCompaniesByUsers}
         user={userToUpdate}
+      />
+      <AlertDialog
+        isOpen={resetPassDialogOpened}
+        onDelete={handleResetPassoword}
+        setIsOpen={setResetPassDialogOpened}
+        headerText="Resetar senha"
+        bodyText="Tem certeza que deseja resetar a senha?"
       />
     </Container>
   );

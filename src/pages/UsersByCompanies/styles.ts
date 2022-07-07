@@ -72,7 +72,7 @@ export const List = styled(ChakraBox)`
 
   .box {
     display: grid;
-    grid-template-columns: 22% 22% 20% 30% 4%;
+    grid-template-columns: 22% 22% 20% 26%22%;
     align-items: center;
     justify-content: center;
 
@@ -181,7 +181,7 @@ export const Box = styled.div`
       padding-left: 26px;
 
       display: grid;
-      grid-template-columns: 25% 25% 25% 5% 25%;
+      grid-template-columns: 26% 26% 26% 22%;
       align-items: center;
 
       & + div {
@@ -202,11 +202,17 @@ export const Box = styled.div`
       padding-left: 26px;
 
       display: grid;
-      grid-template-columns: 25% 25% 25% 5% 5% 20%;
+      grid-template-columns: 26% 26% 26% 22%;
       align-items: center;
-      & + div {
-        margin-top: 8px;
+
+      .buttons {
+        display: flex;
+        align-items: center;
       }
     }
   }
+`;
+
+export const AddNewUserLinkContainer = styled.div`
+  display: flex;
 `;
