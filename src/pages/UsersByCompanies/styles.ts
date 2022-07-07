@@ -181,7 +181,7 @@ export const Box = styled.div`
       padding-left: 26px;
 
       display: grid;
-      grid-template-columns: 26% 26% 26% 22%;
+      grid-template-columns: 20% 20% 20% 20% 20%;
       align-items: center;
 
       & + div {
@@ -202,7 +202,7 @@ export const Box = styled.div`
       padding-left: 26px;
 
       display: grid;
-      grid-template-columns: 26% 26% 26% 22%;
+      grid-template-columns: 20% 20% 20% 20% 20%;
       align-items: center;
 
       .buttons {

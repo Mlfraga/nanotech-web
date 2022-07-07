@@ -39,6 +39,7 @@ interface IProfile {
     id: string;
     role: string;
     telephone: string;
+    username: string;
   };
 }
 
@@ -47,6 +48,7 @@ interface IFormattedUser {
   name: string;
   telephone: string;
   role: string;
+  username: string;
   update_button: JSX.Element;
   reset_pass_button: JSX.Element;
 }
@@ -147,6 +149,7 @@ const UsersByUnits = () => {
             name: profile.name,
             telephone: profile.user.telephone,
             role: profile.user.role,
+            username: profile.user.username,
             update_button: (
               <Tooltip
                 aria-label="Alterar dados do usuário"
@@ -318,6 +321,7 @@ const UsersByUnits = () => {
 
                     <div className="title">
                       <span>Nome</span>
+                      <span>Login</span>
                       <span>Telefone</span>
                       <span>Cargo</span>
                     </div>
@@ -325,6 +329,7 @@ const UsersByUnits = () => {
                     {company.users.map(person => (
                       <div className="person" key={person.id}>
                         <span>{person.name}</span>
+                        <span>{person.username}</span>
                         <span>{person.telephone}</span>
                         <span>{getUserRoleTranslated(person.role)}</span>
                         <div className="buttons">
