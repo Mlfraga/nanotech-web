@@ -28,18 +28,18 @@ interface IFormatRow {
   id: string;
   name: string;
   telephone: string;
-  profiles: [
-    {
-      id: string;
-      name: string;
-      telephone: string;
-      user: {
-        id: string;
-        role: string;
-        telephone: string;
-      };
-    },
-  ];
+  profiles: IProfile[];
+}
+
+interface IProfile {
+  id: string;
+  name: string;
+  telephone: string;
+  user: {
+    id: string;
+    role: string;
+    telephone: string;
+  };
 }
 
 interface IFormattedUser {
@@ -67,7 +67,7 @@ const UsersByUnits = () => {
   const [resetPassDialogOpened, setResetPassDialogOpened] = useState<boolean>(
     false,
   );
-  const [idToResetPassword, setIdToResetPassword] = useState<string>();
+  const [userToResetPassword, setUserToResetPassword] = useState<IProfile>();
 
   const [userToUpdate, setUserToUpdate] = useState<IUser | undefined>(
     undefined,
@@ -113,9 +113,9 @@ const UsersByUnits = () => {
   }, []);
 
   const handleResetPassoword = useCallback(async () => {
-    if (idToResetPassword) {
+    if (userToResetPassword) {
       try {
-        await api.patch(`users/reset-password/${idToResetPassword}`);
+        await api.patch(`users/reset-password/${userToResetPassword.user.id}`);
 
         addToast({
           title: 'Senha do usuário resetada com sucesso.',
@@ -125,7 +125,7 @@ const UsersByUnits = () => {
         });
 
         setResetPassDialogOpened(false);
-        setIdToResetPassword(undefined);
+        setUserToResetPassword(undefined);
       } catch (_err) {
         addToast({
           title:
@@ -134,7 +134,7 @@ const UsersByUnits = () => {
         });
       }
     }
-  }, [idToResetPassword, addToast]);
+  }, [userToResetPassword, addToast]);
 
   const formattedUsersByCompanies: IFormattedCompany[] = useMemo(
     () =>
@@ -174,7 +174,7 @@ const UsersByUnits = () => {
                 <Button
                   onClick={() => {
                     setResetPassDialogOpened(true);
-                    setIdToResetPassword(profile.user.id);
+                    setUserToResetPassword(profile);
                   }}
                   _hover={{
                     backgroundColor: '#404040',
@@ -352,7 +352,7 @@ const UsersByUnits = () => {
         onDelete={handleResetPassoword}
         setIsOpen={setResetPassDialogOpened}
         headerText="Resetar senha"
-        bodyText="Tem certeza que deseja resetar a senha?"
+        bodyText={`Tem certeza que deseja resetar a senha do(a) ${userToResetPassword?.name}?`}
       />
     </Container>
   );
