@@ -32,7 +32,6 @@ export const Content = styled(ChakraBox)`
   div.updateSaleContainer {
     display: flex;
     flex-direction: column;
-    /* justify-content: flex-end; */
     align-items: center;
     width: 100%;
 
@@ -40,39 +39,6 @@ export const Content = styled(ChakraBox)`
       margin-bottom: 12px;
       font-weight: bold;
       font-size: 18px;
-    }
-
-    button {
-      & + button {
-        width: 50px;
-        margin-left: 2rem;
-      }
-
-      width: 250px;
-      height: 40px;
-      margin-top: 36px;
-    }
-
-    .SelectContainer {
-      width: 250px;
-      div.labels {
-        background: transparent;
-        border: 0;
-        display: flex;
-        justify-content: space-between;
-        margin-top: 5px;
-
-        span {
-          font: 18px 'Ubuntu', sans-serif;
-          margin-left: 4px;
-          font-weight: 400;
-          color: #eee;
-
-          & + span {
-            color: #ff6f60;
-          }
-        }
-      }
     }
   }
 `;
@@ -262,4 +228,9 @@ export const Box = styled(ChakraBox)`
       }
     }
   }
+`;
+
+export const ActionButttonsContainer = styled.div`
+  display: flex;
+  gap: 6px;
 `;

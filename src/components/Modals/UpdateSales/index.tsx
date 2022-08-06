@@ -61,7 +61,6 @@ const UpdateSalesModal: React.FC<IUpdateSalesModalProps> = ({
     { value: 'WORKSHOP', label: 'Oficina' },
   ];
 
-  console.log(sale?.availability_date, 'data');
   const handleSubmit = async (data: IFormData, event: any) => {
     try {
       formRef.current?.setErrors({});

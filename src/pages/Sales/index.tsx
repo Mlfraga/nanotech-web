@@ -6,14 +6,13 @@ import React, {
   useMemo,
 } from 'react';
 import { FaArrowAltCircleDown, FaArrowAltCircleUp } from 'react-icons/fa';
-import { FiEdit3, FiSearch, FiTrash, FiX } from 'react-icons/fi';
+import { FiEdit3, FiFilter, FiTrash, FiSave } from 'react-icons/fi';
 
 import {
   Button as ChakraButton,
   Tooltip,
   Text,
   Box as ChakraBox,
-  Grid as ChakraGrid,
   Flex as ChakraFlex,
   Skeleton,
   Stack,
@@ -24,8 +23,6 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 import Breadcrumb from '../../components/Breadcrumb';
-import Button from '../../components/Button';
-import DatePicker from '../../components/DatePicker';
 import AlertDialog from '../../components/Dialogs/Alert';
 import Menu from '../../components/Menu';
 import UpdateSalesModal from '../../components/Modals/UpdateSales';
@@ -33,16 +30,20 @@ import Pagination from '../../components/Pagination';
 import Select from '../../components/Select';
 import { useAuth } from '../../context/auth';
 import { useToast } from '../../context/toast';
+import { ISelectOptions } from '../../interfaces/select';
 import { IUser } from '../../interfaces/users';
 import api from '../../services/api';
 import formatMoney from '../../utils/formatMoney';
 import getSaleStatusTranslated from '../../utils/getSaleStatusTranslated';
-import { Container, Content, Separator, List, Box } from './styles';
-
-interface ISelectOptions {
-  id: string;
-  name: string;
-}
+import FilterDrawer from './components/FilterDrawer';
+import {
+  Container,
+  Content,
+  Separator,
+  List,
+  Box,
+  ActionButttonsContainer,
+} from './styles';
 
 interface ISaleRequestResponseData {
   id: string;
@@ -87,17 +88,11 @@ interface ISaleRequestResponseData {
   request_date: string;
 }
 
-interface IFormDataFilter {
-  deliveryDate: Date;
-  availabilityDate: Date;
-  status: string;
-  seller: string;
-}
-
-interface IFilters {
+export interface IFilterSalesParams {
   deliveryDate?: Date;
   availabilityDate?: Date;
   status?: string;
+  sellerId?: string;
 }
 
 const Sales = () => {
@@ -116,9 +111,12 @@ const Sales = () => {
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(0);
 
-  const [filters, setFilters] = useState<IFilters>({});
+  const [filters, setFilters] = useState<IFilterSalesParams>(
+    {} as IFilterSalesParams,
+  );
   const [loading, setLoading] = useState<boolean>(false);
 
+  const [filterDrawerOpened, setFilterDrawerOpened] = useState<boolean>(false);
   const [deleteDialogOpened, setDeleteDialogOpened] = useState<boolean>(false);
   const [openEditSalesModal, setOpenEditSalesModal] = useState<boolean>(false);
   const [saleToEdit, setSaleToEdit] = useState<
@@ -151,7 +149,7 @@ const Sales = () => {
         const { data } = response;
 
         setSales(data?.items);
-        setTotalPages(data?.total_pages - 1);
+        setTotalPages(data?.total_pages);
         setLoading(false);
       });
 
@@ -306,15 +304,14 @@ const Sales = () => {
     [addToast, currentPage, selectedSales],
   );
 
-  const handleSearchSale = useCallback(
-    async ({
-      availabilityDate,
-      deliveryDate,
-      status,
-      seller,
-    }: IFormDataFilter) => {
-      console.log(seller);
-      if (!availabilityDate && !status && !deliveryDate && !seller) {
+  const handleApplyFilter = useCallback(
+    (params: IFilterSalesParams) => {
+      if (
+        !params.availabilityDate &&
+        !params.status &&
+        !params.deliveryDate &&
+        !params.sellerId
+      ) {
         addToast({
           title: 'Por favor preencha algum campo para realizar a pesquisa.',
           type: 'error',
@@ -324,10 +321,12 @@ const Sales = () => {
       }
 
       setFilters({
-        ...(deliveryDate && { deliveryDate }),
-        ...(availabilityDate && { availabilityDate }),
-        ...(status && { status }),
-        ...(seller && { sellerId: seller }),
+        ...(params.deliveryDate && { deliveryDate: params.deliveryDate }),
+        ...(params.availabilityDate && {
+          availabilityDate: params.availabilityDate,
+        }),
+        ...(params.status && { status: params.status }),
+        ...(params.sellerId && { sellerId: params.sellerId }),
       });
 
       setCurrentPage(0);
@@ -335,7 +334,7 @@ const Sales = () => {
     [addToast],
   );
 
-  const handleRemoveFilters = useCallback(async () => {
+  const handleCleanFilter = useCallback(async () => {
     const salesWithoutFilter = await api.get('sales', {
       params: { page: currentPage },
     });
@@ -393,7 +392,9 @@ const Sales = () => {
   return (
     <Container>
       <Menu />
+
       <Breadcrumb text="Vendas realizadas" />
+
       <Content
         marginLeft="auto"
         marginRight="auto"
@@ -408,111 +409,22 @@ const Sales = () => {
           xl: '90vw',
         }}
       >
-        <Form
-          ref={searchFormRef}
-          onSubmit={handleSearchSale}
-          style={{ display: 'flex', marginBottom: '36px' }}
+        <ChakraButton
+          _hover={{
+            bg: '#5580b9',
+            color: '#fff',
+          }}
+          _focusWithin={{
+            border: 0,
+          }}
+          backgroundColor="#355a9d"
+          style={{ padding: 24 }}
+          onClick={() => setFilterDrawerOpened(true)}
+          isDisabled={deleteLoading}
+          leftIcon={FiFilter}
         >
-          <ChakraGrid
-            templateColumns={
-              user.role !== 'SELLER' ? 'repeat(4, 1fr)' : 'repeat(3, 1fr)'
-            }
-            gap="2rem"
-          >
-            <DatePicker
-              name="availabilityDate"
-              placeholderText="Filtrar por data de disponibilidade"
-              containerProps={{
-                width: '100%',
-                height: 10,
-              }}
-            />
-
-            <DatePicker
-              name="deliveryDate"
-              placeholderText="Filtrar por data de entrega"
-              containerProps={{
-                width: '100%',
-                height: 10,
-              }}
-            />
-
-            <Select
-              placeholder="Filtrar por situação"
-              height={8}
-              backgroundColor="#424242"
-              color="White"
-              name="status"
-              containerProps={{
-                height: 10,
-                border: '2px solid',
-                borderColor: '#585858',
-                backgroundColor: '#424242',
-              }}
-            >
-              <option value="ALL">Todos</option>
-              <option value="PENDING">Pendente</option>
-              <option value="CONFIRMED">Confirmado</option>
-              <option value="CANCELED">Cancelado</option>
-              <option value="FINISHED">Finalizado</option>
-            </Select>
-
-            {user.role !== 'SELLER' && (
-              <Select
-                placeholder="Filtrar por vendedor"
-                height={8}
-                backgroundColor="#424242"
-                color="White"
-                name="seller"
-                containerProps={{
-                  height: 10,
-                  border: '2px solid',
-                  borderColor: '#585858',
-                  backgroundColor: '#424242',
-                }}
-              >
-                {sellersOptions.map(option => (
-                  <option value={option.id}>{option.name}</option>
-                ))}
-              </Select>
-            )}
-          </ChakraGrid>
-
-          <Tooltip label="Filtrar vendas" aria-label="Filtrar vendas">
-            <ChakraButton
-              _hover={{
-                bg: '#5580b9',
-                color: '#fff',
-              }}
-              _focusWithin={{
-                border: 0,
-              }}
-              backgroundColor="#355a9d"
-              height="40px"
-              marginLeft={4}
-              type="submit"
-            >
-              <FiSearch />
-            </ChakraButton>
-          </Tooltip>
-
-          <Tooltip label="Limpar filtros" aria-label="Limpar filtros">
-            <ChakraButton
-              _hover={{
-                bg: '#4e4e4e',
-              }}
-              _focusWithin={{
-                border: 0,
-              }}
-              height="40px"
-              backgroundColor="#454545"
-              marginLeft={4}
-              onClick={handleRemoveFilters}
-            >
-              <FiX />
-            </ChakraButton>
-          </Tooltip>
-        </Form>
+          Filtros
+        </ChakraButton>
 
         {user?.role === 'ADMIN' && (
           <ChakraBox
@@ -528,11 +440,7 @@ const Sales = () => {
               lg: '78vw',
               xl: '90vw',
             }}
-            className={
-              selectedSales.length < 1
-                ? 'udpdateSaleContainerHide'
-                : 'updateSaleContainer'
-            }
+            className="updateSaleContainer"
             hidden={selectedSales.length < 1}
           >
             <span>Realizar ações em venda(s) selecionada(s)</span>
@@ -549,7 +457,8 @@ const Sales = () => {
                 name="statusSale"
                 containerProps={{
                   marginRight: 8,
-                  width: 300,
+                  width: '100%',
+                  minWidth: 300,
                   height: 10,
                   border: '2px solid',
                   borderColor: '#585858',
@@ -561,28 +470,9 @@ const Sales = () => {
                 <option value="CANCELED">Cancelado</option>
                 <option value="FINISHED">Finalizado</option>
               </Select>
-              <Button style={{ marginTop: '0px' }} type="submit">
-                Alterar Situação
-              </Button>
-              <Tooltip label="Excluir venda" aria-label="Excluir venda">
-                <ChakraButton
-                  _hover={{
-                    bg: '#5580b9',
-                    color: '#fff',
-                  }}
-                  _focusWithin={{
-                    border: 0,
-                  }}
-                  backgroundColor="#355a9d"
-                  style={{ marginTop: '0px' }}
-                  onClick={() => setDeleteDialogOpened(true)}
-                  isDisabled={deleteLoading}
-                >
-                  <FiTrash />
-                </ChakraButton>
-              </Tooltip>
-              {selectedSales.length === 1 && (
-                <Tooltip label="Editar venda" aria-label="Editar venda">
+
+              <ActionButttonsContainer>
+                <Tooltip label="Salvar alteração" aria-label="Salvar alteração">
                   <ChakraButton
                     _hover={{
                       bg: '#5580b9',
@@ -592,18 +482,55 @@ const Sales = () => {
                       border: 0,
                     }}
                     backgroundColor="#355a9d"
-                    style={{ marginTop: '0px' }}
-                    onClick={() => {
-                      setOpenEditSalesModal(true);
-                      setSaleToEdit(
-                        sales.find(sale => sale.id === selectedSales[0]),
-                      );
-                    }}
+                    style={{ padding: 12 }}
+                    type="submit"
                   >
-                    <FiEdit3 />
+                    <FiSave />
                   </ChakraButton>
                 </Tooltip>
-              )}
+
+                <Tooltip label="Excluir venda" aria-label="Excluir venda">
+                  <ChakraButton
+                    _hover={{
+                      bg: '#5580b9',
+                      color: '#fff',
+                    }}
+                    _focusWithin={{
+                      border: 0,
+                    }}
+                    backgroundColor="#355a9d"
+                    style={{ padding: 12 }}
+                    onClick={() => setDeleteDialogOpened(true)}
+                    isDisabled={deleteLoading}
+                  >
+                    <FiTrash />
+                  </ChakraButton>
+                </Tooltip>
+
+                {selectedSales.length === 1 && (
+                  <Tooltip label="Editar venda" aria-label="Editar venda">
+                    <ChakraButton
+                      _hover={{
+                        bg: '#5580b9',
+                        color: '#fff',
+                      }}
+                      _focusWithin={{
+                        border: 0,
+                      }}
+                      backgroundColor="#355a9d"
+                      style={{ padding: 12 }}
+                      onClick={() => {
+                        setOpenEditSalesModal(true);
+                        setSaleToEdit(
+                          sales.find(sale => sale.id === selectedSales[0]),
+                        );
+                      }}
+                    >
+                      <FiEdit3 />
+                    </ChakraButton>
+                  </Tooltip>
+                )}
+              </ActionButttonsContainer>
             </Form>
           </ChakraBox>
         )}
@@ -843,6 +770,7 @@ const Sales = () => {
           </>
         )}
       </Content>
+
       <AlertDialog
         isOpen={deleteDialogOpened}
         onDelete={handleDeleteSales}
@@ -850,6 +778,17 @@ const Sales = () => {
         headerText="Excluir Venda"
         bodyText="Tem certeza que deseja excluir a venda?"
       />
+      <FilterDrawer
+        isOpen={filterDrawerOpened}
+        placement="right"
+        onClose={() => setFilterDrawerOpened(false)}
+        initialValues={filters}
+        sellersOptions={sellersOptions}
+        close={() => setFilterDrawerOpened(false)}
+        applyFilter={handleApplyFilter}
+        cleanFilter={handleCleanFilter}
+      />
+
       <UpdateSalesModal
         isOpen={openEditSalesModal}
         onClose={() => setOpenEditSalesModal(false)}
