@@ -773,7 +773,7 @@ const Sales = () => {
 
       <AlertDialog
         isOpen={deleteDialogOpened}
-        onDelete={handleDeleteSales}
+        onConfirm={handleDeleteSales}
         setIsOpen={setDeleteDialogOpened}
         headerText="Excluir Venda"
         bodyText="Tem certeza que deseja excluir a venda?"

@@ -39,25 +39,29 @@ const UpdateCompanyPrices = () => {
   const loadCompanyServices = useCallback(() => {
     setLoading(true);
 
-    api.get(`services/${user.profile.company_id}`).then(response => {
-      const { data } = response;
+    api
+      .get(`services/${user.profile.company_id}`, {
+        params: { showDisabled: false },
+      })
+      .then(response => {
+        const { data } = response;
 
-      const services: ICompanyService[] = data.map(
-        (companyService: ICompanyService) => {
-          const { id, company_price, price, name } = companyService;
+        const services: ICompanyService[] = data.map(
+          (companyService: ICompanyService) => {
+            const { id, company_price, price, name } = companyService;
 
-          return {
-            id,
-            company_price,
-            price,
-            name,
-          };
-        },
-      );
+            return {
+              id,
+              company_price,
+              price,
+              name,
+            };
+          },
+        );
 
-      setCompanyServices(services);
-      setLoading(false);
-    });
+        setCompanyServices(services);
+        setLoading(false);
+      });
   }, [user]);
 
   useEffect(() => {

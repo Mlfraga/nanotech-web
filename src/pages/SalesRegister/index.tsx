@@ -85,13 +85,17 @@ const SalesRegister = () => {
   >([]);
 
   useEffect(() => {
-    api.get(`services/${user?.profile.company_id}`).then(response => {
-      const responseServices: ICompanyServices[] = response.data;
+    api
+      .get(`services/${user?.profile.company_id}`, {
+        params: { showDisabled: false },
+      })
+      .then(response => {
+        const responseServices: ICompanyServices[] = response.data;
 
-      setCompanyServices(
-        responseServices.filter(service => !!service.company_price),
-      );
-    });
+        setCompanyServices(
+          responseServices.filter(service => !!service.company_price),
+        );
+      });
 
     api
       .get(`units/${user?.profile.company_id}`)

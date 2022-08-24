@@ -18,15 +18,19 @@ const Services = () => {
   useEffect(() => {
     if (user?.profile.company_id) {
       if (user?.role === 'MANAGER') {
-        api.get(`/services/${user.profile.company_id}`).then(response => {
-          const servicesWithoutPriceAmount = response.data.filter(
-            (service: { company_price?: number }) => !service.company_price,
-          ).length;
+        api
+          .get(`services/${user.profile.company_id}`, {
+            params: { showDisabled: false },
+          })
+          .then(response => {
+            const servicesWithoutPriceAmount = response.data.filter(
+              (service: { company_price?: number }) => !service.company_price,
+            ).length;
 
-          if (servicesWithoutPriceAmount > 0 || response.data.length < 0) {
-            history.push('set-prices');
-          }
-        });
+            if (servicesWithoutPriceAmount > 0 || response.data.length < 0) {
+              history.push('set-prices');
+            }
+          });
       }
     }
   }, [history, user.profile.company_id, user]);

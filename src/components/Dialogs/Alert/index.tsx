@@ -13,9 +13,12 @@ import {
 interface IDialogProps {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  onDelete: () => void;
+  onConfirm: () => void;
   headerText?: string;
   bodyText?: string;
+  cancelText?: string;
+  saveText?: string;
+  confirmButtonVariantColor?: string;
 }
 
 const Dialog: React.FC<IDialogProps> = ({
@@ -23,7 +26,10 @@ const Dialog: React.FC<IDialogProps> = ({
   setIsOpen,
   headerText = 'Excluir Registro',
   bodyText = 'Tem certeza que deseja excluir o registro?',
-  onDelete,
+  cancelText = 'Cancelar',
+  saveText = 'Confirmar',
+  onConfirm,
+  confirmButtonVariantColor = 'red',
 }) => {
   const onClose = () => setIsOpen(false);
   const cancelRef = React.useRef() as React.RefObject<HTMLElement>;
@@ -49,10 +55,14 @@ const Dialog: React.FC<IDialogProps> = ({
               onClick={onClose}
               bg="#3d4756"
             >
-              Cancelar
+              {cancelText}
             </Button>
-            <Button variantColor="red" onClick={onDelete} ml={3}>
-              Confirmar
+            <Button
+              variantColor={confirmButtonVariantColor}
+              onClick={onConfirm}
+              ml={3}
+            >
+              {saveText}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

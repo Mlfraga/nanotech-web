@@ -32,13 +32,17 @@ const SetCompanyPrices = () => {
   const [services, setServices] = useState<IServices[]>([]);
 
   useEffect(() => {
-    api.get(`/services/${user.profile.company_id}`).then(response => {
-      const servicesWithoutPrice = response.data.filter(
-        (service: { company_price?: number }) => !service.company_price,
-      );
+    api
+      .get(`services/${user.profile.company_id}`, {
+        params: { showDisabled: false },
+      })
+      .then(response => {
+        const servicesWithoutPrice = response.data.filter(
+          (service: { company_price?: number }) => !service.company_price,
+        );
 
-      setServices(servicesWithoutPrice);
-    });
+        setServices(servicesWithoutPrice);
+      });
   }, [history, user.profile.company_id]);
 
   const handleKeyUp = useCallback(

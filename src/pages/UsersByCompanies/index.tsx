@@ -354,7 +354,7 @@ const UsersByUnits = () => {
       />
       <AlertDialog
         isOpen={resetPassDialogOpened}
-        onDelete={handleResetPassoword}
+        onConfirm={handleResetPassoword}
         setIsOpen={setResetPassDialogOpened}
         headerText="Resetar senha"
         bodyText={`Tem certeza que deseja resetar a senha do(a) ${userToResetPassword?.name}?`}
