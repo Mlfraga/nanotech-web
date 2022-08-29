@@ -15,6 +15,7 @@ import Button from '../../components/Button';
 import AlertDialog from '../../components/Dialogs/Alert';
 import Menu from '../../components/Menu';
 import UpdateService from '../../components/Modals/UpdateService';
+import { useToast } from '../../context/toast';
 import { ICompany } from '../../interfaces/companies';
 import api from '../../services/api';
 import { Container, Content, List, Box, Separator } from './styles';
@@ -36,6 +37,7 @@ export interface ICompanyPrices {
 const CompaniesPrices = () => {
   const { id: companyId } = useParams<ICompanyPricesRouterParams>();
   const history = useHistory();
+  const { addToast } = useToast();
 
   const [
     disableServiceAlertOpened,
@@ -98,15 +100,22 @@ const CompaniesPrices = () => {
       });
   }, [companyId, setLoading, setCompanyPrices]);
 
-  const toggleEnabled = async () => {
-    const endpointResource = disableService.enabled ? 'enable' : 'disable';
+  const toggleEnabled = useCallback(async () => {
+    const methodType = disableService.enabled ? 'enable' : 'disable';
 
     const { status } = await api.patch(
-      `services/${endpointResource}/${disableService.id}`,
+      `services/${methodType}/${disableService.id}`,
     );
 
-    if (status === 200) {
-      // setToa
+    console.log('status: ', status);
+
+    if (status === 202) {
+      addToast({
+        title: `Serviço ${
+          methodType === 'enable' ? 'Ativado' : 'Desativado'
+        } com sucesso.`,
+        type: 'success',
+      });
     }
 
     getServices();
@@ -117,7 +126,7 @@ const CompaniesPrices = () => {
         enabled: boolean;
       },
     );
-  };
+  }, [disableService, addToast, getServices]);
 
   return (
     <Container>

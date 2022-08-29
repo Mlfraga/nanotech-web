@@ -5,7 +5,7 @@ import { MdPassword } from 'react-icons/md';
 import { RiAddFill } from 'react-icons/ri';
 import { Link } from 'react-router-dom';
 
-import { Button, Skeleton, Stack, Tooltip } from '@chakra-ui/core';
+import { Button, Skeleton, Stack, Tooltip, Switch } from '@chakra-ui/core';
 
 import Breadcrumb from '../../components/Breadcrumb';
 import AlertDialog from '../../components/Dialogs/Alert';
@@ -39,6 +39,7 @@ interface IProfile {
     id: string;
     role: string;
     telephone: string;
+    enabled: boolean;
     username: string;
   };
 }
@@ -48,6 +49,8 @@ interface IFormattedUser {
   name: string;
   telephone: string;
   role: string;
+  enabled: boolean;
+  user_id: string;
   username: string;
   update_button: JSX.Element;
   reset_pass_button: JSX.Element;
@@ -60,12 +63,23 @@ interface IFormattedCompany {
   users: IFormattedUser[];
 }
 
+interface IDisabledService {
+  id: string;
+  enabled: boolean;
+}
+
 const UsersByUnits = () => {
   const { addToast } = useToast();
 
   const [companies, setCompanies] = useState<IFormatRow[]>([]);
   const [openedCompanies, setOpenedCommpanies] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [disableUserAlertOpened, setDisableUserAlertOpened] = useState<boolean>(
+    false,
+  );
+  const [disableUser, setDisableUser] = useState<IDisabledService>(
+    {} as IDisabledService,
+  );
   const [resetPassDialogOpened, setResetPassDialogOpened] = useState<boolean>(
     false,
   );
@@ -149,6 +163,8 @@ const UsersByUnits = () => {
             name: profile.name,
             telephone: profile.user.telephone,
             role: profile.user.role,
+            enabled: profile.user.enabled,
+            user_id: profile.user.id,
             username: profile.user.username,
             update_button: (
               <Tooltip
@@ -203,6 +219,30 @@ const UsersByUnits = () => {
       }),
     [companies, handleOpenUpdateUserData],
   );
+
+  const toggleEnabled = useCallback(async () => {
+    const methodType = disableUser.enabled ? 'enable' : 'disable';
+
+    const { status } = await api.patch(`users/${methodType}/${disableUser.id}`);
+
+    if (status === 202) {
+      addToast({
+        title: `Usuário ${
+          methodType === 'enable' ? 'Ativado' : 'Desativado'
+        } com sucesso.`,
+        type: 'success',
+      });
+    }
+
+    getCompaniesByUsers();
+    setDisableUserAlertOpened(false);
+    setDisableUser(
+      {} as {
+        id: string;
+        enabled: boolean;
+      },
+    );
+  }, [disableUser, addToast, getCompaniesByUsers]);
 
   return (
     <Container>
@@ -324,14 +364,31 @@ const UsersByUnits = () => {
                       <span>Login</span>
                       <span>Telefone</span>
                       <span>Cargo</span>
+                      <span>Ativo</span>
                     </div>
 
                     {company.users.map(person => (
                       <div className="person" key={person.id}>
                         <span>{person.name}</span>
+
                         <span>{person.username}</span>
+
                         <span>{person.telephone}</span>
+
                         <span>{getUserRoleTranslated(person.role)}</span>
+
+                        <Switch
+                          id="enabled"
+                          isChecked={person.enabled}
+                          color="green"
+                          onClick={_e => {
+                            setDisableUserAlertOpened(true);
+                            setDisableUser({
+                              id: person.user_id,
+                              enabled: !person.enabled,
+                            });
+                          }}
+                        />
                         <div className="buttons">
                           {person.update_button}
                           {person.reset_pass_button}
@@ -345,6 +402,22 @@ const UsersByUnits = () => {
           </>
         )}
       </Content>
+
+      <AlertDialog
+        isOpen={disableUserAlertOpened}
+        onConfirm={toggleEnabled}
+        setIsOpen={setDisableUserAlertOpened}
+        headerText={
+          disableUser.enabled ? 'Ativar Usuário' : 'Desativar Usuário'
+        }
+        bodyText={
+          disableUser.enabled
+            ? 'Tem Certeza Que Deseja Ativar Usuário?'
+            : 'Tem Certeza Que Deseja Desativar Usuário?'
+        }
+        confirmButtonVariantColor={disableUser.enabled ? 'green' : 'red'}
+        saveText={disableUser.enabled ? 'Ativar' : 'Desativar'}
+      />
 
       <UpdateUserModal
         isOpen={!!userToUpdate}
