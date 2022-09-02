@@ -21,10 +21,12 @@ import Select from '../../../../components/Select';
 import { useAuth } from '../../../../context/auth';
 import { ISelectOptions } from '../../../../interfaces/select';
 import { IFilterSalesParams } from '../../index';
+import { RowWithTwoFieldsContainer, DescriptionLabel } from './styles';
 
 interface IFilterDrawerProps extends Omit<IDrawer, 'children'> {
   initialValues: IFilterSalesParams;
   sellersOptions: ISelectOptions[];
+  companiesOptions: ISelectOptions[];
   close: () => void;
   applyFilter: (filter: IFilterSalesParams) => void;
   cleanFilter: () => void;
@@ -33,6 +35,7 @@ interface IFilterDrawerProps extends Omit<IDrawer, 'children'> {
 const FilterDrawer: React.FC<IFilterDrawerProps> = ({
   initialValues,
   sellersOptions,
+  companiesOptions,
   close,
   applyFilter,
   cleanFilter,
@@ -43,6 +46,7 @@ const FilterDrawer: React.FC<IFilterDrawerProps> = ({
 
   const handleApplyFilters = (data: IFilterSalesParams) => {
     close();
+
     applyFilter(data);
   };
 
@@ -68,30 +72,52 @@ const FilterDrawer: React.FC<IFilterDrawerProps> = ({
           onSubmit={handleApplyFilters}
         >
           <DrawerBody mt={6}>
-            <Stack spacing="24px">
-              <Box>
-                <DatePicker
-                  name="availabilityDate"
-                  placeholderText="Data de Disponibilidade"
-                  containerProps={{
-                    width: '100%',
-                    height: 10,
-                  }}
-                  initialDate={initialValues.availabilityDate}
-                />
-              </Box>
+            <Stack style={{ gap: '24px' }}>
+              <DescriptionLabel>Data de disponibilidade</DescriptionLabel>
 
-              <Box>
+              <RowWithTwoFieldsContainer>
                 <DatePicker
-                  name="deliveryDate"
-                  placeholderText="Data de Entrega"
+                  name="startAvailabilityDate"
+                  placeholderText="De"
                   containerProps={{
                     width: '100%',
                     height: 10,
                   }}
-                  initialDate={initialValues.deliveryDate}
+                  initialDate={initialValues.startAvailabilityDate}
                 />
-              </Box>
+                <DatePicker
+                  name="endAvailabilityDate"
+                  placeholderText="Até"
+                  containerProps={{
+                    width: '100%',
+                    height: 10,
+                  }}
+                  initialDate={initialValues.endAvailabilityDate}
+                />
+              </RowWithTwoFieldsContainer>
+
+              <DescriptionLabel>Data de entrega</DescriptionLabel>
+
+              <RowWithTwoFieldsContainer>
+                <DatePicker
+                  name="startDeliveryDate"
+                  placeholderText="De"
+                  containerProps={{
+                    width: '100%',
+                    height: 10,
+                  }}
+                  initialDate={initialValues.startDeliveryDate}
+                />
+                <DatePicker
+                  name="endDeliveryDate"
+                  placeholderText="Até"
+                  containerProps={{
+                    width: '100%',
+                    height: 10,
+                  }}
+                  initialDate={initialValues.endDeliveryDate}
+                />
+              </RowWithTwoFieldsContainer>
 
               <Box>
                 <Select
@@ -140,6 +166,31 @@ const FilterDrawer: React.FC<IFilterDrawerProps> = ({
                   </Select>
                 )}
               </Box>
+
+              {user.role === 'ADMIN' && (
+                <Box>
+                  <Select
+                    placeholder="Concessionária"
+                    height={8}
+                    backgroundColor="#424242"
+                    color="White"
+                    name="companyId"
+                    containerProps={{
+                      height: 10,
+                      border: '2px solid',
+                      borderColor: '#585858',
+                      backgroundColor: '#424242',
+                    }}
+                    defaultValue={initialValues.companyId}
+                  >
+                    {companiesOptions.map(option => (
+                      <option key={option.id} value={option.id}>
+                        {option.name}
+                      </option>
+                    ))}
+                  </Select>
+                </Box>
+              )}
             </Stack>
           </DrawerBody>
 

@@ -30,6 +30,7 @@ import Pagination from '../../components/Pagination';
 import Select from '../../components/Select';
 import { useAuth } from '../../context/auth';
 import { useToast } from '../../context/toast';
+import { ICompany } from '../../interfaces/companies';
 import { ISelectOptions } from '../../interfaces/select';
 import { IUser } from '../../interfaces/users';
 import api from '../../services/api';
@@ -89,10 +90,13 @@ interface ISaleRequestResponseData {
 }
 
 export interface IFilterSalesParams {
-  deliveryDate?: Date;
-  availabilityDate?: Date;
+  startDeliveryDate?: Date;
+  endDeliveryDate?: Date;
+  startAvailabilityDate?: Date;
+  endAvailabilityDate?: Date;
   status?: string;
   sellerId?: string;
+  companyId?: string;
 }
 
 const Sales = () => {
@@ -105,6 +109,9 @@ const Sales = () => {
   const [openedServices, setOpenedServices] = useState<string[]>([]);
   const [selectedSales, setSelectedSales] = useState<string[]>([]);
   const [sellersOptions, setSellersOptions] = useState<ISelectOptions[]>([]);
+  const [companiesOptions, setCompaniesOptions] = useState<ISelectOptions[]>(
+    [],
+  );
 
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
 
@@ -142,7 +149,6 @@ const Sales = () => {
       .get('sales', {
         params: {
           page: currentPage,
-          ...filters,
         },
       })
       .then(response => {
@@ -161,6 +167,14 @@ const Sales = () => {
             .map(seller => ({ id: seller.id, name: seller.name })),
         );
       });
+
+      api.get('companies').then(response => {
+        const newCompanies: ICompany[] = response.data;
+
+        setCompaniesOptions(
+          newCompanies.map(company => ({ id: company.id, name: company.name })),
+        );
+      });
     }
 
     if (user.role === 'MANAGER') {
@@ -170,7 +184,7 @@ const Sales = () => {
         );
       });
     }
-  }, [user, currentPage, filters]);
+  }, [user, currentPage]);
 
   const formattedSales = useMemo(
     () =>
@@ -307,10 +321,13 @@ const Sales = () => {
   const handleApplyFilter = useCallback(
     (params: IFilterSalesParams) => {
       if (
-        !params.availabilityDate &&
+        !params.startAvailabilityDate &&
+        !params.endAvailabilityDate &&
         !params.status &&
-        !params.deliveryDate &&
-        !params.sellerId
+        !params.startDeliveryDate &&
+        !params.endDeliveryDate &&
+        !params.sellerId &&
+        !params.companyId
       ) {
         addToast({
           title: 'Por favor preencha algum campo para realizar a pesquisa.',
@@ -320,14 +337,40 @@ const Sales = () => {
         return;
       }
 
-      setFilters({
-        ...(params.deliveryDate && { deliveryDate: params.deliveryDate }),
-        ...(params.availabilityDate && {
-          availabilityDate: params.availabilityDate,
+      const newFilters = {
+        ...(params.startDeliveryDate && {
+          startDeliveryDate: params.startDeliveryDate,
+        }),
+        ...(params.endDeliveryDate && {
+          endDeliveryDate: params.endDeliveryDate,
+        }),
+        ...(params.startAvailabilityDate && {
+          startAvailabilityDate: params.startAvailabilityDate,
+        }),
+        ...(params.endAvailabilityDate && {
+          endAvailabilityDate: params.endAvailabilityDate,
         }),
         ...(params.status && { status: params.status }),
         ...(params.sellerId && { sellerId: params.sellerId }),
-      });
+        ...(params.companyId && { companyId: params.companyId }),
+      };
+
+      setFilters(newFilters);
+
+      api
+        .get('sales', {
+          params: {
+            page: 0,
+            ...newFilters,
+          },
+        })
+        .then(response => {
+          const { data } = response;
+
+          setSales(data?.items);
+          setTotalPages(data?.total_pages);
+          setLoading(false);
+        });
 
       setCurrentPage(0);
     },
@@ -764,7 +807,7 @@ const Sales = () => {
               <Pagination
                 setPage={setCurrentPage}
                 page={currentPage}
-                total_pages={totalPages}
+                total_pages={totalPages - 1}
               />
             </List>
           </>
@@ -784,6 +827,7 @@ const Sales = () => {
         onClose={() => setFilterDrawerOpened(false)}
         initialValues={filters}
         sellersOptions={sellersOptions}
+        companiesOptions={companiesOptions}
         close={() => setFilterDrawerOpened(false)}
         applyFilter={handleApplyFilter}
         cleanFilter={handleCleanFilter}
