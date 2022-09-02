@@ -94,6 +94,8 @@ export interface IFilterSalesParams {
   endDeliveryDate?: Date;
   startAvailabilityDate?: Date;
   endAvailabilityDate?: Date;
+  startFinishedDate?: Date;
+  endFinishedDate?: Date;
   status?: string;
   sellerId?: string;
   companyId?: string;
@@ -326,6 +328,8 @@ const Sales = () => {
         !params.status &&
         !params.startDeliveryDate &&
         !params.endDeliveryDate &&
+        !params.startFinishedDate &&
+        !params.endFinishedDate &&
         !params.sellerId &&
         !params.companyId
       ) {
@@ -349,6 +353,12 @@ const Sales = () => {
         }),
         ...(params.endAvailabilityDate && {
           endAvailabilityDate: params.endAvailabilityDate,
+        }),
+        ...(params.startFinishedDate && {
+          startFinishedDate: params.startFinishedDate,
+        }),
+        ...(params.endFinishedDate && {
+          endFinishedDate: params.endFinishedDate,
         }),
         ...(params.status && { status: params.status }),
         ...(params.sellerId && { sellerId: params.sellerId }),

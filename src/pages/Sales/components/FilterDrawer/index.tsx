@@ -119,6 +119,29 @@ const FilterDrawer: React.FC<IFilterDrawerProps> = ({
                 />
               </RowWithTwoFieldsContainer>
 
+              <DescriptionLabel>Data de finalização</DescriptionLabel>
+
+              <RowWithTwoFieldsContainer>
+                <DatePicker
+                  name="startFinishedDate"
+                  placeholderText="De"
+                  containerProps={{
+                    width: '100%',
+                    height: 10,
+                  }}
+                  initialDate={initialValues.startFinishedDate}
+                />
+                <DatePicker
+                  name="endFinishedDate"
+                  placeholderText="Até"
+                  containerProps={{
+                    width: '100%',
+                    height: 10,
+                  }}
+                  initialDate={initialValues.endFinishedDate}
+                />
+              </RowWithTwoFieldsContainer>
+
               <Box>
                 <Select
                   placeholder="Status"
