@@ -59,11 +59,7 @@ const FilterDrawer: React.FC<IFilterDrawerProps> = ({
     <Drawer {...rest}>
       <DrawerOverlay />
       <DrawerContent bg="#383838" minW={460}>
-        <DrawerCloseButton
-          onClick={() => {
-            console.log('opaaa');
-          }}
-        />
+        <DrawerCloseButton />
         <DrawerHeader borderBottomWidth="1px">Filtrar Vendas</DrawerHeader>
 
         <Form

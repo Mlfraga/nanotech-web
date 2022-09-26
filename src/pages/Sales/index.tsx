@@ -7,6 +7,7 @@ import React, {
 } from 'react';
 import { FaArrowAltCircleDown, FaArrowAltCircleUp } from 'react-icons/fa';
 import { FiEdit3, FiFilter, FiTrash, FiSave } from 'react-icons/fi';
+import { FiSettings } from 'react-icons/fi';
 
 import {
   Button as ChakraButton,
@@ -16,6 +17,7 @@ import {
   Flex as ChakraFlex,
   Skeleton,
   Stack,
+  Flex,
 } from '@chakra-ui/core';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
@@ -37,6 +39,7 @@ import api from '../../services/api';
 import formatMoney from '../../utils/formatMoney';
 import getSaleStatusTranslated from '../../utils/getSaleStatusTranslated';
 import FilterDrawer from './components/FilterDrawer';
+import WhatsappNumbersDrawer from './components/WhatsappNumbersDrawer';
 import {
   Container,
   Content,
@@ -125,6 +128,10 @@ const Sales = () => {
   );
   const [loading, setLoading] = useState<boolean>(false);
 
+  const [
+    whatsappNumbersDrawerOpened,
+    setWhatsappNumbersDrawerOpened,
+  ] = useState<boolean>(false);
   const [filterDrawerOpened, setFilterDrawerOpened] = useState<boolean>(false);
   const [deleteDialogOpened, setDeleteDialogOpened] = useState<boolean>(false);
   const [openEditSalesModal, setOpenEditSalesModal] = useState<boolean>(false);
@@ -449,22 +456,43 @@ const Sales = () => {
       <Breadcrumb
         text="Vendas realizadas"
         filterButton={
-          <ChakraButton
-            _hover={{
-              bg: '#5580b9',
-              color: '#fff',
-            }}
-            _focusWithin={{
-              border: 0,
-            }}
-            backgroundColor="#355a9d"
-            style={{ padding: 24 }}
-            onClick={() => setFilterDrawerOpened(true)}
-            isDisabled={deleteLoading}
-            leftIcon={FiFilter}
-          >
-            Filtros
-          </ChakraButton>
+          <Flex style={{ gap: '6px' }}>
+            <Tooltip label="Configurar números" aria-label="Configurar números">
+              <ChakraButton
+                _hover={{
+                  bg: '#282828',
+                  color: '#fff',
+                }}
+                _focusWithin={{
+                  border: 0,
+                }}
+                backgroundColor="#303030"
+                width={12}
+                height={12}
+                borderRadius="50%"
+                onClick={() => setWhatsappNumbersDrawerOpened(true)}
+                isDisabled={deleteLoading}
+              >
+                <FiSettings />
+              </ChakraButton>
+            </Tooltip>
+            <ChakraButton
+              _hover={{
+                bg: '#5580b9',
+                color: '#fff',
+              }}
+              _focusWithin={{
+                border: 0,
+              }}
+              backgroundColor="#355a9d"
+              style={{ padding: 24 }}
+              onClick={() => setFilterDrawerOpened(true)}
+              isDisabled={deleteLoading}
+              leftIcon={FiFilter}
+            >
+              Filtros
+            </ChakraButton>
+          </Flex>
         }
       />
 
@@ -828,6 +856,7 @@ const Sales = () => {
         headerText="Excluir Venda"
         bodyText="Tem certeza que deseja excluir a venda?"
       />
+
       <FilterDrawer
         isOpen={filterDrawerOpened}
         placement="right"
@@ -838,6 +867,12 @@ const Sales = () => {
         close={() => setFilterDrawerOpened(false)}
         applyFilter={handleApplyFilter}
         cleanFilter={handleCleanFilter}
+      />
+
+      <WhatsappNumbersDrawer
+        isOpen={whatsappNumbersDrawerOpened}
+        placement="right"
+        onClose={() => setWhatsappNumbersDrawerOpened(false)}
       />
 
       <UpdateSalesModal
