@@ -13,8 +13,9 @@ export const Container = styled(ChakraBox)`
 
 export const Content = styled(ChakraBox)`
   .boxTitle {
+    padding-left: 10px;
     display: grid;
-    grid-template-columns: 22% 22% 54%;
+    grid-template-columns: 20% 20% 16% 24% 6.6% 6.6% 6.6%;
     align-items: center;
     justify-content: center;
 
@@ -23,6 +24,11 @@ export const Content = styled(ChakraBox)`
     background: #282828;
     height: 60px;
     border-radius: 15px;
+
+    span {
+      font: 16px 'Ubuntu', sans-serif;
+      font-weight: bold;
+    }
   }
 
   .button {
@@ -30,6 +36,13 @@ export const Content = styled(ChakraBox)`
     float: right;
     width: 250px;
   }
+`;
+
+export const ButtonContainer = styled.div`
+  width: 100%;
+  max-width: 320px;
+  float: right;
+  margin-top: 16px;
 `;
 
 export const Separator = styled.div`
@@ -72,7 +85,7 @@ export const List = styled(ChakraBox)`
 
   .box {
     display: grid;
-    grid-template-columns: 22% 22% 20% 26%22%;
+    grid-template-columns: 22% 22% 20% 26% 22%;
     align-items: center;
     justify-content: center;
 
@@ -122,7 +135,7 @@ export const Box = styled.div`
     padding-left: 10px;
     display: grid;
     width: 100%;
-    grid-template-columns: 22% 22% 50% 4%;
+    grid-template-columns: 20% 20% 16% 24% 6.6% 6.6% 6.6%;
     align-items: center;
     justify-content: center;
 
@@ -211,6 +224,10 @@ export const Box = styled.div`
       }
     }
   }
+`;
+
+export const CellContainer = styled.div`
+  word-break: break-all;
 `;
 
 export const AddNewUserLinkContainer = styled.div`

@@ -446,13 +446,33 @@ const Sales = () => {
     <Container>
       <Menu />
 
-      <Breadcrumb text="Vendas realizadas" />
+      <Breadcrumb
+        text="Vendas realizadas"
+        filterButton={
+          <ChakraButton
+            _hover={{
+              bg: '#5580b9',
+              color: '#fff',
+            }}
+            _focusWithin={{
+              border: 0,
+            }}
+            backgroundColor="#355a9d"
+            style={{ padding: 24 }}
+            onClick={() => setFilterDrawerOpened(true)}
+            isDisabled={deleteLoading}
+            leftIcon={FiFilter}
+          >
+            Filtros
+          </ChakraButton>
+        }
+      />
 
       <Content
         marginLeft="auto"
         marginRight="auto"
+        mt="16px"
         width="100%"
-        marginTop="26px"
         paddingBottom="16px"
         maxWidth={{
           xs: '90vw',
@@ -462,23 +482,6 @@ const Sales = () => {
           xl: '90vw',
         }}
       >
-        <ChakraButton
-          _hover={{
-            bg: '#5580b9',
-            color: '#fff',
-          }}
-          _focusWithin={{
-            border: 0,
-          }}
-          backgroundColor="#355a9d"
-          style={{ padding: 24 }}
-          onClick={() => setFilterDrawerOpened(true)}
-          isDisabled={deleteLoading}
-          leftIcon={FiFilter}
-        >
-          Filtros
-        </ChakraButton>
-
         {user?.role === 'ADMIN' && (
           <ChakraBox
             marginLeft="auto"
@@ -587,12 +590,6 @@ const Sales = () => {
             </Form>
           </ChakraBox>
         )}
-
-        <Separator>
-          <span>Vendas</span>
-          <div />
-        </Separator>
-
         <div className="boxTitle">
           <span>N°</span>
           <span>Vendedor</span>

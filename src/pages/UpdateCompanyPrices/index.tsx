@@ -14,7 +14,7 @@ import { useAuth } from '../../context/auth';
 import { useToast } from '../../context/toast';
 import api from '../../services/api';
 import { currencyMasker } from '../../utils/masks';
-import { Container, Content, Separator, List, Box } from './styles';
+import { Container, Content, List, Box } from './styles';
 
 interface ICompanyService {
   id: string;
@@ -140,10 +140,6 @@ const UpdateCompanyPrices = () => {
           xl: '90vw',
         }}
       >
-        <Separator>
-          <span>Preços</span>
-          <div />
-        </Separator>
         <div className="boxTitle">
           <span>Serviço</span>
           <span>Valor da Nanotech</span>

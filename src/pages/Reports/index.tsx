@@ -10,7 +10,6 @@ import Breadcrumb from '../../components/Breadcrumb';
 import DatePicker from '../../components/DatePicker';
 import Menu from '../../components/Menu';
 import Select from '../../components/Select';
-import Separator from '../../components/Separator';
 import { useAuth } from '../../context/auth';
 import { useToast } from '../../context/toast';
 import api from '../../services/api';
@@ -137,7 +136,6 @@ const Reports: React.FC = () => {
             xl: '90vw',
           }}
         >
-          <Separator text="Filtros" />
           <Form ref={formRef} onSubmit={handleGetReport}>
             <Grid templateColumns="repeat(4, 1fr)" paddingY={8} gap={4}>
               {user.role === 'ADMIN' && (

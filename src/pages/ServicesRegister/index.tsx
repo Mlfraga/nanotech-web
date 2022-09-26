@@ -14,7 +14,7 @@ import { useToast } from '../../context/toast';
 import api from '../../services/api';
 import getValidationsErrors from '../../utils/getValidationError';
 import { currencyMasker } from '../../utils/masks';
-import { Container, Content, Separator, InputContainer } from './styles';
+import { Container, Content, InputContainer } from './styles';
 
 interface IFormData {
   name: string;
@@ -95,7 +95,7 @@ const ServicesRegister = () => {
   return (
     <Container>
       <Menu />
-      <Breadcrumb text="Adicionar serviços" />
+      <Breadcrumb text="Cadastrar serviço" />
       <Content
         marginLeft="auto"
         marginRight="auto"
@@ -108,11 +108,6 @@ const ServicesRegister = () => {
           xl: '90vw',
         }}
       >
-        <Separator>
-          <span>Cadastro de serviços</span>
-          <div />
-        </Separator>
-
         <Form ref={formRef} onSubmit={handleSubmit}>
           <div className="inputs">
             <InputContainer style={{ maxWidth: '375px', width: '100%' }}>

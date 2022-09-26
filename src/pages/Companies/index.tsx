@@ -190,11 +190,6 @@ const Companies = () => {
           xl: '90vw',
         }}
       >
-        <Separator>
-          <span>Concessionárias</span>
-          <div />
-        </Separator>
-
         <div className="boxTitle">
           <span>Nome</span>
           <span>Contato</span>

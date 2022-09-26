@@ -148,7 +148,7 @@ const RegsiterSellers = () => {
     <Container>
       <Menu />
 
-      <Breadcrumb text="Registro de vendedores" />
+      <Breadcrumb text="Registro de vendedor" />
 
       <Content
         marginLeft="auto"
@@ -164,7 +164,7 @@ const RegsiterSellers = () => {
       >
         <Form ref={formRef} onSubmit={handleSubmit}>
           <Separator>
-            <span>Dados do vendedor</span>
+            <span>Dados do usuário</span>
             <div />
           </Separator>
           <Inputs style={{ marginTop: '20px' }}>
@@ -224,7 +224,7 @@ const RegsiterSellers = () => {
           </Inputs>
 
           <Separator>
-            <span>Dados da conta vendedor</span>
+            <span>Dados do perfil</span>
             <div />
           </Separator>
 

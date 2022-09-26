@@ -1,15 +1,20 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
-import { FaArrowAltCircleDown, FaArrowAltCircleUp } from 'react-icons/fa';
 import { FiEdit2 } from 'react-icons/fi';
 import { MdPassword } from 'react-icons/md';
-import { RiAddFill } from 'react-icons/ri';
-import { Link } from 'react-router-dom';
 
-import { Button, Skeleton, Stack, Tooltip, Switch } from '@chakra-ui/core';
+import {
+  Button as ChakraButton,
+  Skeleton,
+  Stack,
+  Tooltip,
+  Switch,
+} from '@chakra-ui/core';
 
 import Breadcrumb from '../../components/Breadcrumb';
+import Button from '../../components/Button';
 import AlertDialog from '../../components/Dialogs/Alert';
 import Menu from '../../components/Menu';
+import CreateUserModal from '../../components/Modals/CreateUser';
 import UpdateUserModal from '../../components/Modals/UpdateUserData';
 import { useToast } from '../../context/toast';
 import { IUser } from '../../interfaces/users';
@@ -18,29 +23,23 @@ import getUserRoleTranslated from '../../utils/getUserRoleTranslated';
 import {
   Container,
   Content,
-  Separator,
+  ButtonContainer,
   List,
   Box,
-  AddNewUserLinkContainer,
+  CellContainer,
 } from './styles';
 
-interface IFormatRow {
+interface IFetchedUser {
   id: string;
-  name: string;
+  email: string;
+  enabled: boolean;
+  role: string;
   telephone: string;
-  profiles: IProfile[];
-}
-
-interface IProfile {
-  id: string;
-  name: string;
-  telephone: string;
-  user: {
+  username: string;
+  profile: {
     id: string;
-    role: string;
-    telephone: string;
-    enabled: boolean;
-    username: string;
+    name: string;
+    company: { name: string; id: string };
   };
 }
 
@@ -49,18 +48,11 @@ interface IFormattedUser {
   name: string;
   telephone: string;
   role: string;
+  companyName?: string;
   enabled: boolean;
-  user_id: string;
-  username: string;
-  update_button: JSX.Element;
+  login: string;
+  update_user_button: JSX.Element;
   reset_pass_button: JSX.Element;
-}
-
-interface IFormattedCompany {
-  id: string;
-  name: string;
-  telephone: string;
-  users: IFormattedUser[];
 }
 
 interface IDisabledService {
@@ -71,8 +63,7 @@ interface IDisabledService {
 const UsersByUnits = () => {
   const { addToast } = useToast();
 
-  const [companies, setCompanies] = useState<IFormatRow[]>([]);
-  const [openedCompanies, setOpenedCommpanies] = useState<string[]>([]);
+  const [users, setUsers] = useState<IFetchedUser[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [disableUserAlertOpened, setDisableUserAlertOpened] = useState<boolean>(
     false,
@@ -83,42 +74,29 @@ const UsersByUnits = () => {
   const [resetPassDialogOpened, setResetPassDialogOpened] = useState<boolean>(
     false,
   );
-  const [userToResetPassword, setUserToResetPassword] = useState<IProfile>();
+  const [openCreateUserModal, setOpenCreateUserModal] = useState<boolean>(
+    false,
+  );
+  const [userToResetPassword, setUserToResetPassword] = useState<IUser>();
 
   const [userToUpdate, setUserToUpdate] = useState<IUser | undefined>(
     undefined,
   );
 
-  const getCompaniesByUsers = useCallback(() => {
+  const fetchUsers = useCallback(() => {
     setLoading(true);
 
-    api.get('companies').then(response => {
-      const newCompanies: IFormatRow[] = response.data;
+    api.get('users').then(response => {
+      const fetchedProfiles: IFetchedUser[] = response.data;
 
-      setCompanies(newCompanies);
+      setUsers(fetchedProfiles);
       setLoading(false);
     });
   }, []);
 
   useEffect(() => {
-    getCompaniesByUsers();
-  }, [getCompaniesByUsers]);
-
-  const handleOpenUnities = useCallback(
-    (id: string) => {
-      setOpenedCommpanies([...openedCompanies, id]);
-    },
-    [openedCompanies],
-  );
-
-  const handleCloseUnities = useCallback(
-    (id: string) => {
-      const newOpenedUnities = openedCompanies.filter(unitId => unitId !== id);
-
-      setOpenedCommpanies(newOpenedUnities);
-    },
-    [openedCompanies],
-  );
+    fetchUsers();
+  }, [fetchUsers]);
 
   const handleOpenUpdateUserData = useCallback((user: IUser) => {
     setUserToUpdate(user);
@@ -131,7 +109,7 @@ const UsersByUnits = () => {
   const handleResetPassoword = useCallback(async () => {
     if (userToResetPassword) {
       try {
-        await api.patch(`users/reset-password/${userToResetPassword.user.id}`);
+        await api.patch(`users/reset-password/${userToResetPassword.id}`);
 
         addToast({
           title: 'Senha do usuário resetada com sucesso.',
@@ -152,72 +130,69 @@ const UsersByUnits = () => {
     }
   }, [userToResetPassword, addToast]);
 
-  const formattedUsersByCompanies: IFormattedCompany[] = useMemo(
+  const formattedUsers: IFormattedUser[] = useMemo(
     () =>
-      companies.map(company => {
-        const users: IFormattedUser[] = [];
-
-        company.profiles.forEach(profile => {
-          users.push({
-            id: profile.id,
-            name: profile.name,
-            telephone: profile.user.telephone,
-            role: profile.user.role,
-            enabled: profile.user.enabled,
-            user_id: profile.user.id,
-            username: profile.user.username,
-            update_button: (
-              <Tooltip
-                aria-label="Alterar dados do usuário"
-                label="Alterar dados do usuário"
-              >
-                <Button
-                  onClick={() => handleOpenUpdateUserData(profile)}
-                  _hover={{
-                    backgroundColor: '#404040',
-                    color: '#ccc',
-                    border: 0,
-                  }}
-                  _focusWithin={{ border: 0 }}
-                  background="#424242"
-                >
-                  <FiEdit2 />
-                </Button>
-              </Tooltip>
-            ),
-            reset_pass_button: (
-              <Tooltip
-                aria-label="Resetar senha do usuário"
-                label="Resetar senha do usuário"
-              >
-                <Button
-                  onClick={() => {
-                    setResetPassDialogOpened(true);
-                    setUserToResetPassword(profile);
-                  }}
-                  _hover={{
-                    backgroundColor: '#404040',
-                    color: '#ccc',
-                    border: 0,
-                  }}
-                  _focusWithin={{ border: 0 }}
-                  background="#424242"
-                >
-                  <MdPassword />
-                </Button>
-              </Tooltip>
-            ),
-          });
-        });
-
-        return {
-          id: company.id,
-          name: company.name,
-          telephone: company.telephone,
-          users,
-        };
-      }),
-    [companies, handleOpenUpdateUserData],
+      users.map(user => ({
+        id: user.id,
+        name: user.profile.name,
+        login: user.username,
+        companyName: user.profile?.company?.name,
+        role: getUserRoleTranslated(user.role),
+        enabled: user.enabled,
+        telephone: user.telephone,
+        update_user_button: (
+          <Tooltip
+            aria-label="Alterar dados do usuário"
+            label="Alterar dados do usuário"
+          >
+            <ChakraButton
+              onClick={() =>
+                handleOpenUpdateUserData({
+                  id: user.profile.id,
+                  name: user.profile.name,
+                  user,
+                })
+              }
+              _hover={{
+                backgroundColor: '#404040',
+                color: '#ccc',
+                border: 0,
+              }}
+              _focusWithin={{ border: 0 }}
+              background="#424242"
+            >
+              <FiEdit2 />
+            </ChakraButton>
+          </Tooltip>
+        ),
+        reset_pass_button: (
+          <Tooltip
+            aria-label="Resetar senha do usuário"
+            label="Resetar senha do usuário"
+          >
+            <ChakraButton
+              onClick={() => {
+                setResetPassDialogOpened(true);
+                setUserToResetPassword({
+                  id: user.id,
+                  name: user.profile.name,
+                  user,
+                });
+              }}
+              _hover={{
+                backgroundColor: '#404040',
+                color: '#ccc',
+                border: 0,
+              }}
+              _focusWithin={{ border: 0 }}
+              background="#424242"
+            >
+              <MdPassword />
+            </ChakraButton>
+          </Tooltip>
+        ),
+      })),
+    [users, handleOpenUpdateUserData],
   );
 
   const toggleEnabled = useCallback(async () => {
@@ -234,7 +209,7 @@ const UsersByUnits = () => {
       });
     }
 
-    getCompaniesByUsers();
+    fetchUsers();
     setDisableUserAlertOpened(false);
     setDisableUser(
       {} as {
@@ -242,13 +217,13 @@ const UsersByUnits = () => {
         enabled: boolean;
       },
     );
-  }, [disableUser, addToast, getCompaniesByUsers]);
+  }, [disableUser, addToast, fetchUsers]);
 
   return (
     <Container>
       <Menu />
 
-      <Breadcrumb text="Usuários por concessionária" />
+      <Breadcrumb text="Usuários" />
       <Content
         marginLeft="auto"
         marginRight="auto"
@@ -262,13 +237,12 @@ const UsersByUnits = () => {
           xl: '90vw',
         }}
       >
-        <Separator>
-          <span>Concessionárias</span>
-          <div />
-        </Separator>
         <div className="boxTitle">
-          <h3>Concessionária</h3>
-          <h3>Telephone</h3>
+          <span>Nome</span>
+          <span>Login</span>
+          <span>Concessionária</span>
+          <span>Cargo</span>
+          <span>Ativo</span>
         </div>
 
         {loading ? (
@@ -312,95 +286,57 @@ const UsersByUnits = () => {
         ) : (
           <>
             <List height={{ lg: '40vh', xl: '55vh' }}>
-              {formattedUsersByCompanies.map(company => (
-                <Box key={company.id}>
-                  <div
-                    className="header"
-                    style={
-                      openedCompanies.includes(company.id)
-                        ? { borderRadius: '15px 15px 0 0' }
-                        : { borderRadius: 15 }
-                    }
-                  >
-                    <span>{company.name}</span>
-                    <span>{company.telephone}</span>
+              {formattedUsers.map(user => (
+                <Box key={user.id}>
+                  <div className="header" style={{ borderRadius: 15 }}>
+                    <CellContainer>
+                      <span>{user.name}</span>
+                    </CellContainer>
 
-                    <AddNewUserLinkContainer>
-                      <Link
-                        className="createNewCompanyLink"
-                        to={`users-register/?company=${company.id}`}
-                      >
-                        <RiAddFill size={18} />
-                        Adicionar novo usuário a essa concessionária
-                      </Link>
-                    </AddNewUserLinkContainer>
+                    <CellContainer>
+                      <span>{user.login}</span>
+                    </CellContainer>
 
-                    {openedCompanies.includes(company.id) ? (
-                      <FaArrowAltCircleUp
-                        onClick={() => handleCloseUnities(company.id)}
-                        style={{ cursor: 'pointer' }}
-                        size={26}
-                      />
-                    ) : (
-                      <FaArrowAltCircleDown
-                        onClick={() => handleOpenUnities(company.id)}
-                        style={{ cursor: 'pointer' }}
-                        size={26}
-                      />
-                    )}
-                  </div>
+                    <CellContainer>
+                      <span>{user.companyName}</span>
+                    </CellContainer>
 
-                  <div
-                    className="dropDown"
-                    hidden={!openedCompanies.includes(company.id)}
-                  >
-                    <Separator className="separator">
-                      <span>Usuários dessa concessionária</span>
-                      <div />
-                    </Separator>
+                    <CellContainer>
+                      <span>{user.role}</span>
+                    </CellContainer>
 
-                    <div className="title">
-                      <span>Nome</span>
-                      <span>Login</span>
-                      <span>Telefone</span>
-                      <span>Cargo</span>
-                      <span>Ativo</span>
-                    </div>
+                    <Switch
+                      id="enabled"
+                      isChecked={user.enabled}
+                      color="green"
+                      onClick={_e => {
+                        setDisableUserAlertOpened(true);
+                        setDisableUser({
+                          id: user.id,
+                          enabled: !user.enabled,
+                        });
+                      }}
+                    />
 
-                    {company.users.map(person => (
-                      <div className="person" key={person.id}>
-                        <span>{person.name}</span>
+                    <CellContainer>{user.update_user_button}</CellContainer>
 
-                        <span>{person.username}</span>
-
-                        <span>{person.telephone}</span>
-
-                        <span>{getUserRoleTranslated(person.role)}</span>
-
-                        <Switch
-                          id="enabled"
-                          isChecked={person.enabled}
-                          color="green"
-                          onClick={_e => {
-                            setDisableUserAlertOpened(true);
-                            setDisableUser({
-                              id: person.user_id,
-                              enabled: !person.enabled,
-                            });
-                          }}
-                        />
-                        <div className="buttons">
-                          {person.update_button}
-                          {person.reset_pass_button}
-                        </div>
-                      </div>
-                    ))}
+                    <CellContainer>{user.reset_pass_button}</CellContainer>
                   </div>
                 </Box>
               ))}
             </List>
           </>
         )}
+
+        <ButtonContainer>
+          <Button
+            onClick={() => {
+              setOpenCreateUserModal(true);
+            }}
+          >
+            Adicionar Novo Usuário
+          </Button>
+        </ButtonContainer>
       </Content>
 
       <AlertDialog
@@ -419,10 +355,19 @@ const UsersByUnits = () => {
         saveText={disableUser.enabled ? 'Ativar' : 'Desativar'}
       />
 
+      <CreateUserModal
+        isOpen={openCreateUserModal}
+        onClose={() => setOpenCreateUserModal(false)}
+        onSave={() => {
+          fetchUsers();
+
+          setOpenCreateUserModal(false);
+        }}
+      />
       <UpdateUserModal
         isOpen={!!userToUpdate}
         onClose={handleCloseUpdateUserModal}
-        onSave={getCompaniesByUsers}
+        onSave={fetchUsers}
         user={userToUpdate}
       />
       <AlertDialog

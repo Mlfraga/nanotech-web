@@ -228,7 +228,7 @@ export const AuthProvider: React.FC = ({ children }) => {
       ];
     }
 
-    if (user.role === 'ADMIN') {
+    if (user.role === 'ADMIN' || user.role === 'NANOTECH_REPRESENTATIVE') {
       buttons = [
         {
           name: 'Concessionárias',
@@ -383,7 +383,10 @@ export const AuthProvider: React.FC = ({ children }) => {
           ];
         }
 
-        if (userData.role === 'ADMIN') {
+        if (
+          userData.role === 'ADMIN' ||
+          userData.role === 'NANOTECH_REPRESENTATIVE'
+        ) {
           buttons = [
             {
               name: 'Concessionárias',

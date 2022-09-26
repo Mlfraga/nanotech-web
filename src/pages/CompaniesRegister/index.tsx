@@ -13,7 +13,7 @@ import { useToast } from '../../context/toast';
 import api from '../../services/api';
 import CpfCnpjUtils from '../../utils/CpfCnpjUtils';
 import getValidationsErrors from '../../utils/getValidationError';
-import { Container, Content, Separator, InputContainer } from './styles';
+import { Container, Content, InputContainer } from './styles';
 
 interface IFormData {
   companyName: string;
@@ -98,7 +98,7 @@ const CompaniesRegister = () => {
   return (
     <Container>
       <Menu />
-      <Breadcrumb text="Adicionar novas concessionárias" />
+      <Breadcrumb text="Cadastrar nova concessionária" />
       <Content
         marginLeft="auto"
         marginRight="auto"
@@ -111,11 +111,6 @@ const CompaniesRegister = () => {
           xl: '90vw',
         }}
       >
-        <Separator>
-          <span>Cadastro de concessionárias</span>
-          <div />
-        </Separator>
-
         <Form ref={formRef} onSubmit={handleSubmit}>
           <div className="inputs">
             <InputContainer>

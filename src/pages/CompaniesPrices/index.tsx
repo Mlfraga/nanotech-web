@@ -18,7 +18,7 @@ import UpdateService from '../../components/Modals/UpdateService';
 import { useToast } from '../../context/toast';
 import { ICompany } from '../../interfaces/companies';
 import api from '../../services/api';
-import { Container, Content, List, Box, Separator } from './styles';
+import { Container, Content, List, Box } from './styles';
 
 interface ICompanyPricesRouterParams {
   id: string;
@@ -131,7 +131,7 @@ const CompaniesPrices = () => {
   return (
     <Container>
       <Menu />
-      <Breadcrumb text="Serviços" />
+      <Breadcrumb text={`Serviços Disponíveis para ${company?.name}`} />
       <Content
         marginLeft="auto"
         marginRight="auto"
@@ -145,10 +145,6 @@ const CompaniesPrices = () => {
           xl: '90vw',
         }}
       >
-        <Separator>
-          <span>{`Serviços Disponíveis na ${company?.name}`}</span>
-          <div />
-        </Separator>
         <div className="boxTitle">
           <h3>Nome</h3>
           <h3>Preço</h3>

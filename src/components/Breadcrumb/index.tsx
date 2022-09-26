@@ -1,14 +1,14 @@
 import React from 'react';
 
-import { Container } from './styles';
+import { Container, Title } from './styles';
 
 interface IBreaadCrumbProps {
   text: string;
+  filterButton?: JSX.Element;
 }
 
-const Breadcrumb: React.FC<IBreaadCrumbProps> = ({ text }) => (
+const Breadcrumb: React.FC<IBreaadCrumbProps> = ({ text, filterButton }) => (
   <Container
-    backgroundColor="#355a9d"
     width="100%"
     maxWidth={{
       xs: '90vw',
@@ -17,15 +17,20 @@ const Breadcrumb: React.FC<IBreaadCrumbProps> = ({ text }) => (
       lg: '78vw',
       xl: '90vw',
     }}
-    color="#eee"
     display="flex"
     marginLeft="auto"
     marginRight="auto"
-    padding="12px 15px"
+    padding="0px 0px 26px 8px"
     borderRadius="md"
+    flexDirection="row"
+    alignItems="center"
+    justifyContent="space-between"
     fontWeight="bold"
+    borderBottom="1px solid #505050"
   >
-    <span>{text}</span>
+    <Title>{text}</Title>
+
+    {filterButton}
   </Container>
 );
 

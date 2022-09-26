@@ -14,7 +14,7 @@ import Menu from '../../components/Menu';
 import { useToast } from '../../context/toast';
 import api from '../../services/api';
 import getValidationsErrors from '../../utils/getValidationError';
-import { Container, Content, Separator, InputContainer } from './styles';
+import { Container, Content, InputContainer } from './styles';
 
 interface ICompany {
   id: string;
@@ -135,11 +135,6 @@ const UnitiesRegister = () => {
           xl: '90vw',
         }}
       >
-        <Separator>
-          <span>Cadastro de unidades</span>
-          <div />
-        </Separator>
-
         <Form ref={formRef} onSubmit={handleSubmit}>
           <div className="inputs">
             <InputContainer style={{ maxWidth: '375px', width: '100%' }}>

@@ -8,3 +8,9 @@ export const Container = styled(ChakraBox)`
     margin-top: 26px;
   }
 `;
+
+export const Title = styled.span`
+  font-size: 26px;
+  font-family: 'Inter', sans-serif;
+  color: #eee;
+`;

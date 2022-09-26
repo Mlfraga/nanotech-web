@@ -62,5 +62,4 @@ export const Container = styled(Box)<IContainerProps>`
   margin-right: 8;
   width: 100%;
   border: 2px solid #585858;
-  background-color: #424242;
 `;
