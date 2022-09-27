@@ -12,9 +12,8 @@ import {
 import Breadcrumb from '../../components/Breadcrumb';
 import Button from '../../components/Button';
 import Menu from '../../components/Menu';
-// import UpdateService from '../../components/Modals/UpdateService';
 import api from '../../services/api';
-import { Container, Content, Separator, List } from './styles';
+import { Container, Content, List } from './styles';
 
 interface IFormatRow {
   id: string;
@@ -95,19 +94,8 @@ const AdminServices = () => {
         marginLeft="auto"
         marginRight="auto"
         width="100%"
-        maxWidth={{
-          xs: '90vw',
-          sm: '90vw',
-          md: '80vw',
-          lg: '78vw',
-          xl: '90vw',
-        }}
+        maxWidth="90vw"
       >
-        <Separator>
-          <span>Serviços</span>
-          <div />
-        </Separator>
-
         <div className="boxTitle">
           <h3>Nome</h3>
           <h3>Preço</h3>

@@ -1,11 +1,12 @@
 /* eslint-disable react/no-array-index-key */
 import React from 'react';
 
+import { BoxProps } from '@chakra-ui/core';
 import Pagination from '@material-ui/lab/Pagination';
 
 import { Container } from './styles';
 
-interface IPaginationProps {
+interface IPaginationProps extends BoxProps {
   total_pages: number;
   page: number;
   setPage: React.Dispatch<React.SetStateAction<number>>;
@@ -15,6 +16,7 @@ const IPagination: React.FC<IPaginationProps> = ({
   total_pages,
   page,
   setPage,
+  ...rest
 }) => (
   <Container
     backgroundColor="#303030"
@@ -27,6 +29,7 @@ const IPagination: React.FC<IPaginationProps> = ({
     fontWeight="bold"
     justifyContent="center"
     alignItems="center"
+    {...rest}
   >
     <Pagination
       count={total_pages + 1}

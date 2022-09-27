@@ -43,13 +43,7 @@ const Services = () => {
 
       <Content
         width="100%"
-        maxWidth={{
-          xs: '90vw',
-          sm: '90vw',
-          md: '80vw',
-          lg: '78vw',
-          xl: '90vw',
-        }}
+        maxWidth="90vw"
         marginLeft="auto"
         marginRight="auto"
       >

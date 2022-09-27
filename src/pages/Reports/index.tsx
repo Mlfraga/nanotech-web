@@ -10,7 +10,6 @@ import Breadcrumb from '../../components/Breadcrumb';
 import DatePicker from '../../components/DatePicker';
 import Menu from '../../components/Menu';
 import Select from '../../components/Select';
-import Separator from '../../components/Separator';
 import { useAuth } from '../../context/auth';
 import { useToast } from '../../context/toast';
 import api from '../../services/api';
@@ -55,7 +54,7 @@ const Reports: React.FC = () => {
   const [isReportLoading, setIsReportLoading] = useState(false);
 
   useEffect(() => {
-    if (user.role === 'ADMIN') {
+    if (user.role === 'ADMIN' || user.role === 'NANOTECH_REPRESENTATIVE') {
       api.get('companies').then(response => {
         const newCompanies: ICompaniesResponseData[] = response.data;
 
@@ -137,32 +136,32 @@ const Reports: React.FC = () => {
             xl: '90vw',
           }}
         >
-          <Separator text="Filtros" />
           <Form ref={formRef} onSubmit={handleGetReport}>
             <Grid templateColumns="repeat(4, 1fr)" paddingY={8} gap={4}>
-              {user.role === 'ADMIN' && (
-                <Select
-                  name="company"
-                  height={8}
-                  backgroundColor="#424242"
-                  color="White"
-                  placeholder="Concessionárias"
-                  containerProps={{
-                    marginRight: 8,
-                    width: '100%',
-                    height: 10,
-                    border: '2px solid',
-                    borderColor: '#585858',
-                    backgroundColor: '#424242',
-                  }}
-                >
-                  {companies.map(company => (
-                    <option value={company.id} key={company.id}>
-                      {company.name}
-                    </option>
-                  ))}
-                </Select>
-              )}
+              {user.role === 'ADMIN' ||
+                (user.role === 'NANOTECH_REPRESENTATIVE' && (
+                  <Select
+                    name="company"
+                    height={8}
+                    backgroundColor="#424242"
+                    color="White"
+                    placeholder="Concessionárias"
+                    containerProps={{
+                      marginRight: 8,
+                      width: '100%',
+                      height: 10,
+                      border: '2px solid',
+                      borderColor: '#585858',
+                      backgroundColor: '#424242',
+                    }}
+                  >
+                    {companies.map(company => (
+                      <option value={company.id} key={company.id}>
+                        {company.name}
+                      </option>
+                    ))}
+                  </Select>
+                ))}
 
               <DatePicker
                 placeholderText="Data de entrega inicial"

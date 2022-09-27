@@ -7,7 +7,7 @@ import Breadcrumb from '../../components/Breadcrumb';
 import Button from '../../components/Button';
 import Menu from '../../components/Menu';
 import api from '../../services/api';
-import { Container, Content, Separator, List } from './styles';
+import { Container, Content, List } from './styles';
 
 interface IFormatRow {
   id: string;
@@ -52,25 +52,13 @@ const Sellers = () => {
         marginLeft="auto"
         marginRight="auto"
         width="100%"
-        maxWidth={{
-          xs: '90vw',
-          sm: '90vw',
-          md: '80vw',
-          lg: '78vw',
-          xl: '90vw',
-        }}
+        maxWidth="90vw"
       >
-        <Separator>
-          <span>Vendedores</span>
-          <div />
-        </Separator>
-
         <div className="boxTitle">
           <h3>Nome</h3>
           <h3>Telefone</h3>
           <h3>E-mail</h3>
           <h3>Concessionária</h3>
-          <h3>Unidade</h3>
           <h3>Cargo</h3>
         </div>
 
@@ -142,7 +130,6 @@ const Sellers = () => {
                   <span>{row.user.telephone}</span>
                   <span>{row.user.email}</span>
                   <span>{row.company.name}</span>
-                  <span>{row.unit?.name}</span>
                   <span>
                     {row.user?.role === 'MANAGER' ? 'Gerente' : 'Vendedor'}
                   </span>

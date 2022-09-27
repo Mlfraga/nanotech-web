@@ -20,13 +20,13 @@ const ToastContainer: React.FC<IToastContainerProps> = ({ messages }) => {
     },
   );
 
-  return (
+  return messagesWithTransitions.length > 0 ? (
     <Container>
       {messagesWithTransitions.map(({ item, key, props }) => (
         <Toast key={key} message={item} style={props} />
       ))}
     </Container>
-  );
+  ) : null;
 };
 
 export default ToastContainer;

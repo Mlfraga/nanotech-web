@@ -32,6 +32,7 @@
   ],
   "rules": {
     "prettier/prettier": "error",
+    "linebreak-style": 0,
     "dot-notation": "off",
     "indent": "off",
     "camelcase": "off",

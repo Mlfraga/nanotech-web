@@ -112,13 +112,7 @@ const SetCompanyPrices = () => {
         marginRight="auto"
         width="100%"
         marginTop="26px"
-        maxWidth={{
-          xs: '90vw',
-          sm: '90vw',
-          md: '80vw',
-          lg: '78vw',
-          xl: '90vw',
-        }}
+        maxWidth="90vw"
       >
         <Form ref={formRef} style={{ width: '100%' }} onSubmit={handleSubmit}>
           <Grid

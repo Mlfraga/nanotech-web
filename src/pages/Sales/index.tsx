@@ -7,6 +7,7 @@ import React, {
 } from 'react';
 import { FaArrowAltCircleDown, FaArrowAltCircleUp } from 'react-icons/fa';
 import { FiEdit3, FiFilter, FiTrash, FiSave } from 'react-icons/fi';
+import { FiSettings } from 'react-icons/fi';
 
 import {
   Button as ChakraButton,
@@ -16,6 +17,7 @@ import {
   Flex as ChakraFlex,
   Skeleton,
   Stack,
+  Flex,
 } from '@chakra-ui/core';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
@@ -37,6 +39,7 @@ import api from '../../services/api';
 import formatMoney from '../../utils/formatMoney';
 import getSaleStatusTranslated from '../../utils/getSaleStatusTranslated';
 import FilterDrawer from './components/FilterDrawer';
+import WhatsappNumbersDrawer from './components/WhatsappNumbersDrawer';
 import {
   Container,
   Content,
@@ -125,6 +128,10 @@ const Sales = () => {
   );
   const [loading, setLoading] = useState<boolean>(false);
 
+  const [
+    whatsappNumbersDrawerOpened,
+    setWhatsappNumbersDrawerOpened,
+  ] = useState<boolean>(false);
   const [filterDrawerOpened, setFilterDrawerOpened] = useState<boolean>(false);
   const [deleteDialogOpened, setDeleteDialogOpened] = useState<boolean>(false);
   const [openEditSalesModal, setOpenEditSalesModal] = useState<boolean>(false);
@@ -161,7 +168,7 @@ const Sales = () => {
         setLoading(false);
       });
 
-    if (user.role === 'ADMIN') {
+    if (user.role === 'ADMIN' || user.role === 'NANOTECH_REPRESENTATIVE') {
       api.get<IUser[]>('profiles').then(response => {
         setSellersOptions(
           response.data
@@ -446,409 +453,463 @@ const Sales = () => {
     <Container>
       <Menu />
 
-      <Breadcrumb text="Vendas realizadas" />
-
-      <Content
-        marginLeft="auto"
-        marginRight="auto"
-        width="100%"
-        marginTop="26px"
-        paddingBottom="16px"
-        maxWidth={{
-          xs: '90vw',
-          sm: '90vw',
-          md: '80vw',
-          lg: '78vw',
-          xl: '90vw',
+      <Flex
+        direction="column"
+        w={{
+          xs: '100%',
+          sm: '100%',
+          md: '100% ',
+          lg: 'calc(100% - 80px)',
+          xl: '100%',
         }}
+        ml={{
+          xs: '0px',
+          sm: '0px',
+          md: '0px',
+          lg: '80px',
+          xl: '0px',
+        }}
+        paddingX={8}
       >
-        <ChakraButton
-          _hover={{
-            bg: '#5580b9',
-            color: '#fff',
-          }}
-          _focusWithin={{
-            border: 0,
-          }}
-          backgroundColor="#355a9d"
-          style={{ padding: 24 }}
-          onClick={() => setFilterDrawerOpened(true)}
-          isDisabled={deleteLoading}
-          leftIcon={FiFilter}
-        >
-          Filtros
-        </ChakraButton>
-
-        {user?.role === 'ADMIN' && (
-          <ChakraBox
-            marginLeft="auto"
-            marginRight="auto"
-            width="100%"
-            marginTop="26px"
-            paddingBottom="16px"
-            maxWidth={{
-              xs: '90vw',
-              sm: '90vw',
-              md: '80vw',
-              lg: '78vw',
-              xl: '90vw',
-            }}
-            className="updateSaleContainer"
-            hidden={selectedSales.length < 1}
-          >
-            <span>Realizar ações em venda(s) selecionada(s)</span>
-
-            <Form
-              ref={formRef}
-              onSubmit={handleUpdateSale}
-              style={{ display: 'flex', alignItems: 'center' }}
-            >
-              <Select
-                height={8}
-                backgroundColor="#424242"
-                color="White"
-                name="statusSale"
-                containerProps={{
-                  marginRight: 8,
-                  width: '100%',
-                  minWidth: 300,
-                  height: 10,
-                  border: '2px solid',
-                  borderColor: '#585858',
-                  backgroundColor: '#424242',
-                }}
-              >
-                <option value="PENDING">Pendente</option>
-                <option value="CONFIRMED">Confirmado</option>
-                <option value="CANCELED">Cancelado</option>
-                <option value="FINISHED">Finalizado</option>
-              </Select>
-
-              <ActionButttonsContainer>
-                <Tooltip label="Salvar alteração" aria-label="Salvar alteração">
-                  <ChakraButton
-                    _hover={{
-                      bg: '#5580b9',
-                      color: '#fff',
-                    }}
-                    _focusWithin={{
-                      border: 0,
-                    }}
-                    backgroundColor="#355a9d"
-                    style={{ padding: 12 }}
-                    type="submit"
+        <Breadcrumb
+          text="Vendas realizadas"
+          filterButton={
+            <Flex style={{ gap: '6px' }}>
+              {user?.role === 'ADMIN' ||
+                (user.role === 'NANOTECH_REPRESENTATIVE' && (
+                  <Tooltip
+                    label="Configurar números"
+                    aria-label="Configurar números"
                   >
-                    <FiSave />
-                  </ChakraButton>
-                </Tooltip>
-
-                <Tooltip label="Excluir venda" aria-label="Excluir venda">
-                  <ChakraButton
-                    _hover={{
-                      bg: '#5580b9',
-                      color: '#fff',
-                    }}
-                    _focusWithin={{
-                      border: 0,
-                    }}
-                    backgroundColor="#355a9d"
-                    style={{ padding: 12 }}
-                    onClick={() => setDeleteDialogOpened(true)}
-                    isDisabled={deleteLoading}
-                  >
-                    <FiTrash />
-                  </ChakraButton>
-                </Tooltip>
-
-                {selectedSales.length === 1 && (
-                  <Tooltip label="Editar venda" aria-label="Editar venda">
                     <ChakraButton
                       _hover={{
-                        bg: '#5580b9',
+                        bg: '#282828',
                         color: '#fff',
                       }}
                       _focusWithin={{
                         border: 0,
                       }}
-                      backgroundColor="#355a9d"
-                      style={{ padding: 12 }}
-                      onClick={() => {
-                        setOpenEditSalesModal(true);
-                        setSaleToEdit(
-                          sales.find(sale => sale.id === selectedSales[0]),
-                        );
-                      }}
+                      backgroundColor="#303030"
+                      width={12}
+                      height={12}
+                      borderRadius="50%"
+                      onClick={() => setWhatsappNumbersDrawerOpened(true)}
+                      isDisabled={deleteLoading}
                     >
-                      <FiEdit3 />
+                      <FiSettings />
                     </ChakraButton>
                   </Tooltip>
-                )}
-              </ActionButttonsContainer>
-            </Form>
-          </ChakraBox>
-        )}
+                ))}
+              <ChakraButton
+                _hover={{
+                  bg: '#5580b9',
+                  color: '#fff',
+                }}
+                _focusWithin={{
+                  border: 0,
+                }}
+                backgroundColor="#355a9d"
+                style={{ padding: 24 }}
+                onClick={() => setFilterDrawerOpened(true)}
+                isDisabled={deleteLoading}
+                leftIcon={FiFilter}
+              >
+                Filtros
+              </ChakraButton>
+            </Flex>
+          }
+        />
 
-        <Separator>
-          <span>Vendas</span>
-          <div />
-        </Separator>
+        <Content
+          marginLeft="auto"
+          marginRight="auto"
+          mt="16px"
+          width="100%"
+          paddingBottom="16px"
+          maxWidth="90vw"
+        >
+          {user?.role === 'ADMIN' ||
+            (user.role === 'NANOTECH_REPRESENTATIVE' && (
+              <ChakraBox
+                marginLeft="auto"
+                marginRight="auto"
+                width="100%"
+                marginTop="26px"
+                paddingBottom="16px"
+                maxWidth={{
+                  xs: '90vw',
+                  sm: '90vw',
+                  md: '80vw',
+                  lg: '78vw',
+                  xl: '90vw',
+                }}
+                className="updateSaleContainer"
+                hidden={selectedSales.length < 1}
+              >
+                <span>Realizar ações em venda(s) selecionada(s)</span>
 
-        <div className="boxTitle">
-          <span>N°</span>
-          <span>Vendedor</span>
-          <span>Carro</span>
-          <span>Placa</span>
-          <span>Data de disponibilidade</span>
-          <span>Data de entrega</span>
-          <span>Situação</span>
-        </div>
-
-        {loading ? (
-          <Stack marginTop="16px">
-            <Skeleton
-              height="60px"
-              borderRadius="md"
-              colorStart="#505050"
-              colorEnd="#404040"
-              marginTop="8px"
-            />
-            <Skeleton
-              height="60px"
-              borderRadius="md"
-              colorStart="#505050"
-              colorEnd="#404040"
-              marginTop="8px"
-            />
-            <Skeleton
-              height="60px"
-              borderRadius="md"
-              colorStart="#505050"
-              colorEnd="#404040"
-              marginTop="8px"
-            />
-            <Skeleton
-              height="60px"
-              borderRadius="md"
-              colorStart="#505050"
-              colorEnd="#404040"
-              marginTop="8px"
-            />
-            <Skeleton
-              height="60px"
-              borderRadius="md"
-              colorStart="#505050"
-              colorEnd="#404040"
-              marginTop="8px"
-            />
-            <Skeleton
-              height="60px"
-              borderRadius="md"
-              colorStart="#505050"
-              colorEnd="#404040"
-              marginTop="8px"
-            />
-            <Skeleton
-              height="60px"
-              borderRadius="md"
-              colorStart="#505050"
-              colorEnd="#404040"
-              marginTop="8px"
-            />
-          </Stack>
-        ) : (
-          <>
-            <List width="100%" marginTop={4} paddingBottom={16}>
-              {formattedSales.map(sale => (
-                <Box
-                  key={sale.id}
-                  onClick={
-                    user?.role === 'ADMIN'
-                      ? () => handleSelectSale(sale.id)
-                      : undefined
-                  }
+                <Form
+                  ref={formRef}
+                  onSubmit={handleUpdateSale}
+                  style={{ display: 'flex', alignItems: 'center' }}
                 >
-                  <div
-                    className={
-                      selectedSales.includes(sale.id)
-                        ? 'header-selected'
-                        : 'header'
-                    }
-                    style={
-                      openedServices.includes(sale.id)
-                        ? {
-                            borderRadius: '15px 15px 0 0',
-                            borderBottom: 0,
-                            cursor: 'pointer',
-                          }
-                        : { borderRadius: '15px', cursor: 'pointer' }
-                    }
+                  <Select
+                    height={8}
+                    backgroundColor="#424242"
+                    color="White"
+                    name="statusSale"
+                    containerProps={{
+                      marginRight: 8,
+                      width: '100%',
+                      minWidth: 300,
+                      height: 10,
+                      border: '2px solid',
+                      borderColor: '#585858',
+                      backgroundColor: '#424242',
+                    }}
                   >
-                    <span>{sale.client_id}</span>
-                    <span>{sale.seller}</span>
-                    <span>{sale.car}</span>
-                    <span>{sale.carPlate}</span>
-                    <span>
-                      {format(
-                        new Date(sale.availability_date),
-                        "dd'/'MM'/'yyyy '-' HH:mm'h'",
-                        { locale: ptBR },
-                      )}
-                    </span>
-                    <span>
-                      {format(
-                        new Date(sale.delivery_date),
-                        "dd'/'MM'/'yyyy '-' HH:mm'h'",
-                        { locale: ptBR },
-                      )}
-                    </span>
-                    <div className="status">
-                      <span>
-                        <div className={sale.status} />
-                        {getSaleStatusTranslated(sale.status)}
-                      </span>
-                    </div>
+                    <option value="PENDING">Pendente</option>
+                    <option value="CONFIRMED">Confirmado</option>
+                    <option value="CANCELED">Cancelado</option>
+                    <option value="FINISHED">Finalizado</option>
+                  </Select>
 
-                    {openedServices.includes(sale.id) ? (
-                      <FaArrowAltCircleUp
-                        onClick={e => {
-                          e.stopPropagation();
-                          handleCloseServices(sale.id);
+                  <ActionButttonsContainer>
+                    <Tooltip
+                      label="Salvar alteração"
+                      aria-label="Salvar alteração"
+                    >
+                      <ChakraButton
+                        _hover={{
+                          bg: '#5580b9',
+                          color: '#fff',
                         }}
-                        style={{ cursor: 'pointer' }}
-                        size={26}
-                      />
-                    ) : (
-                      <FaArrowAltCircleDown
-                        onClick={e => {
-                          e.stopPropagation();
-                          handleOpenServices(sale.id);
+                        _focusWithin={{
+                          border: 0,
                         }}
-                        style={{ cursor: 'pointer' }}
-                        size={26}
-                      />
+                        backgroundColor="#355a9d"
+                        style={{ padding: 12 }}
+                        type="submit"
+                      >
+                        <FiSave />
+                      </ChakraButton>
+                    </Tooltip>
+
+                    <Tooltip label="Excluir venda" aria-label="Excluir venda">
+                      <ChakraButton
+                        _hover={{
+                          bg: '#5580b9',
+                          color: '#fff',
+                        }}
+                        _focusWithin={{
+                          border: 0,
+                        }}
+                        backgroundColor="#355a9d"
+                        style={{ padding: 12 }}
+                        onClick={() => setDeleteDialogOpened(true)}
+                        isDisabled={deleteLoading}
+                      >
+                        <FiTrash />
+                      </ChakraButton>
+                    </Tooltip>
+
+                    {selectedSales.length === 1 && (
+                      <Tooltip label="Editar venda" aria-label="Editar venda">
+                        <ChakraButton
+                          _hover={{
+                            bg: '#5580b9',
+                            color: '#fff',
+                          }}
+                          _focusWithin={{
+                            border: 0,
+                          }}
+                          backgroundColor="#355a9d"
+                          style={{ padding: 12 }}
+                          onClick={() => {
+                            setOpenEditSalesModal(true);
+                            setSaleToEdit(
+                              sales.find(sale => sale.id === selectedSales[0]),
+                            );
+                          }}
+                        >
+                          <FiEdit3 />
+                        </ChakraButton>
+                      </Tooltip>
                     )}
-                  </div>
+                  </ActionButttonsContainer>
+                </Form>
+              </ChakraBox>
+            ))}
 
-                  <div
-                    className="dropDown"
-                    hidden={!openedServices.includes(sale.id)}
-                    style={
-                      selectedSales.includes(sale.id)
-                        ? { border: '2px solid #355a9d', borderTop: 0 }
-                        : { border: 0 }
-                    }
-                  >
-                    <Separator className="separator">
-                      <span>Detalhes</span>
-                      <div />
-                    </Separator>
-                    <ChakraFlex>
-                      <ChakraBox width="70%">
-                        <div className="details">
+          <Flex direction="column" overflowX="auto">
+            <div className="boxTitle">
+              <span>N°</span>
+              <span>Vendedor</span>
+              <span>Carro</span>
+              <span>Placa</span>
+              <span>Data de disponibilidade</span>
+              <span>Data de entrega</span>
+              <span>Situação</span>
+            </div>
+
+            {loading ? (
+              <Stack marginTop="16px">
+                <Skeleton
+                  height="60px"
+                  borderRadius="md"
+                  colorStart="#505050"
+                  colorEnd="#404040"
+                  marginTop="8px"
+                />
+                <Skeleton
+                  height="60px"
+                  borderRadius="md"
+                  colorStart="#505050"
+                  colorEnd="#404040"
+                  marginTop="8px"
+                />
+                <Skeleton
+                  height="60px"
+                  borderRadius="md"
+                  colorStart="#505050"
+                  colorEnd="#404040"
+                  marginTop="8px"
+                />
+                <Skeleton
+                  height="60px"
+                  borderRadius="md"
+                  colorStart="#505050"
+                  colorEnd="#404040"
+                  marginTop="8px"
+                />
+                <Skeleton
+                  height="60px"
+                  borderRadius="md"
+                  colorStart="#505050"
+                  colorEnd="#404040"
+                  marginTop="8px"
+                />
+                <Skeleton
+                  height="60px"
+                  borderRadius="md"
+                  colorStart="#505050"
+                  colorEnd="#404040"
+                  marginTop="8px"
+                />
+                <Skeleton
+                  height="60px"
+                  borderRadius="md"
+                  colorStart="#505050"
+                  colorEnd="#404040"
+                  marginTop="8px"
+                />
+              </Stack>
+            ) : (
+              <>
+                <List width="100%" marginTop={4} paddingBottom={16}>
+                  {formattedSales.map(sale => (
+                    <Box
+                      key={sale.id}
+                      onClick={
+                        user?.role === 'ADMIN' ||
+                        user?.role === 'NANOTECH_REPRESENTATIVE'
+                          ? () => handleSelectSale(sale.id)
+                          : undefined
+                      }
+                    >
+                      <div
+                        className={
+                          selectedSales.includes(sale.id)
+                            ? 'header-selected'
+                            : 'header'
+                        }
+                        style={
+                          openedServices.includes(sale.id)
+                            ? {
+                                borderRadius: '15px 15px 0 0',
+                                borderBottom: 0,
+                                cursor: 'pointer',
+                              }
+                            : { borderRadius: '15px', cursor: 'pointer' }
+                        }
+                      >
+                        <span>{sale.client_id}</span>
+                        <span>{sale.seller}</span>
+                        <span>{sale.car}</span>
+                        <span>{sale.carPlate}</span>
+                        <span>
+                          {format(
+                            new Date(sale.availability_date),
+                            "dd'/'MM'/'yyyy '-' HH:mm'h'",
+                            { locale: ptBR },
+                          )}
+                        </span>
+                        <span>
+                          {format(
+                            new Date(sale.delivery_date),
+                            "dd'/'MM'/'yyyy '-' HH:mm'h'",
+                            { locale: ptBR },
+                          )}
+                        </span>
+                        <div className="status">
                           <span>
-                            <strong>Unidade:</strong> {` ${sale.unit}`}
-                          </span>
-                          <span>
-                            <strong>Data do pedido: </strong>
-                            {format(
-                              new Date(sale.request_date),
-                              "dd'/'MM'/'yyyy '-' HH:mm'h'",
-                              { locale: ptBR },
-                            )}
+                            <div className={sale.status} />
+                            {getSaleStatusTranslated(sale.status)}
                           </span>
                         </div>
+
+                        {openedServices.includes(sale.id) ? (
+                          <FaArrowAltCircleUp
+                            onClick={e => {
+                              e.stopPropagation();
+                              handleCloseServices(sale.id);
+                            }}
+                            style={{ cursor: 'pointer' }}
+                            size={26}
+                          />
+                        ) : (
+                          <FaArrowAltCircleDown
+                            onClick={e => {
+                              e.stopPropagation();
+                              handleOpenServices(sale.id);
+                            }}
+                            style={{ cursor: 'pointer' }}
+                            size={26}
+                          />
+                        )}
+                      </div>
+
+                      <div
+                        className="dropDown"
+                        hidden={!openedServices.includes(sale.id)}
+                        style={
+                          selectedSales.includes(sale.id)
+                            ? { border: '2px solid #355a9d', borderTop: 0 }
+                            : { border: 0 }
+                        }
+                      >
                         <Separator className="separator">
-                          <span style={{ fontSize: '14px' }}>Serviços</span>
+                          <span>Detalhes</span>
                           <div />
                         </Separator>
-                        {sale.services.map(service => (
-                          <div className="service" key={service.id}>
-                            <span>{service.name}</span>
-                            <span>{service?.price}</span>
-                          </div>
-                        ))}
-                        <div className="total">
-                          <span>Total</span>
-                          <span>
-                            {user?.role === 'ADMIN'
-                              ? Number(sale.cost_value).toLocaleString(
-                                  'pt-br',
-                                  {
-                                    style: 'currency',
-                                    currency: 'BRL',
-                                  },
-                                )
-                              : Number(sale.company_value).toLocaleString(
-                                  'pt-br',
-                                  {
-                                    style: 'currency',
-                                    currency: 'BRL',
-                                  },
+                        <ChakraFlex>
+                          <ChakraBox width="70%">
+                            <div className="details">
+                              <span>
+                                <strong>Unidade:</strong> {` ${sale.unit}`}
+                              </span>
+                              <span>
+                                <strong>Data do pedido: </strong>
+                                {format(
+                                  new Date(sale.request_date),
+                                  "dd'/'MM'/'yyyy '-' HH:mm'h'",
+                                  { locale: ptBR },
                                 )}
-                          </span>
-                        </div>
-                      </ChakraBox>
-                      <ChakraFlex
-                        wordBreak="break-all"
-                        marginTop="16px"
-                        marginLeft={2}
-                        borderRadius="md"
-                        width="30%"
-                        padding={6}
-                        flexShrink="initial"
-                        background="#303030"
-                      >
-                        <Text
-                          width="100%"
-                          textAlign="center"
-                          lineHeight={2}
-                          fontSize={16}
-                        >
-                          <strong>Observações:</strong>
-                          <br />
-                          {sale.comments}
-                        </Text>
-                      </ChakraFlex>
-                    </ChakraFlex>
-                  </div>
-                </Box>
-              ))}
+                              </span>
+                            </div>
+                            <Separator className="separator">
+                              <span style={{ fontSize: '14px' }}>Serviços</span>
+                              <div />
+                            </Separator>
+                            {sale.services.map(service => (
+                              <div className="service" key={service.id}>
+                                <span>{service.name}</span>
+                                <span>{service?.price}</span>
+                              </div>
+                            ))}
+                            <div className="total">
+                              <span>Total</span>
+                              <span>
+                                {user?.role === 'ADMIN' ||
+                                user?.role === 'NANOTECH_REPRESENTATIVE'
+                                  ? Number(sale.cost_value).toLocaleString(
+                                      'pt-br',
+                                      {
+                                        style: 'currency',
+                                        currency: 'BRL',
+                                      },
+                                    )
+                                  : Number(sale.company_value).toLocaleString(
+                                      'pt-br',
+                                      {
+                                        style: 'currency',
+                                        currency: 'BRL',
+                                      },
+                                    )}
+                              </span>
+                            </div>
+                          </ChakraBox>
+                          <ChakraFlex
+                            wordBreak="break-all"
+                            marginTop="16px"
+                            marginLeft={2}
+                            borderRadius="md"
+                            width="30%"
+                            padding={6}
+                            flexShrink="initial"
+                            background="#303030"
+                          >
+                            <Text
+                              width="100%"
+                              textAlign="center"
+                              lineHeight={2}
+                              fontSize={16}
+                            >
+                              <strong>Observações:</strong>
+                              <br />
+                              {sale.comments}
+                            </Text>
+                          </ChakraFlex>
+                        </ChakraFlex>
+                      </div>
+                    </Box>
+                  ))}
 
-              <Pagination
-                setPage={setCurrentPage}
-                page={currentPage}
-                total_pages={totalPages - 1}
-              />
-            </List>
-          </>
-        )}
-      </Content>
+                  <Pagination
+                    minWidth="1100px"
+                    setPage={setCurrentPage}
+                    page={currentPage}
+                    total_pages={totalPages - 1}
+                  />
+                </List>
+              </>
+            )}
+          </Flex>
+        </Content>
 
-      <AlertDialog
-        isOpen={deleteDialogOpened}
-        onConfirm={handleDeleteSales}
-        setIsOpen={setDeleteDialogOpened}
-        headerText="Excluir Venda"
-        bodyText="Tem certeza que deseja excluir a venda?"
-      />
-      <FilterDrawer
-        isOpen={filterDrawerOpened}
-        placement="right"
-        onClose={() => setFilterDrawerOpened(false)}
-        initialValues={filters}
-        sellersOptions={sellersOptions}
-        companiesOptions={companiesOptions}
-        close={() => setFilterDrawerOpened(false)}
-        applyFilter={handleApplyFilter}
-        cleanFilter={handleCleanFilter}
-      />
+        <AlertDialog
+          isOpen={deleteDialogOpened}
+          onConfirm={handleDeleteSales}
+          setIsOpen={setDeleteDialogOpened}
+          headerText="Excluir Venda"
+          bodyText="Tem certeza que deseja excluir a venda?"
+        />
 
-      <UpdateSalesModal
-        isOpen={openEditSalesModal}
-        onClose={() => setOpenEditSalesModal(false)}
-        onSave={loadSales}
-        sale={saleToEdit}
-      />
+        <FilterDrawer
+          isOpen={filterDrawerOpened}
+          placement="right"
+          onClose={() => setFilterDrawerOpened(false)}
+          initialValues={filters}
+          sellersOptions={sellersOptions}
+          companiesOptions={companiesOptions}
+          close={() => setFilterDrawerOpened(false)}
+          applyFilter={handleApplyFilter}
+          cleanFilter={handleCleanFilter}
+        />
+
+        <WhatsappNumbersDrawer
+          isOpen={whatsappNumbersDrawerOpened}
+          placement="right"
+          onClose={() => setWhatsappNumbersDrawerOpened(false)}
+        />
+
+        <UpdateSalesModal
+          isOpen={openEditSalesModal}
+          onClose={() => setOpenEditSalesModal(false)}
+          onSave={loadSales}
+          sale={saleToEdit}
+        />
+      </Flex>
     </Container>
   );
 };

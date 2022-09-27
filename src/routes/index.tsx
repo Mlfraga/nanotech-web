@@ -33,7 +33,7 @@ const Routes: React.FC = () => (
       path="/services-register/:company_id"
       component={ServicesRegister}
       isPrivate
-      permissions={['ADMIN']}
+      permissions={['ADMIN', 'NANOTECH_REPRESENTATIVE']}
     />
     <Route
       path="/set-prices"
@@ -63,7 +63,7 @@ const Routes: React.FC = () => (
       path="/sales"
       component={Sales}
       isPrivate
-      permissions={['MANAGER', 'SELLER', 'ADMIN']}
+      permissions={['MANAGER', 'SELLER', 'ADMIN', 'NANOTECH_REPRESENTATIVE']}
     />
     <Route
       path="/prices"
@@ -75,40 +75,45 @@ const Routes: React.FC = () => (
       path="/companies"
       component={Companies}
       isPrivate
-      permissions={['ADMIN']}
+      permissions={['ADMIN', 'NANOTECH_REPRESENTATIVE']}
     />
     <Route
       exact
       path="/company/prices/:id"
       component={CompaniesPrices}
       isPrivate
-      permissions={['ADMIN']}
+      permissions={['ADMIN', 'NANOTECH_REPRESENTATIVE']}
     />
     <Route
       path="/companies-register"
       component={CompaniesRegister}
       isPrivate
-      permissions={['ADMIN']}
+      permissions={['ADMIN', 'NANOTECH_REPRESENTATIVE']}
     />
     <Route
       path="/unities-register"
       component={UnitiesRegister}
       isPrivate
-      permissions={['ADMIN']}
+      permissions={['ADMIN', 'NANOTECH_REPRESENTATIVE']}
     />
-    <Route path="/users" component={Users} isPrivate permissions={['ADMIN']} />
+    <Route
+      path="/users"
+      component={Users}
+      isPrivate
+      permissions={['ADMIN', 'NANOTECH_REPRESENTATIVE']}
+    />
     <Route
       path="/users-register"
       component={UsersRegister}
       isPrivate
-      permissions={['ADMIN']}
+      permissions={['ADMIN', 'NANOTECH_REPRESENTATIVE']}
     />
 
     <Route
       path="/reports"
       component={Reports}
       isPrivate
-      permissions={['MANAGER', 'ADMIN']}
+      permissions={['MANAGER', 'ADMIN', 'NANOTECH_REPRESENTATIVE']}
     />
 
     <Route path="*" component={NotFound} exact />

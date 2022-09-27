@@ -14,7 +14,7 @@ export const Container = styled.div`
 export const Content = styled(ChakraBox)`
   .boxTitle {
     display: grid;
-    grid-template-columns: 14.6% 16% 19% 16% 16% 16%;
+    grid-template-columns: 14.6% 16% 19% 16% 32%;
     align-items: center;
     justify-content: center;
 
@@ -55,7 +55,7 @@ export const Separator = styled.div`
 `;
 
 export const List = styled(ChakraBox)`
-  width: 100.5%;
+  width: 100%;
   height: 550px;
   overflow: auto;
   margin-top: 16px;
@@ -72,7 +72,7 @@ export const List = styled(ChakraBox)`
 
   .box {
     display: grid;
-    grid-template-columns: 14.6% 16% 19% 16% 16% 16%;
+    grid-template-columns: 14.6% 16% 19% 16% 32%;
     align-items: center;
     justify-content: center;
 

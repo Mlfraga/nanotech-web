@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react';
+import { useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { FormHandles } from '@unform/core';
@@ -42,7 +43,7 @@ interface IDataSubmit {
   role: string;
   name: string;
   telephone: string;
-  companyId: string;
+  companyId?: string;
   unitId?: string;
   enabled: boolean;
 }
@@ -63,54 +64,62 @@ const UsersRegister = () => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
 
-  const [company, setCompany] = useState<ICompany>({} as ICompany);
+  const [company, setCompany] = useState<ICompany>();
   const [loading, setLoading] = useState(false);
   const [role, setRole] = useState<string>('');
   const [unitSelectOptions, setUnitSelectOptions] = useState<
     Array<{ value: string; label: string }>
   >([]);
 
-  const roleSelectOptions = [
-    { value: 'SELLER', label: 'Vendedor' },
-    { value: 'MANAGER', label: 'Gerente' },
-  ];
+  const roleSelectOptions = useMemo(() => {
+    if (company) {
+      return [
+        { value: 'SELLER', label: 'Vendedor' },
+        { value: 'MANAGER', label: 'Gerente' },
+      ];
+    }
+
+    return [
+      {
+        value: 'NANOTECH_REPRESENTATIVE',
+        label: 'Representante Nanotech',
+      },
+    ];
+  }, [company]);
 
   useEffect(() => {
     const query = history.location.search;
 
     const parsedQuery = queryString.parse(query, { parseNumbers: true });
     if (
-      !parsedQuery.company ||
-      typeof parsedQuery.company !== 'string' ||
-      !isUuid(parsedQuery.company)
+      parsedQuery.company ||
+      typeof parsedQuery.company === 'string' ||
+      isUuid(String(parsedQuery.company))
     ) {
-      history.push('/services');
-      return;
-    }
+      api
+        .get(`companies/${parsedQuery.company}`)
+        .then(response => {
+          const newCompany: ICompany = response.data;
 
-    api
-      .get(`companies/${parsedQuery.company}`)
-      .then(response => {
-        const newCompany: ICompany = response.data;
+          const unitiesOptions: Array<{
+            value: string;
+            label: string;
+          }> = newCompany.unities.map(unit => ({
+            value: unit.id,
+            label: unit.name,
+          }));
 
-        const unitiesOptions: Array<{
-          value: string;
-          label: string;
-        }> = newCompany.unities.map(unit => ({
-          value: unit.id,
-          label: unit.name,
-        }));
-
-        setUnitSelectOptions(unitiesOptions);
-        setCompany({
-          id: newCompany.id,
-          name: newCompany.name,
-          unities: newCompany.unities,
+          setUnitSelectOptions(unitiesOptions);
+          setCompany({
+            id: newCompany.id,
+            name: newCompany.name,
+            unities: newCompany.unities,
+          });
+        })
+        .catch(() => {
+          history.push('/services');
         });
-      })
-      .catch(() => {
-        history.push('/services');
-      });
+    }
   }, [history]);
 
   const handleChangeRoleSelect = useCallback(
@@ -157,62 +166,89 @@ const UsersRegister = () => {
           return;
         }
 
-        if (role === 'SELLER') {
-          const formDataToCreateSeller: IDataSubmit = {
+        if (company) {
+          if (role === 'SELLER') {
+            const formDataToCreateSeller: IDataSubmit = {
+              username: data.username,
+              email: data.email,
+              password: data.password,
+              role: data.role,
+              name: data.name,
+              telephone: data.telephone,
+              companyId: company.id,
+              unitId: String(data.unit),
+              enabled: true,
+            };
+
+            const response = await api.post(
+              'users/signup',
+              formDataToCreateSeller,
+            );
+
+            if (response.status === 200) {
+              addToast({
+                title: 'Cadastro realizado com sucesso.',
+                type: 'success',
+                description: `Agora o(a) usuário(a) ${data.username} já pode utilizar o sistema.`,
+              });
+
+              setRole('');
+
+              reset();
+            }
+            return;
+          }
+
+          const formDataToCreateManager: IDataSubmit = {
             username: data.username,
             email: data.email,
             password: data.password,
             role: data.role,
             name: data.name,
             telephone: data.telephone,
-            companyId: company?.id,
-            unitId: String(data.unit),
+            companyId: company.id,
             enabled: true,
           };
 
           const response = await api.post(
             'users/signup',
-            formDataToCreateSeller,
+            formDataToCreateManager,
           );
 
           if (response.status === 200) {
             addToast({
               title: 'Cadastro realizado com sucesso.',
               type: 'success',
-              description: `Agora o(a) usuário(a) ${data.username} já pode utilizar o sistema.`,
+              description: `Agora o usuário ${data.username} já pode utilizar o sistema.`,
             });
-
-            setRole('');
 
             reset();
           }
-          return;
-        }
+        } else {
+          const formDataToCreateNanotechRepresentative: IDataSubmit = {
+            username: data.username,
+            email: data.email,
+            password: data.password,
+            role: data.role,
+            name: data.name,
+            telephone: data.telephone,
+            enabled: true,
+          };
 
-        const formDataToCreateManager: IDataSubmit = {
-          username: data.username,
-          email: data.email,
-          password: data.password,
-          role: data.role,
-          name: data.name,
-          telephone: data.telephone,
-          companyId: company.id,
-          enabled: true,
-        };
+          const response = await api.post(
+            'users/signup',
+            formDataToCreateNanotechRepresentative,
+          );
 
-        const response = await api.post(
-          'users/signup',
-          formDataToCreateManager,
-        );
+          if (response.status === 200) {
+            addToast({
+              title: 'Cadastro realizado com sucesso.',
+              type: 'success',
+              description: `Agora o usuário ${data.username} já pode utilizar o sistema.`,
+            });
 
-        if (response.status === 200) {
-          addToast({
-            title: 'Cadastro realizado com sucesso.',
-            type: 'success',
-            description: `Agora o usuário ${data.username} já pode utilizar o sistema.`,
-          });
-
-          reset();
+            reset();
+          }
         }
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
@@ -237,21 +273,13 @@ const UsersRegister = () => {
   return (
     <Container>
       <Menu />
-      <Breadcrumb
-        text={`Registro de novos usuários a concessionária ${company.name}`}
-      />
+      <Breadcrumb text="Registro de novo usuário" />
       <Content
         marginLeft="auto"
         marginRight="auto"
         width="100%"
         marginTop="26px"
-        maxWidth={{
-          xs: '90vw',
-          sm: '90vw',
-          md: '80vw',
-          lg: '78vw',
-          xl: '90vw',
-        }}
+        maxWidth="90vw"
       >
         <Form ref={formRef} onSubmit={handleSubmit}>
           <Separator>
@@ -310,6 +338,7 @@ const UsersRegister = () => {
                   borderColor: '#585858',
                   backgroundColor: '#424242',
                 }}
+                defaultValue={!company?.name ? 'NANOTECH_REPRESENTATIVE' : ''}
               >
                 {roleSelectOptions.map(opt => (
                   <option key={opt.value} value={opt.value}>

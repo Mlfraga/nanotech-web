@@ -14,6 +14,11 @@ interface ISelectProps extends ChakraSelectProps {
   containerProps?: ChakraPseudoBoxProps;
 }
 
+export interface ISelectOption {
+  value: string;
+  label: string;
+}
+
 const ReactSelect: React.FC<ISelectProps> = ({
   name,
   children,
@@ -54,10 +59,11 @@ const ReactSelect: React.FC<ISelectProps> = ({
       height={12}
       borderRadius="md"
       paddingLeft={4}
-      {...containerProps}
       onClick={() => {
         selectRef.current?.focus();
       }}
+      bg="#424242"
+      {...containerProps}
     >
       <ChakraSelect
         defaultValue={defaultValue}

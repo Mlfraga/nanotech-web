@@ -14,7 +14,7 @@ interface IRouteProps extends ReactDOMRouteProps {
 }
 
 const Permission: React.FC<IRouteProps> = ({
-  permissions = ['MANAGER', 'SELLER', 'ADMIN'],
+  permissions = ['MANAGER', 'SELLER', 'ADMIN', 'NANOTECH_REPRESENTATIVE'],
   component: Component,
   ...rest
 }) => {

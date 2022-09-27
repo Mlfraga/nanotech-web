@@ -20,7 +20,7 @@ import api from '../services/api';
 
 interface IUser {
   id: string;
-  role: 'ADMIN' | 'MANAGER' | 'SELLER';
+  role: 'ADMIN' | 'MANAGER' | 'SELLER' | 'NANOTECH_REPRESENTATIVE';
   profile: {
     id: string;
     company_id: string;
@@ -228,7 +228,7 @@ export const AuthProvider: React.FC = ({ children }) => {
       ];
     }
 
-    if (user.role === 'ADMIN') {
+    if (user.role === 'ADMIN' || user.role === 'NANOTECH_REPRESENTATIVE') {
       buttons = [
         {
           name: 'Concessionárias',
@@ -383,7 +383,10 @@ export const AuthProvider: React.FC = ({ children }) => {
           ];
         }
 
-        if (userData.role === 'ADMIN') {
+        if (
+          userData.role === 'ADMIN' ||
+          userData.role === 'NANOTECH_REPRESENTATIVE'
+        ) {
           buttons = [
             {
               name: 'Concessionárias',
