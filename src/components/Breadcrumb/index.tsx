@@ -10,13 +10,7 @@ interface IBreaadCrumbProps {
 const Breadcrumb: React.FC<IBreaadCrumbProps> = ({ text, filterButton }) => (
   <Container
     width="100%"
-    maxWidth={{
-      xs: '90vw',
-      sm: '90vw',
-      md: '80vw',
-      lg: '78vw',
-      xl: '90vw',
-    }}
+    maxWidth="90vw"
     display="flex"
     marginLeft="auto"
     marginRight="auto"

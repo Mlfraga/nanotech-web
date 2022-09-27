@@ -58,7 +58,7 @@ const FilterDrawer: React.FC<IFilterDrawerProps> = ({
   return (
     <Drawer {...rest}>
       <DrawerOverlay />
-      <DrawerContent bg="#383838" minW={460}>
+      <DrawerContent overflowY="auto" bg="#383838" minW={460}>
         <DrawerCloseButton />
         <DrawerHeader borderBottomWidth="1px">Filtrar Vendas</DrawerHeader>
 

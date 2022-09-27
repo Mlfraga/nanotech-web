@@ -127,13 +127,7 @@ const UnitiesRegister = () => {
         marginLeft="auto"
         marginRight="auto"
         width="100%"
-        maxWidth={{
-          xs: '90vw',
-          sm: '90vw',
-          md: '80vw',
-          lg: '78vw',
-          xl: '90vw',
-        }}
+        maxWidth="90vw"
       >
         <Form ref={formRef} onSubmit={handleSubmit}>
           <div className="inputs">

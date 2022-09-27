@@ -35,3 +35,10 @@ export const StyledStack = styled(Stack)`
     }
   }
 `;
+
+export const AddNumberButton = styled.button`
+  border: 0;
+  background: transparent;
+  color: #3182ce;
+  font-size: 18px;
+`;

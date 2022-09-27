@@ -13,8 +13,10 @@ export const Container = styled(ChakraBox)`
 
 export const Content = styled(ChakraBox)`
   .boxTitle {
+    min-width: 1100px;
+
     display: grid;
-    grid-template-columns: 5% 14% 13% 13% 18% 18% 14% 5%;
+    grid-template-columns: 9% 14% 13% 13% 16% 16% 14% 5%;
     align-items: center;
     justify-content: center;
     padding-left: 10px;
@@ -92,10 +94,12 @@ export const Box = styled(ChakraBox)`
   }
 
   div.header {
+    min-width: 1100px;
+
     padding-left: 10px;
     display: grid;
     width: 100%;
-    grid-template-columns: 5% 14% 13% 13% 18% 18% 14% 5%;
+    grid-template-columns: 9% 14% 13% 13% 16% 16% 14% 5%;
     align-items: center;
     justify-content: center;
 
@@ -120,10 +124,12 @@ export const Box = styled(ChakraBox)`
   }
 
   div.header-selected {
+    min-width: 1100px;
+
     padding-left: 10px;
     display: grid;
     width: 100%;
-    grid-template-columns: 5% 14% 13% 13% 18% 18% 14% 5%;
+    grid-template-columns: 9% 14% 13% 13% 16% 16% 14% 5%;
     align-items: center;
     justify-content: center;
 
@@ -165,6 +171,8 @@ export const Box = styled(ChakraBox)`
   }
 
   .dropDown {
+    min-width: 1100px;
+
     width: 100%;
     background: #353535;
     border-radius: 0 0 15px 15px;
