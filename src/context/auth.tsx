@@ -20,7 +20,7 @@ import api from '../services/api';
 
 interface IUser {
   id: string;
-  role: 'ADMIN' | 'MANAGER' | 'SELLER';
+  role: 'ADMIN' | 'MANAGER' | 'SELLER' | 'NANOTECH_REPRESENTATIVE';
   profile: {
     id: string;
     company_id: string;

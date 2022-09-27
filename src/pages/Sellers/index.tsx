@@ -59,7 +59,6 @@ const Sellers = () => {
           <h3>Telefone</h3>
           <h3>E-mail</h3>
           <h3>Concessionária</h3>
-          <h3>Unidade</h3>
           <h3>Cargo</h3>
         </div>
 
@@ -131,7 +130,6 @@ const Sellers = () => {
                   <span>{row.user.telephone}</span>
                   <span>{row.user.email}</span>
                   <span>{row.company.name}</span>
-                  <span>{row.unit?.name}</span>
                   <span>
                     {row.user?.role === 'MANAGER' ? 'Gerente' : 'Vendedor'}
                   </span>

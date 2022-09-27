@@ -168,7 +168,7 @@ const Sales = () => {
         setLoading(false);
       });
 
-    if (user.role === 'ADMIN') {
+    if (user.role === 'ADMIN' || user.role === 'NANOTECH_REPRESENTATIVE') {
       api.get<IUser[]>('profiles').then(response => {
         setSellersOptions(
           response.data
@@ -475,28 +475,31 @@ const Sales = () => {
           text="Vendas realizadas"
           filterButton={
             <Flex style={{ gap: '6px' }}>
-              <Tooltip
-                label="Configurar números"
-                aria-label="Configurar números"
-              >
-                <ChakraButton
-                  _hover={{
-                    bg: '#282828',
-                    color: '#fff',
-                  }}
-                  _focusWithin={{
-                    border: 0,
-                  }}
-                  backgroundColor="#303030"
-                  width={12}
-                  height={12}
-                  borderRadius="50%"
-                  onClick={() => setWhatsappNumbersDrawerOpened(true)}
-                  isDisabled={deleteLoading}
-                >
-                  <FiSettings />
-                </ChakraButton>
-              </Tooltip>
+              {user?.role === 'ADMIN' ||
+                (user.role === 'NANOTECH_REPRESENTATIVE' && (
+                  <Tooltip
+                    label="Configurar números"
+                    aria-label="Configurar números"
+                  >
+                    <ChakraButton
+                      _hover={{
+                        bg: '#282828',
+                        color: '#fff',
+                      }}
+                      _focusWithin={{
+                        border: 0,
+                      }}
+                      backgroundColor="#303030"
+                      width={12}
+                      height={12}
+                      borderRadius="50%"
+                      onClick={() => setWhatsappNumbersDrawerOpened(true)}
+                      isDisabled={deleteLoading}
+                    >
+                      <FiSettings />
+                    </ChakraButton>
+                  </Tooltip>
+                ))}
               <ChakraButton
                 _hover={{
                   bg: '#5580b9',
@@ -525,92 +528,57 @@ const Sales = () => {
           paddingBottom="16px"
           maxWidth="90vw"
         >
-          {user?.role === 'ADMIN' && (
-            <ChakraBox
-              marginLeft="auto"
-              marginRight="auto"
-              width="100%"
-              marginTop="26px"
-              paddingBottom="16px"
-              maxWidth={{
-                xs: '90vw',
-                sm: '90vw',
-                md: '80vw',
-                lg: '78vw',
-                xl: '90vw',
-              }}
-              className="updateSaleContainer"
-              hidden={selectedSales.length < 1}
-            >
-              <span>Realizar ações em venda(s) selecionada(s)</span>
-
-              <Form
-                ref={formRef}
-                onSubmit={handleUpdateSale}
-                style={{ display: 'flex', alignItems: 'center' }}
+          {user?.role === 'ADMIN' ||
+            (user.role === 'NANOTECH_REPRESENTATIVE' && (
+              <ChakraBox
+                marginLeft="auto"
+                marginRight="auto"
+                width="100%"
+                marginTop="26px"
+                paddingBottom="16px"
+                maxWidth={{
+                  xs: '90vw',
+                  sm: '90vw',
+                  md: '80vw',
+                  lg: '78vw',
+                  xl: '90vw',
+                }}
+                className="updateSaleContainer"
+                hidden={selectedSales.length < 1}
               >
-                <Select
-                  height={8}
-                  backgroundColor="#424242"
-                  color="White"
-                  name="statusSale"
-                  containerProps={{
-                    marginRight: 8,
-                    width: '100%',
-                    minWidth: 300,
-                    height: 10,
-                    border: '2px solid',
-                    borderColor: '#585858',
-                    backgroundColor: '#424242',
-                  }}
+                <span>Realizar ações em venda(s) selecionada(s)</span>
+
+                <Form
+                  ref={formRef}
+                  onSubmit={handleUpdateSale}
+                  style={{ display: 'flex', alignItems: 'center' }}
                 >
-                  <option value="PENDING">Pendente</option>
-                  <option value="CONFIRMED">Confirmado</option>
-                  <option value="CANCELED">Cancelado</option>
-                  <option value="FINISHED">Finalizado</option>
-                </Select>
-
-                <ActionButttonsContainer>
-                  <Tooltip
-                    label="Salvar alteração"
-                    aria-label="Salvar alteração"
+                  <Select
+                    height={8}
+                    backgroundColor="#424242"
+                    color="White"
+                    name="statusSale"
+                    containerProps={{
+                      marginRight: 8,
+                      width: '100%',
+                      minWidth: 300,
+                      height: 10,
+                      border: '2px solid',
+                      borderColor: '#585858',
+                      backgroundColor: '#424242',
+                    }}
                   >
-                    <ChakraButton
-                      _hover={{
-                        bg: '#5580b9',
-                        color: '#fff',
-                      }}
-                      _focusWithin={{
-                        border: 0,
-                      }}
-                      backgroundColor="#355a9d"
-                      style={{ padding: 12 }}
-                      type="submit"
-                    >
-                      <FiSave />
-                    </ChakraButton>
-                  </Tooltip>
+                    <option value="PENDING">Pendente</option>
+                    <option value="CONFIRMED">Confirmado</option>
+                    <option value="CANCELED">Cancelado</option>
+                    <option value="FINISHED">Finalizado</option>
+                  </Select>
 
-                  <Tooltip label="Excluir venda" aria-label="Excluir venda">
-                    <ChakraButton
-                      _hover={{
-                        bg: '#5580b9',
-                        color: '#fff',
-                      }}
-                      _focusWithin={{
-                        border: 0,
-                      }}
-                      backgroundColor="#355a9d"
-                      style={{ padding: 12 }}
-                      onClick={() => setDeleteDialogOpened(true)}
-                      isDisabled={deleteLoading}
+                  <ActionButttonsContainer>
+                    <Tooltip
+                      label="Salvar alteração"
+                      aria-label="Salvar alteração"
                     >
-                      <FiTrash />
-                    </ChakraButton>
-                  </Tooltip>
-
-                  {selectedSales.length === 1 && (
-                    <Tooltip label="Editar venda" aria-label="Editar venda">
                       <ChakraButton
                         _hover={{
                           bg: '#5580b9',
@@ -621,21 +589,57 @@ const Sales = () => {
                         }}
                         backgroundColor="#355a9d"
                         style={{ padding: 12 }}
-                        onClick={() => {
-                          setOpenEditSalesModal(true);
-                          setSaleToEdit(
-                            sales.find(sale => sale.id === selectedSales[0]),
-                          );
-                        }}
+                        type="submit"
                       >
-                        <FiEdit3 />
+                        <FiSave />
                       </ChakraButton>
                     </Tooltip>
-                  )}
-                </ActionButttonsContainer>
-              </Form>
-            </ChakraBox>
-          )}
+
+                    <Tooltip label="Excluir venda" aria-label="Excluir venda">
+                      <ChakraButton
+                        _hover={{
+                          bg: '#5580b9',
+                          color: '#fff',
+                        }}
+                        _focusWithin={{
+                          border: 0,
+                        }}
+                        backgroundColor="#355a9d"
+                        style={{ padding: 12 }}
+                        onClick={() => setDeleteDialogOpened(true)}
+                        isDisabled={deleteLoading}
+                      >
+                        <FiTrash />
+                      </ChakraButton>
+                    </Tooltip>
+
+                    {selectedSales.length === 1 && (
+                      <Tooltip label="Editar venda" aria-label="Editar venda">
+                        <ChakraButton
+                          _hover={{
+                            bg: '#5580b9',
+                            color: '#fff',
+                          }}
+                          _focusWithin={{
+                            border: 0,
+                          }}
+                          backgroundColor="#355a9d"
+                          style={{ padding: 12 }}
+                          onClick={() => {
+                            setOpenEditSalesModal(true);
+                            setSaleToEdit(
+                              sales.find(sale => sale.id === selectedSales[0]),
+                            );
+                          }}
+                        >
+                          <FiEdit3 />
+                        </ChakraButton>
+                      </Tooltip>
+                    )}
+                  </ActionButttonsContainer>
+                </Form>
+              </ChakraBox>
+            ))}
 
           <Flex direction="column" overflowX="auto">
             <div className="boxTitle">
@@ -707,7 +711,8 @@ const Sales = () => {
                     <Box
                       key={sale.id}
                       onClick={
-                        user?.role === 'ADMIN'
+                        user?.role === 'ADMIN' ||
+                        user?.role === 'NANOTECH_REPRESENTATIVE'
                           ? () => handleSelectSale(sale.id)
                           : undefined
                       }
@@ -815,7 +820,8 @@ const Sales = () => {
                             <div className="total">
                               <span>Total</span>
                               <span>
-                                {user?.role === 'ADMIN'
+                                {user?.role === 'ADMIN' ||
+                                user?.role === 'NANOTECH_REPRESENTATIVE'
                                   ? Number(sale.cost_value).toLocaleString(
                                       'pt-br',
                                       {
