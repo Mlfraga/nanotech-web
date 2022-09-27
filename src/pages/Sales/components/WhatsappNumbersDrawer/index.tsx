@@ -59,7 +59,6 @@ const WhatsappNumbersDrawer: React.FC<IWhatsappNumbersDrawerProps> = ({
     });
 
     api.get<INumber[]>('/whatsapp-numbers').then(response => {
-      console.log(response.data);
       setNumbers(response.data);
     });
   }, []);
@@ -261,7 +260,6 @@ const WhatsappNumbersDrawer: React.FC<IWhatsappNumbersDrawerProps> = ({
                       placeholder="Concessionária"
                       isDisabled={!newNumber?.restricted_to_especific_company}
                       onChange={e => {
-                        console.log(e.target.value);
                         setNewNumber(odValue => ({
                           ...odValue,
                           company: e?.target?.value,

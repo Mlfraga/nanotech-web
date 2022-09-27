@@ -46,8 +46,6 @@ const Login = () => {
           password: data.password,
         });
 
-        console.log(`res: ${res}`);
-
         addToast({ title: 'Login realizado', type: 'success' });
 
         if (res.user.first_login) {

@@ -107,8 +107,6 @@ const CompaniesPrices = () => {
       `services/${methodType}/${disableService.id}`,
     );
 
-    console.log('status: ', status);
-
     if (status === 202) {
       addToast({
         title: `Serviço ${
