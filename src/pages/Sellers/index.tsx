@@ -125,7 +125,7 @@ const Sellers = () => {
           <>
             <List height={{ lg: '40vh', xl: '55vh' }}>
               {rows.map(row => (
-                <div className="box">
+                <div key={row.id} className="box">
                   <span>{row.name}</span>
                   <span>{row.user.telephone}</span>
                   <span>{row.user.email}</span>

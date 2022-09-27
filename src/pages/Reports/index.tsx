@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useMemo,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { FiLoader } from 'react-icons/fi';
 import { useHistory } from 'react-router-dom';
 
@@ -52,6 +58,11 @@ const Reports: React.FC = () => {
 
   const [companies, setCompanies] = useState<ICompaniesResponseData[]>([]);
   const [isReportLoading, setIsReportLoading] = useState(false);
+
+  const canHandleSales = useMemo(
+    () => user?.role === 'ADMIN' || user?.role === 'NANOTECH_REPRESENTATIVE',
+    [user],
+  );
 
   useEffect(() => {
     if (user.role === 'ADMIN' || user.role === 'NANOTECH_REPRESENTATIVE') {
@@ -138,30 +149,29 @@ const Reports: React.FC = () => {
         >
           <Form ref={formRef} onSubmit={handleGetReport}>
             <Grid templateColumns="repeat(4, 1fr)" paddingY={8} gap={4}>
-              {user.role === 'ADMIN' ||
-                (user.role === 'NANOTECH_REPRESENTATIVE' && (
-                  <Select
-                    name="company"
-                    height={8}
-                    backgroundColor="#424242"
-                    color="White"
-                    placeholder="Concessionárias"
-                    containerProps={{
-                      marginRight: 8,
-                      width: '100%',
-                      height: 10,
-                      border: '2px solid',
-                      borderColor: '#585858',
-                      backgroundColor: '#424242',
-                    }}
-                  >
-                    {companies.map(company => (
-                      <option value={company.id} key={company.id}>
-                        {company.name}
-                      </option>
-                    ))}
-                  </Select>
-                ))}
+              {canHandleSales && (
+                <Select
+                  name="company"
+                  height={8}
+                  backgroundColor="#424242"
+                  color="White"
+                  placeholder="Concessionárias"
+                  containerProps={{
+                    marginRight: 8,
+                    width: '100%',
+                    height: 10,
+                    border: '2px solid',
+                    borderColor: '#585858',
+                    backgroundColor: '#424242',
+                  }}
+                >
+                  {companies.map(company => (
+                    <option value={company.id} key={company.id}>
+                      {company.name}
+                    </option>
+                  ))}
+                </Select>
+              )}
 
               <DatePicker
                 placeholderText="Data de entrega inicial"

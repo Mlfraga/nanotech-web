@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { FiSave, FiTrash, FiXSquare } from 'react-icons/fi';
+import { FiPlus } from 'react-icons/fi';
 import { NumberFormatValues } from 'react-number-format';
+
 import {
   DrawerOverlay,
   DrawerContent,
@@ -17,12 +19,12 @@ import {
   PseudoBox,
   Button,
 } from '@chakra-ui/core';
-import { FiPlus } from 'react-icons/fi';
+
 import { ISelectOption } from '../../../../components/Select';
+import { useToast } from '../../../../context/toast';
 import { ICompany } from '../../../../interfaces/companies';
 import api from '../../../../services/api';
 import { TelephoneField, StyledStack } from './styles';
-import { useToast } from '../../../../context/toast';
 
 interface INumber {
   id: string;
@@ -107,22 +109,23 @@ const WhatsappNumbersDrawer: React.FC<IWhatsappNumbersDrawerProps> = ({
       });
     }
 
-    return numberAlreadyExistsValidation ||
+    return !(
+      numberAlreadyExistsValidation ||
       numberIsNullValidation ||
       numberLengthValidation ||
       companyIsNullValidation
-      ? false
-      : true;
+    );
   };
 
   const handleAddNumber = () => {
     const isValid = validate();
 
-    console.log(isValid);
-
     if (isValid) {
       setCreateNumberMode(false);
-      setNumbers([...numbers, newNumber]);
+      setNumbers([
+        ...numbers,
+        { ...newNumber, id: String(numbers.length + 1) },
+      ]);
     }
   };
 
@@ -173,7 +176,12 @@ const WhatsappNumbersDrawer: React.FC<IWhatsappNumbersDrawerProps> = ({
             >
               {numbers.map(number => (
                 <>
-                  <Flex w="100%" borderRight="1px solid #282828" paddingY="4px">
+                  <Flex
+                    key={number.id}
+                    w="100%"
+                    borderRight="1px solid #282828"
+                    paddingY="4px"
+                  >
                     <TelephoneField
                       format="## #####-####"
                       mask="_"
@@ -236,7 +244,7 @@ const WhatsappNumbersDrawer: React.FC<IWhatsappNumbersDrawerProps> = ({
                     <Checkbox
                       name="receive_only_company_sales"
                       isChecked={newNumber?.restricted_to_especific_company}
-                      onChange={e => {
+                      onChange={_e => {
                         setNewNumber(oldValue => ({
                           ...oldValue,
                           restricted_to_especific_company: !oldValue.restricted_to_especific_company,
