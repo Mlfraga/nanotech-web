@@ -186,31 +186,30 @@ const FilterDrawer: React.FC<IFilterDrawerProps> = ({
                 )}
               </Box>
 
-              {user.role === 'ADMIN' ||
-                (user.role === 'NANOTECH_REPRESENTATIVE' && (
-                  <Box>
-                    <Select
-                      placeholder="Concessionária"
-                      height={8}
-                      backgroundColor="#424242"
-                      color="White"
-                      name="companyId"
-                      containerProps={{
-                        height: 10,
-                        border: '2px solid',
-                        borderColor: '#585858',
-                        backgroundColor: '#424242',
-                      }}
-                      defaultValue={initialValues.companyId}
-                    >
-                      {companiesOptions.map(option => (
-                        <option key={option.id} value={option.id}>
-                          {option.name}
-                        </option>
-                      ))}
-                    </Select>
-                  </Box>
-                ))}
+              {user.role !== 'SELLER' && user.role !== 'MANAGER' && (
+                <Box>
+                  <Select
+                    placeholder="Concessionária"
+                    height={8}
+                    backgroundColor="#424242"
+                    color="White"
+                    name="companyId"
+                    containerProps={{
+                      height: 10,
+                      border: '2px solid',
+                      borderColor: '#585858',
+                      backgroundColor: '#424242',
+                    }}
+                    defaultValue={initialValues.companyId}
+                  >
+                    {companiesOptions.map(option => (
+                      <option key={option.id} value={option.id}>
+                        {option.name}
+                      </option>
+                    ))}
+                  </Select>
+                </Box>
+              )}
             </Stack>
           </DrawerBody>
 

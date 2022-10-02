@@ -53,20 +53,23 @@ const Carroussel = () => (
             xs: 'none',
             sm: 'none',
             md: 'none',
-            lg: 'block',
+            lg: 'none',
             xl: 'block',
           }}
           fontSize={22}
           mt={4}
           textAlign="left"
           fontWeight="normal"
+          color="#c7c7c7"
         >
-          Nano proteção não é um serviço ou um produto de marca, é uma
-          tecnologia de fabricação de produtos. É a capacidade do produto
-          interagir e penetrar nos poros do material em questão. As Nano
-          proteções de pintura, interagem quimicamente com o verniz, através de
-          ligações iônicas ou covalentes. Por isso oferece uma durabilidade
-          variável e em média muito mais longa do que as ceras.
+          Os serviços na pintura automotiva são classificados como serviços de
+          preparação e serviços de proteção. <br />
+          Na preparação realiza-se técnicas de Espelhamento de Pintura.
+          <br /> Quando se fala em proteção, a NANOTECH disponibiliza uma
+          variedade de produtos, para você não perder nenhuma venda! Temos os
+          Selantes, Ionizadores e Vitrificadores. <br />
+          Todas as melhores tecnologias de Nano Proteção do mercado, para você
+          oferecer a melhor opção ao cliente.
         </Text>
 
         <Flex
@@ -114,20 +117,22 @@ const Carroussel = () => (
             xs: 'none',
             sm: 'none',
             md: 'none',
-            lg: 'block',
+            lg: 'none',
             xl: 'block',
           }}
           fontSize={22}
           mt={4}
           textAlign="left"
           fontWeight="normal"
+          color="#c7c7c7"
         >
-          É a aplicação de um produto hidratante ao couro dos bancos do veículo.
-          É usado para preservar as características do couro como a textura,
-          cheiro e cor originais. Protege o couro de ressecamento, trincas e de
-          rachaduras ao longo do tempo causados pela exposição à luz solar, ar
-          condicionado e até mesmo o suor. Deve ser aplicada no mínimo de 6 em 6
-          meses. Se não hidratado, pode ocorrer o trincamento do couro.
+          Os serviços nos vidros são divididos em serviços de descontaminação e
+          serviços de impermeabilização.
+          <br /> A cristalização realiza esta descontaminação, por ação química
+          e mecânica, através de processos de polimento.
+          <br /> A Impermeabilização se faz com a aplicação de produtos de alta
+          tecnologia, que confere a superfície vítrea uma super hidro
+          repelência.
         </Text>
 
         <Flex
@@ -176,19 +181,21 @@ const Carroussel = () => (
             xs: 'none',
             sm: 'none',
             md: 'none',
-            lg: 'block',
+            lg: 'none',
             xl: 'block',
           }}
           fontSize={22}
           mt={4}
           textAlign="left"
           fontWeight="normal"
+          color="#c7c7c7"
         >
-          A higienização do interior é um serviço completo de limpeza que
-          higieniza profundamente todo o interior do veículo eliminando as
-          sujeiras mais difíceis de alcançar. Ela se dá pela utilização de
-          equipamentos e acessórios próprios para essa função. Lava-se banco,
-          forro de porta, carpete, painel, teto e porta malas.
+          Os serviços no interior do veículo se dividem em Higienização e
+          Proteção. Higienização é o serviço primordial para a realização de
+          qualquer outro serviço de proteção. As proteções que a NANOTECH
+          disponibiliza são: <br />
+          Para o couro - Hidratação e Vitrificação <br />
+          Para o tecido - Impermeabilização
         </Text>
 
         <Flex
