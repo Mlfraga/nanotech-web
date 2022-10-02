@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Button, Flex, Text } from '@chakra-ui/core';
-import { Pagination, Autoplay } from 'swiper';
+import { Pagination, Autoplay, Navigation } from 'swiper';
 import { Swiper } from 'swiper/react';
 
 import glassImg from '../../../../assets/services/glass.jpg';
@@ -12,6 +12,7 @@ import { Slider } from './styles';
 import 'swiper/swiper.min.css';
 import 'swiper/modules/pagination/pagination.min.css';
 import 'swiper/modules/autoplay/autoplay.min.css';
+import 'swiper/modules/navigation/navigation.min.css';
 
 const Carroussel = () => (
   <Swiper
@@ -22,9 +23,12 @@ const Carroussel = () => (
     pagination={{
       dynamicBullets: true,
     }}
-    modules={[Pagination, Autoplay]}
+    modules={[Pagination, Autoplay, Navigation]}
     className="mySwiper"
-    autoplay
+    autoplay={{
+      delay: 15000,
+    }}
+    navigation
   >
     <Slider imagePath={autoPolishmentImg}>
       <Flex

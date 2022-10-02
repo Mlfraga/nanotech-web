@@ -47,6 +47,14 @@ ul{
 .swiper-pagination-bullet-active-main{
   background: #305b9c;
 }
+
+.swiper-button-next,
+.swiper-button-prev {
+    color: #fff;
+    fill: black;
+    stroke: black;
+}
+
 `;
 
 export default GlobalStyle;
