@@ -1,14 +1,13 @@
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { Box, Flex, Grid, Text } from '@chakra-ui/core';
+import { Flex } from '@chakra-ui/core';
 
-import nanoproteçãoImg from '../../assets/nanoproteção.jpg';
-import signInBackgroundImg from '../../assets/sign-in-background-3.jpg';
 import Breadcrumb from '../../components/Breadcrumb';
 import Menu from '../../components/Menu';
 import { useAuth } from '../../context/auth';
 import api from '../../services/api';
+import Carroussel from './components/Carroussel';
 import { Container, Content } from './styles';
 
 const Services = () => {
@@ -39,145 +38,39 @@ const Services = () => {
     <Container>
       <Menu />
 
-      <Breadcrumb text="Serviços" />
-
-      <Content
-        width="100%"
-        maxWidth="90vw"
-        marginLeft="auto"
-        marginRight="auto"
+      <Flex
+        direction="column"
+        w={{
+          xs: '100%',
+          sm: '100%',
+          md: '100% ',
+          lg: 'calc(100% - 80px)',
+          xl: '100%',
+        }}
+        ml={{
+          xs: '0px',
+          sm: '0px',
+          md: '0px',
+          lg: '80px',
+          xl: '0px',
+        }}
+        paddingX={8}
+        paddingBottom={8}
+        flex={1}
       >
-        <Grid templateColumns="repeat(2, 1fr)" gap={6} marginTop="26px">
-          <Box
-            w="100%"
-            bg="gray.700"
-            borderRadius="md"
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            paddingTop="15px"
-            paddingLeft="15px"
-            paddingRight="15px"
-            border="2px solid #626262"
-            onClick={() => history.push('/service/vitrificacao')}
-          >
-            <img
-              style={{ maxWidth: '100%', borderRadius: '8px' }}
-              className="images"
-              src={signInBackgroundImg}
-              alt="img"
-            />
-            <Flex
-              alignItems="center"
-              paddingY="10px"
-              marginTop="2px"
-              width="100%"
-              height="15px"
-              margin="8px"
-            >
-              <Text fontSize="16px" color="#CCC">
-                Polimento técnico
-              </Text>
-            </Flex>
-          </Box>
-          <Box
-            w="100%"
-            bg="gray.700"
-            borderRadius="md"
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            paddingTop="15px"
-            paddingLeft="15px"
-            paddingRight="15px"
-            border="2px solid #626262"
-            onClick={() => history.push('/service/vitrificacao')}
-          >
-            <img
-              style={{ maxWidth: '330px', borderRadius: '8px' }}
-              className="images"
-              src={nanoproteçãoImg}
-              alt="img"
-            />
-            <Flex
-              alignItems="center"
-              paddingY="10px"
-              marginTop="2px"
-              width="100%"
-              height="15px"
-              margin="8px"
-            >
-              <Text fontSize="16px" color="#CCC">
-                Nano Proteção
-              </Text>
-            </Flex>
-          </Box>
-          <Box
-            w="100%"
-            bg="gray.700"
-            borderRadius="md"
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            paddingTop="15px"
-            paddingLeft="15px"
-            paddingRight="15px"
-            border="2px solid #626262"
-            onClick={() => history.push('/service/vitrificacao')}
-          >
-            <img
-              style={{ maxWidth: '100%', borderRadius: '8px' }}
-              className="images"
-              src={signInBackgroundImg}
-              alt="img"
-            />
-            <Flex
-              alignItems="center"
-              paddingY="10px"
-              marginTop="2px"
-              width="100%"
-              height="15px"
-              margin="8px"
-            >
-              <Text fontSize="16px" color="#CCC">
-                Interiores
-              </Text>
-            </Flex>
-          </Box>
-          <Box
-            w="100%"
-            bg="gray.700"
-            borderRadius="md"
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            paddingTop="15px"
-            paddingLeft="15px"
-            paddingRight="15px"
-            border="2px solid #626262"
-            onClick={() => history.push('/service/vitrificacao')}
-          >
-            <img
-              style={{ maxWidth: '100%', borderRadius: '8px' }}
-              className="images"
-              src={signInBackgroundImg}
-              alt="img"
-            />
-            <Flex
-              alignItems="center"
-              paddingY="10px"
-              marginTop="2px"
-              width="100%"
-              height="15px"
-              margin="8px"
-            >
-              <Text fontSize="16px" color="#CCC">
-                Vidros
-              </Text>
-            </Flex>
-          </Box>
-        </Grid>
-      </Content>
+        <Breadcrumb text="Serviços" />
+
+        <Content
+          width="100%"
+          maxWidth="90vw"
+          marginLeft="auto"
+          marginRight="auto"
+          mt={8}
+          flex={1}
+        >
+          <Carroussel />
+        </Content>
+      </Flex>
     </Container>
   );
 };

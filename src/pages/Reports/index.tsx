@@ -83,7 +83,10 @@ const Reports: React.FC = () => {
         finalDate: data.finalDate,
         ...(data.status && { status: data.status }),
         ...(data.company && { company: data.company }),
-        ...(user.role !== 'ADMIN' && { company: user.profile.company_id }),
+        ...(user.role !== 'ADMIN' &&
+          user.role !== 'NANOTECH_REPRESENTATIVE' && {
+            company: user.profile.company_id,
+          }),
       };
 
       try {

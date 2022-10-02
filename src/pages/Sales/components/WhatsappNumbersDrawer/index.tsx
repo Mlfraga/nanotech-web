@@ -246,6 +246,7 @@ const WhatsappNumbersDrawer: React.FC<IWhatsappNumbersDrawerProps> = ({
                       onChange={_e => {
                         setNewNumber(oldValue => ({
                           ...oldValue,
+                          // eslint-disable-next-line max-len
                           restricted_to_especific_company: !oldValue.restricted_to_especific_company,
                         }));
                       }}

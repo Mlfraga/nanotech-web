@@ -139,17 +139,42 @@ const Sales = () => {
     ISaleRequestResponseData | undefined
   >({} as ISaleRequestResponseData);
 
-  const loadSales = async () => {
+  const loadSales = useCallback(async () => {
     setLoading(true);
 
-    const res = await api.get('sales', { params: { page: currentPage } });
+    const res = await api.get('sales', {
+      params: {
+        page: currentPage,
+        ...(filters?.startDeliveryDate && {
+          startDeliveryDate: filters?.startDeliveryDate,
+        }),
+        ...(filters?.endDeliveryDate && {
+          endDeliveryDate: filters?.endDeliveryDate,
+        }),
+        ...(filters?.startAvailabilityDate && {
+          startAvailabilityDate: filters?.startAvailabilityDate,
+        }),
+        ...(filters?.endAvailabilityDate && {
+          endAvailabilityDate: filters?.endAvailabilityDate,
+        }),
+        ...(filters?.startFinishedDate && {
+          startFinishedDate: filters?.startFinishedDate,
+        }),
+        ...(filters?.endFinishedDate && {
+          endFinishedDate: filters?.endFinishedDate,
+        }),
+        ...(filters?.status && { status: filters?.status }),
+        ...(filters?.sellerId && { sellerId: filters?.sellerId }),
+        ...(filters?.companyId && { companyId: filters?.companyId }),
+      },
+    });
 
     setSales(res.data.items);
     setTotalPages(res.data.total_pages);
     setCurrentPage(res.data.current_page);
 
     setLoading(false);
-  };
+  }, [currentPage, filters]);
 
   useEffect(() => {
     setLoading(true);
@@ -158,6 +183,27 @@ const Sales = () => {
       .get('sales', {
         params: {
           page: currentPage,
+          ...(filters?.startDeliveryDate && {
+            startDeliveryDate: filters?.startDeliveryDate,
+          }),
+          ...(filters?.endDeliveryDate && {
+            endDeliveryDate: filters?.endDeliveryDate,
+          }),
+          ...(filters?.startAvailabilityDate && {
+            startAvailabilityDate: filters?.startAvailabilityDate,
+          }),
+          ...(filters?.endAvailabilityDate && {
+            endAvailabilityDate: filters?.endAvailabilityDate,
+          }),
+          ...(filters?.startFinishedDate && {
+            startFinishedDate: filters?.startFinishedDate,
+          }),
+          ...(filters?.endFinishedDate && {
+            endFinishedDate: filters?.endFinishedDate,
+          }),
+          ...(filters?.status && { status: filters?.status }),
+          ...(filters?.sellerId && { sellerId: filters?.sellerId }),
+          ...(filters?.companyId && { companyId: filters?.companyId }),
         },
       })
       .then(response => {
@@ -167,12 +213,19 @@ const Sales = () => {
         setTotalPages(data?.total_pages);
         setLoading(false);
       });
+  }, [currentPage, filters]);
 
+  useEffect(() => {
     if (user.role === 'ADMIN' || user.role === 'NANOTECH_REPRESENTATIVE') {
       api.get<IUser[]>('profiles').then(response => {
         setSellersOptions(
           response.data
-            .filter(u => u.id !== user.profile.id && u.user.role !== 'ADMIN')
+            .filter(
+              u =>
+                u.id !== user.profile.id &&
+                u.user.role !== 'ADMIN' &&
+                u.user.role !== 'NANOTECH_REPRESENTATIVE',
+            )
             .map(seller => ({ id: seller.id, name: seller.name })),
         );
       });
@@ -193,7 +246,7 @@ const Sales = () => {
         );
       });
     }
-  }, [user, currentPage]);
+  }, [user]);
 
   const formattedSales = useMemo(
     () =>
@@ -378,22 +431,6 @@ const Sales = () => {
       };
 
       setFilters(newFilters);
-
-      api
-        .get('sales', {
-          params: {
-            page: 0,
-            ...newFilters,
-          },
-        })
-        .then(response => {
-          const { data } = response;
-
-          setSales(data?.items);
-          setTotalPages(data?.total_pages);
-          setLoading(false);
-        });
-
       setCurrentPage(0);
     },
     [addToast],
@@ -525,12 +562,11 @@ const Sales = () => {
         />
 
         <Content
+          width="100%"
+          maxWidth="90vw"
           marginLeft="auto"
           marginRight="auto"
-          mt="16px"
-          width="100%"
-          paddingBottom="16px"
-          maxWidth="90vw"
+          mt={8}
         >
           {canHandleSales && (
             <ChakraBox
@@ -873,7 +909,7 @@ const Sales = () => {
                     minWidth="1100px"
                     setPage={setCurrentPage}
                     page={currentPage}
-                    total_pages={totalPages - 1}
+                    total_pages={totalPages}
                   />
                 </List>
               </>

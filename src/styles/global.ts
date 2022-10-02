@@ -5,22 +5,22 @@ const GlobalStyle = createGlobalStyle`
 @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap'); */
 
 * {
-margin: 0;
-padding: 0;
-outline: 0;
-box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  outline: 0;
+  box-sizing: border-box;
 }
 
 html, body, #root{
-height: 100%;
+  height: 100%;
 }
 
 body {
-font: 14px 'Roboto', sans-serif;
-background: #383838;
-color: #EEE;
-text-rendering: optimizeLegibility;
--webkit-font-smoothing: antialiased;
+  font: 14px 'Roboto', sans-serif;
+  background: #383838;
+  color: #EEE;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 input, button {
@@ -32,7 +32,21 @@ button{
 }
 
 ul{
-list-style: none;
+  list-style: none;
+}
+
+.swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-pagination-bullet{
+  background: #bebebe;
+}
+
+.swiper-pagination-bullet-active-main{
+  background: #305b9c;
 }
 `;
+
 export default GlobalStyle;
