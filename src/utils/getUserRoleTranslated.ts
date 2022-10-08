@@ -8,7 +8,9 @@ export default function getUserRoleTranslated(role: string): string {
       return 'Administrador';
     case 'NANOTECH_REPRESENTATIVE':
       return 'Representante da Nanotech';
+    case 'SERVICE_PROVIDER':
+      return 'Responsável Técnico';
     default:
-      return 'Outracoisa';
+      return '-';
   }
 }
