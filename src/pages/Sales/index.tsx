@@ -6,7 +6,7 @@ import React, {
   useMemo,
 } from 'react';
 import { FaArrowAltCircleDown, FaArrowAltCircleUp } from 'react-icons/fa';
-import { FiEdit3, FiFilter, FiTrash, FiSave } from 'react-icons/fi';
+import { FiEdit3, FiFilter, FiTrash, FiSave, FiUsers } from 'react-icons/fi';
 import { FiSettings } from 'react-icons/fi';
 
 import {
@@ -27,6 +27,7 @@ import { ptBR } from 'date-fns/locale';
 import Breadcrumb from '../../components/Breadcrumb';
 import AlertDialog from '../../components/Dialogs/Alert';
 import Menu from '../../components/Menu';
+import IndicateServiceProvider from '../../components/Modals/IndicateServiceProvider';
 import UpdateSalesModal from '../../components/Modals/UpdateSales';
 import Pagination from '../../components/Pagination';
 import Select from '../../components/Select';
@@ -135,6 +136,10 @@ const Sales = () => {
   const [filterDrawerOpened, setFilterDrawerOpened] = useState<boolean>(false);
   const [deleteDialogOpened, setDeleteDialogOpened] = useState<boolean>(false);
   const [openEditSalesModal, setOpenEditSalesModal] = useState<boolean>(false);
+  const [
+    openIndServiceProviderModal,
+    setOpenIndServiceProviderModal,
+  ] = useState<boolean>(false);
   const [saleToEdit, setSaleToEdit] = useState<
     ISaleRequestResponseData | undefined
   >({} as ISaleRequestResponseData);
@@ -675,6 +680,33 @@ const Sales = () => {
                       </ChakraButton>
                     </Tooltip>
                   )}
+
+                  {canHandleSales && (
+                    <Tooltip
+                      label="Atribuir técnico"
+                      aria-label="Atribuir técnico"
+                    >
+                      <ChakraButton
+                        _hover={{
+                          bg: '#5580b9',
+                          color: '#fff',
+                        }}
+                        _focusWithin={{
+                          border: 0,
+                        }}
+                        backgroundColor="#355a9d"
+                        style={{ padding: 12 }}
+                        onClick={() => {
+                          setOpenIndServiceProviderModal(true);
+                          setSaleToEdit(
+                            sales.find(sale => sale.id === selectedSales[0]),
+                          );
+                        }}
+                      >
+                        <FiUsers />
+                      </ChakraButton>
+                    </Tooltip>
+                  )}
                 </ActionButttonsContainer>
               </Form>
             </ChakraBox>
@@ -948,6 +980,12 @@ const Sales = () => {
           onClose={() => setOpenEditSalesModal(false)}
           onSave={loadSales}
           sale={saleToEdit}
+        />
+
+        <IndicateServiceProvider
+          isOpen={openIndServiceProviderModal}
+          onClose={() => setOpenIndServiceProviderModal(false)}
+          sales={selectedSales}
         />
       </Flex>
     </Container>
