@@ -8,8 +8,10 @@ import {
   ModalHeader,
   ModalBody,
 } from '@chakra-ui/core';
+import { Chip } from '@material-ui/core';
 
-import { TitleBox, Box, TextBox } from './styles';
+import { IServiceProvider } from '../../../interfaces/service_provider';
+import { Title, Box, Text, ChipBox, ChipContainer } from './styles';
 
 interface IFormattedSale {
   id: string;
@@ -22,52 +24,49 @@ interface IUpdateCompanyModalProps {
     reason?: 'pressedEscape' | 'clickedOverlay',
   ) => void;
   sales: IFormattedSale[];
+  serviceProviders: IServiceProvider[];
 }
-const UpdateCompanyModal: React.FC<IUpdateCompanyModalProps> = ({
+const IndicateServiceProviderModal: React.FC<IUpdateCompanyModalProps> = ({
   isOpen,
   onClose,
   sales,
-}) => {
-  const quantitySales: number = sales.length;
-  return (
-    <>
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent
-          backgroundColor="#383838"
-          maxWidth={900}
-          borderRadius="md"
-        >
-          <ModalHeader>Atribuir técnico ou responsável técnico</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Box>
-              {quantitySales <= 1 ? (
-                <TitleBox>Venda selecionada</TitleBox>
-              ) : (
-                <TitleBox>Vendas selecionadas</TitleBox>
-              )}
+  serviceProviders,
+}) => (
+  <>
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <ModalOverlay />
+      <ModalContent backgroundColor="#383838" maxWidth={900} borderRadius="md">
+        <ModalHeader>Atribuir técnico ou responsável técnico</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+          <Box>
+            <Title>Venda selecionada</Title>
+            {sales.map(sale => (
+              <Text key={sale.id}>
+                <span>{sale.client_id}</span>
+              </Text>
+            ))}
+          </Box>
 
-              <TextBox>
-                {sales.map(sale => (
-                  <>
-                    {quantitySales <= 1 ? (
-                      <span>{sale.client_id}</span>
-                    ) : (
-                      <>
-                        <span>-</span>
-                        <span>{sale.client_id}</span>
-                      </>
-                    )}
-                  </>
-                ))}
-              </TextBox>
-            </Box>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-    </>
-  );
-};
+          <Title>Selecionar técnico(s)</Title>
+          <ChipContainer>
+            {serviceProviders.map(provider => (
+              <>
+                <ChipBox>
+                  <Chip
+                    key={provider.id}
+                    label={provider.name}
+                    // onClick={handleClick}
+                    // onDelete={}
+                  />
+                </ChipBox>
+              </>
+            ))}
+          </ChipContainer>
+        </ModalBody>
+      </ModalContent>
+    </Modal>
+  </>
+);
 
-export default UpdateCompanyModal;
+export default IndicateServiceProviderModal;

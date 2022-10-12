@@ -5,18 +5,27 @@ export const Box = styled.div`
   flex-direction: column;
 `;
 
-export const TitleBox = styled.h1`
-  font: 16px 'Ubuntu', sans-serif;
+export const Title = styled.h1`
+  font: 17px 'Ubuntu', sans-serif;
   font-weight: bold;
   margin-bottom: 10px;
 `;
 
-export const TextBox = styled.div`
+export const Text = styled.div`
   display: flex;
   flex-direction: row;
-  gap: 10px;
-
+  margin-bottom: 20px;
   span {
-    font: 14px 'Ubuntu', sans-serif;
+    font: 16px 'Ubuntu', sans-serif;
   }
+`;
+
+export const ChipContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+`;
+
+export const ChipBox = styled.div`
+  padding: 5px;
 `;

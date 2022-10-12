@@ -21,6 +21,7 @@ import {
 } from '@chakra-ui/core';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
+import { AxiosResponse } from 'axios';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -35,6 +36,7 @@ import { useAuth } from '../../context/auth';
 import { useToast } from '../../context/toast';
 import { ICompany } from '../../interfaces/companies';
 import { ISelectOptions } from '../../interfaces/select';
+import { IServiceProvider } from '../../interfaces/service_provider';
 import { IUser } from '../../interfaces/users';
 import api from '../../services/api';
 import formatMoney from '../../utils/formatMoney';
@@ -143,6 +145,9 @@ const Sales = () => {
   const [saleToEdit, setSaleToEdit] = useState<
     ISaleRequestResponseData | undefined
   >({} as ISaleRequestResponseData);
+  const [serviceProviders, setServiceProviders] = useState<IServiceProvider[]>(
+    [],
+  );
 
   const loadSales = useCallback(async () => {
     setLoading(true);
@@ -500,6 +505,17 @@ const Sales = () => {
     selectedSales.some((id: string) => id === sale.id),
   );
 
+  useEffect(() => {
+    api
+      .get('/profiles', {
+        params: { role: 'SERVICE_PROVIDER' },
+      })
+      .then((response: AxiosResponse) => {
+        setServiceProviders(response.data);
+        console.log(response.data);
+      });
+  }, []);
+
   return (
     <Container>
       <Menu />
@@ -685,7 +701,7 @@ const Sales = () => {
                     </Tooltip>
                   )}
 
-                  {canHandleSales && (
+                  {canHandleSales && selectedSales.length === 1 && (
                     <Tooltip
                       label="Atribuir técnico"
                       aria-label="Atribuir técnico"
@@ -993,6 +1009,7 @@ const Sales = () => {
             id: sale.id,
             client_id: sale.client_id,
           }))}
+          serviceProviders={serviceProviders}
         />
       </Flex>
     </Container>
