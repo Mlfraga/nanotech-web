@@ -6,24 +6,29 @@ import {
   ModalContent,
   ModalOverlay,
   ModalHeader,
+  ModalBody,
 } from '@chakra-ui/core';
 
+import { TitleBox, Box, TextBox } from './styles';
+
+interface ISales {
+  id: string;
+  client_id: string;
+}
 interface IUpdateCompanyModalProps {
   isOpen: boolean;
   onClose: (
     event: React.MouseEvent | React.KeyboardEvent,
     reason?: 'pressedEscape' | 'clickedOverlay',
   ) => void;
-  sales: string[];
+  sales: any;
 }
-
 const UpdateCompanyModal: React.FC<IUpdateCompanyModalProps> = ({
   isOpen,
   onClose,
   sales,
 }) => {
-  console.log(sales);
-
+  const quantitySales: number = sales.length;
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -35,9 +40,34 @@ const UpdateCompanyModal: React.FC<IUpdateCompanyModalProps> = ({
         >
           <ModalHeader>Atribuir técnico ou responsável técnico</ModalHeader>
           <ModalCloseButton />
+          <ModalBody>
+            <Box>
+              {quantitySales <= 1 ? (
+                <TitleBox>Venda selecionada</TitleBox>
+              ) : (
+                <TitleBox>Vendas selecionadas</TitleBox>
+              )}
+
+              <TextBox>
+                {sales.map((sale: any) => (
+                  <>
+                    {quantitySales <= 1 ? (
+                      <span>{sale.client_id}</span>
+                    ) : (
+                      <>
+                        <span>-</span>
+                        <span>{sale.client_id}</span>
+                      </>
+                    )}
+                  </>
+                ))}
+              </TextBox>
+            </Box>
+          </ModalBody>
         </ModalContent>
       </Modal>
     </>
   );
 };
+
 export default UpdateCompanyModal;

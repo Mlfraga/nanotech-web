@@ -496,6 +496,10 @@ const Sales = () => {
     setDeleteDialogOpened(false);
   }, [selectedSales, addToast, currentPage]);
 
+  const selectedSalesInfo = formattedSales.filter(sale =>
+    selectedSales.some((id: string) => id === sale.id),
+  );
+
   return (
     <Container>
       <Menu />
@@ -985,7 +989,7 @@ const Sales = () => {
         <IndicateServiceProvider
           isOpen={openIndServiceProviderModal}
           onClose={() => setOpenIndServiceProviderModal(false)}
-          sales={selectedSales}
+          sales={selectedSalesInfo}
         />
       </Flex>
     </Container>
