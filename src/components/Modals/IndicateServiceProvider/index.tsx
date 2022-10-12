@@ -11,7 +11,7 @@ import {
 
 import { TitleBox, Box, TextBox } from './styles';
 
-interface ISales {
+interface IFormattedSale {
   id: string;
   client_id: string;
 }
@@ -21,7 +21,7 @@ interface IUpdateCompanyModalProps {
     event: React.MouseEvent | React.KeyboardEvent,
     reason?: 'pressedEscape' | 'clickedOverlay',
   ) => void;
-  sales: any;
+  sales: IFormattedSale[];
 }
 const UpdateCompanyModal: React.FC<IUpdateCompanyModalProps> = ({
   isOpen,
@@ -49,7 +49,7 @@ const UpdateCompanyModal: React.FC<IUpdateCompanyModalProps> = ({
               )}
 
               <TextBox>
-                {sales.map((sale: any) => (
+                {sales.map(sale => (
                   <>
                     {quantitySales <= 1 ? (
                       <span>{sale.client_id}</span>

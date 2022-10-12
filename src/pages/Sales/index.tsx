@@ -989,7 +989,10 @@ const Sales = () => {
         <IndicateServiceProvider
           isOpen={openIndServiceProviderModal}
           onClose={() => setOpenIndServiceProviderModal(false)}
-          sales={selectedSalesInfo}
+          sales={selectedSalesInfo.map(sale => ({
+            id: sale.id,
+            client_id: sale.client_id,
+          }))}
         />
       </Flex>
     </Container>
