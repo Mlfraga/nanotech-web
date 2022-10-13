@@ -241,10 +241,13 @@ const Sales = () => {
       });
 
       api.get('companies').then(response => {
-        const newCompanies: ICompany[] = response.data;
+        const newCompaniesOptions: ICompany[] = response.data;
 
         setCompaniesOptions(
-          newCompanies.map(company => ({ id: company.id, name: company.name })),
+          newCompaniesOptions.map(company => ({
+            id: company.id,
+            name: company.name,
+          })),
         );
       });
     }
