@@ -6,7 +6,6 @@ import {
   ModalContent,
   ModalOverlay,
   ModalHeader,
-  Text,
   ModalBody,
   Flex,
   Textarea,
@@ -18,7 +17,7 @@ import { Form } from '@unform/web';
 
 import { IServiceProvider } from '../../../interfaces/service_provider';
 import DatePicker from '../../DatePicker';
-import { Title, Box, Content, CustomChip } from './styles';
+import { Content, CustomChip } from './styles';
 
 interface IFormattedSale {
   id: string;
@@ -37,7 +36,7 @@ interface IUpdateCompanyModalProps {
 const IndicateServiceProviderModal: React.FC<IUpdateCompanyModalProps> = ({
   isOpen,
   onClose,
-  sales,
+  // sales,
   serviceProviders,
 }) => {
   const formRef = useRef<FormHandles>(null);
