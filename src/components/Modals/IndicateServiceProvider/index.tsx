@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useRef, useState, useEffect } from 'react';
 
 import {
   Modal,
@@ -8,45 +8,117 @@ import {
   ModalHeader,
   ModalBody,
   Flex,
-  Textarea,
+  Button,
+  Text,
 } from '@chakra-ui/core';
 import { TextField } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 
+import { useToast } from '../../../context/toast';
 import { IServiceProvider } from '../../../interfaces/service_provider';
+import api from '../../../services/api';
 import DatePicker from '../../DatePicker';
+import Textarea from '../../Textarea';
 import { Content, CustomChip } from './styles';
 
-interface IFormattedSale {
-  id: string;
-  client_id: string;
-}
 interface IUpdateCompanyModalProps {
   isOpen: boolean;
-  onClose: (
-    event: React.MouseEvent | React.KeyboardEvent,
-    reason?: 'pressedEscape' | 'clickedOverlay',
-  ) => void;
-  sales: IFormattedSale[];
+  onClose: () => void;
+  saleId: string | null;
   serviceProviders: IServiceProvider[];
+}
+
+interface IFormData {
+  techinical_comments: string;
+  date_to_be_done: Date;
 }
 
 const IndicateServiceProviderModal: React.FC<IUpdateCompanyModalProps> = ({
   isOpen,
   onClose,
-  // sales,
+  saleId,
   serviceProviders,
 }) => {
+  const { addToast } = useToast();
   const formRef = useRef<FormHandles>(null);
-  const [selectedProviders, setSelectedProviders] = useState<string[]>([]);
-  console.log(
-    serviceProviders.map(profile => ({
-      id: profile.id,
-      name: profile.name,
-    })),
+
+  const [loading, setLoading] = useState(false);
+  const [initialDateToBeDone, setInitialDateToBeDone] = useState<
+    Date | undefined
+  >();
+  const [initialTechinicalComments, setInitialTechinicalComments] = useState(
+    '',
   );
+  const [selectedProviders, setSelectedProviders] = useState<
+    {
+      name: string;
+      id: string;
+    }[]
+  >([]);
+
+  useEffect(() => {
+    if (saleId) {
+      api
+        .get(`/service-sale-providers/sale/${saleId}`)
+        .then(response => {
+          setSelectedProviders(response.data.providers || []);
+          setInitialDateToBeDone(
+            response.data.date_to_be_done
+              ? new Date(response.data.date_to_be_done)
+              : undefined,
+          );
+
+          const techinicalCommentsFieldRef = formRef.current?.getFieldRef(
+            'techinical_comments',
+          );
+
+          techinicalCommentsFieldRef.value =
+            response.data.techinical_comments || '';
+        })
+        .catch(() => {
+          setSelectedProviders([]);
+          setInitialDateToBeDone(undefined);
+          setInitialTechinicalComments('');
+        });
+    }
+  }, [saleId, formRef]);
+
+  const handleLinkSalesToProviders = useCallback(
+    (data: IFormData) => {
+      const payload = {
+        ...data,
+        sale_ids: [saleId],
+        sale_service_provider_profile_ids: selectedProviders.map(
+          provider => provider.id,
+        ),
+      };
+      setLoading(true);
+      api
+        .post('/service-sale-providers', payload)
+        .then(() => {
+          addToast({
+            type: 'success',
+            title: 'Responsáveis pelo serviço indicados com sucesso!',
+            description:
+              'Os responsáveis pelo serviço foram indicados com sucesso!',
+          });
+          onClose();
+        })
+        .catch(() => {
+          addToast({
+            type: 'error',
+            title: 'Erro ao indicar responsáveis técnicos',
+            description:
+              'Ocorreu um erro ao indicar responsáveis técnicos para as vendas',
+          });
+        })
+        .finally(() => setLoading(false));
+    },
+    [saleId, selectedProviders, addToast, onClose],
+  );
+
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -55,6 +127,7 @@ const IndicateServiceProviderModal: React.FC<IUpdateCompanyModalProps> = ({
           backgroundColor="#383838"
           maxWidth={900}
           borderRadius="md"
+          zIndex={1300}
         >
           <ModalHeader>Atribuir vendas aos responsáveis técnicos</ModalHeader>
           <ModalCloseButton />
@@ -63,12 +136,32 @@ const IndicateServiceProviderModal: React.FC<IUpdateCompanyModalProps> = ({
               <Form
                 style={{ display: 'flex', flex: 1, flexDirection: 'column' }}
                 ref={formRef}
-                onSubmit={() => console.log('opdo')}
+                onSubmit={handleLinkSalesToProviders}
               >
+                <Flex mb={6} direction="column">
+                  <Text fontWeight="semibold" fontSize={16} mb={2}>
+                    Observações Técnicas:{' '}
+                  </Text>
+                  <Textarea
+                    defaultValue={initialTechinicalComments}
+                    name="techinical_comments"
+                  />
+                </Flex>
+
                 <Flex w="100%" direction="row" style={{ gap: '8px' }}>
                   <Flex w="50%" direction="column">
+                    <Text fontWeight="semibold" fontSize={16} mb={2}>
+                      Responsáveis:{' '}
+                    </Text>
                     <Autocomplete
-                      options={serviceProviders.map(profile => profile.name)}
+                      options={serviceProviders.map(profile => ({
+                        name: profile.name,
+                        id: profile.id,
+                      }))}
+                      getOptionSelected={(option, value) =>
+                        option.id === value.id
+                      }
+                      getOptionLabel={option => option.name}
                       autoComplete={false}
                       style={{
                         background: '#282828',
@@ -76,6 +169,7 @@ const IndicateServiceProviderModal: React.FC<IUpdateCompanyModalProps> = ({
                         borderRadius: 8,
                         minHeight: '40px',
                         margin: '0px',
+                        border: '1px solid #585858',
                       }}
                       renderInput={params => (
                         <TextField
@@ -92,7 +186,7 @@ const IndicateServiceProviderModal: React.FC<IUpdateCompanyModalProps> = ({
                       renderTags={selectedValues =>
                         selectedValues.map(option => (
                           <CustomChip
-                            key={option}
+                            key={option.id}
                             style={{
                               color: '#fff',
                               borderColor: '#585858',
@@ -109,16 +203,19 @@ const IndicateServiceProviderModal: React.FC<IUpdateCompanyModalProps> = ({
                               );
                             }}
                             variant="outlined"
-                            label={option}
+                            label={option.name}
                           />
                         ))
                       }
                     />
                   </Flex>
                   <Flex w="50%" direction="column">
+                    <Text fontWeight="semibold" fontSize={16} mb={2}>
+                      Data a ser realizado:{' '}
+                    </Text>
                     <DatePicker
-                      name="dateToBeDone"
-                      placeholderText="Data a realizar"
+                      name="date_to_be_done"
+                      initialDate={initialDateToBeDone}
                       containerProps={{
                         width: '100%',
                         height: 10,
@@ -127,7 +224,32 @@ const IndicateServiceProviderModal: React.FC<IUpdateCompanyModalProps> = ({
                   </Flex>
                 </Flex>
 
-                <Textarea name="comments" style={{ marginTop: '12px' }} />
+                <Flex
+                  mt={16}
+                  flex={1}
+                  justifyContent="flex-end"
+                  alignItems="flex-end"
+                  style={{ gap: '12px' }}
+                >
+                  <Button
+                    isDisabled={loading}
+                    onClick={() => onClose()}
+                    variant="outline"
+                    _hover={{ background: 'transparent' }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    isDisabled={loading}
+                    type="submit"
+                    backgroundColor="#355a9d"
+                    _hover={{
+                      backgroundColor: '#5580b9',
+                    }}
+                  >
+                    Salvar
+                  </Button>
+                </Flex>
               </Form>
             </Content>
           </ModalBody>

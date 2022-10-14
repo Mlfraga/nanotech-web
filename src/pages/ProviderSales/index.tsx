@@ -30,6 +30,7 @@ interface ISales {
   status: string;
   production_status: 'TO_DO' | 'IN_PROGRESS' | 'DONE' | 'PENDING';
   comments: string;
+  techinical_comments: string;
   sellerName: string;
   client_identifier: string;
   car: {
@@ -51,6 +52,10 @@ const ProviderSales = () => {
   const [commentsModalIsOpen, setCommentsModalIsOpen] = useState(false);
   const [sales, setSales] = useState<ISales[]>([]);
   const [listFrom, setListFrom] = useState('today');
+  const [selectedSaleComments, setSelectedSaleComments] = useState({
+    comments: '',
+    techinicalComments: '',
+  });
 
   const fetchSalesByProvider = useCallback(async () => {
     setLoading(true);
@@ -206,7 +211,13 @@ const ProviderSales = () => {
                             color: '#6e737c',
                           }}
                           color="#fff"
-                          onClick={() => setCommentsModalIsOpen(true)}
+                          onClick={() => {
+                            setCommentsModalIsOpen(true);
+                            setSelectedSaleComments({
+                              comments: sale.comments,
+                              techinicalComments: sale.techinical_comments,
+                            });
+                          }}
                         >
                           <FiInfo size={20} />
                         </Button>
@@ -283,6 +294,8 @@ const ProviderSales = () => {
       <SalesCommentsModal
         isOpen={commentsModalIsOpen}
         onClose={() => setCommentsModalIsOpen(false)}
+        comments={selectedSaleComments.comments}
+        techinicalComments={selectedSaleComments.techinicalComments}
       />
     </Container>
   );

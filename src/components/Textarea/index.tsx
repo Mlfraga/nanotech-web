@@ -7,10 +7,19 @@ interface ITextareaProps extends InputProps {
   name: string;
 }
 
-const ITextarea: React.FC<ITextareaProps> = ({ name, ...rest }) => {
+const ITextarea: React.FC<ITextareaProps> = ({
+  defaultValue: initialValue,
+  name,
+  ...rest
+}) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const { fieldName, error, registerField } = useField(name);
+  const {
+    fieldName,
+    error,
+    registerField,
+    defaultValue = initialValue,
+  } = useField(name);
 
   useEffect(() => {
     registerField({
@@ -28,6 +37,7 @@ const ITextarea: React.FC<ITextareaProps> = ({ name, ...rest }) => {
       borderColor={error ? '#c53030' : '#585858'}
       color="#fff"
       name={name}
+      defaultValue={defaultValue}
       resize="none"
       _hover={{ borderWidth: '2px', borderColor: '#585858' }}
       _focus={{

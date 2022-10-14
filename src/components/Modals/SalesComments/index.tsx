@@ -17,14 +17,14 @@ interface ISalesCommentsModalProps {
     event: React.MouseEvent | React.KeyboardEvent,
     reason?: 'pressedEscape' | 'clickedOverlay',
   ) => void;
-  techinicianComments?: string;
+  techinicalComments?: string;
   comments?: string;
 }
 
 const SalesCommentsModal: React.FC<ISalesCommentsModalProps> = ({
   isOpen,
   onClose,
-  techinicianComments,
+  techinicalComments,
   comments,
 }) => (
   <Modal isOpen={isOpen} onClose={onClose}>
@@ -45,7 +45,7 @@ const SalesCommentsModal: React.FC<ISalesCommentsModalProps> = ({
         </Flex>
         <Flex w="50%" direction="column">
           <Text fontWeight="semibold">Observações técnicas</Text>
-          <Text mt={4}>{techinicianComments || 'Nenhuma observação'}</Text>
+          <Text mt={4}>{techinicalComments || 'Nenhuma observação'}</Text>
         </Flex>
       </ModalBody>
     </ModalContent>

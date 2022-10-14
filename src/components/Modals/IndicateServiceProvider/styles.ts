@@ -56,4 +56,9 @@ export const Content = styled.div`
   label + .MuiInput-formControl {
     margin-top: 0px;
   }
+
+  .MuiAutocomplete-popper {
+    background-color: #282828;
+    z-index: 9999;
+  }
 `;

@@ -122,6 +122,9 @@ const Sales = () => {
   );
 
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
+  const [saleToLinkProviders, setSaleToLinkProviders] = useState<string | null>(
+    null,
+  );
 
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(0);
@@ -139,8 +142,8 @@ const Sales = () => {
   const [deleteDialogOpened, setDeleteDialogOpened] = useState<boolean>(false);
   const [openEditSalesModal, setOpenEditSalesModal] = useState<boolean>(false);
   const [
-    openIndServiceProviderModal,
-    setOpenIndServiceProviderModal,
+    openLinkServiceProviderToSalesModal,
+    setOpenLinkServiceProviderToSalesModal,
   ] = useState<boolean>(false);
   const [saleToEdit, setSaleToEdit] = useState<
     ISaleRequestResponseData | undefined
@@ -260,6 +263,16 @@ const Sales = () => {
       });
     }
   }, [user]);
+
+  useEffect(() => {
+    api
+      .get('/profiles', {
+        params: { role: 'SERVICE_PROVIDER' },
+      })
+      .then((response: AxiosResponse) => {
+        setServiceProviders(response.data);
+      });
+  }, []);
 
   const formattedSales = useMemo(
     () =>
@@ -508,17 +521,6 @@ const Sales = () => {
     selectedSales.some((id: string) => id === sale.id),
   );
 
-  useEffect(() => {
-    api
-      .get('/profiles', {
-        params: { role: 'SERVICE_PROVIDER' },
-      })
-      .then((response: AxiosResponse) => {
-        setServiceProviders(response.data);
-        console.log(response.data);
-      });
-  }, []);
-
   return (
     <Container>
       <Menu />
@@ -706,8 +708,8 @@ const Sales = () => {
 
                   {canHandleSales && selectedSales.length === 1 && (
                     <Tooltip
-                      label="Atribuir técnico"
-                      aria-label="Atribuir técnico"
+                      label="Atribuir responsáveis técnicos"
+                      aria-label="Atribuir responsáveis técnicos"
                     >
                       <ChakraButton
                         _hover={{
@@ -720,10 +722,8 @@ const Sales = () => {
                         backgroundColor="#355a9d"
                         style={{ padding: 12 }}
                         onClick={() => {
-                          setOpenIndServiceProviderModal(true);
-                          setSaleToEdit(
-                            sales.find(sale => sale.id === selectedSales[0]),
-                          );
+                          setOpenLinkServiceProviderToSalesModal(true);
+                          setSaleToLinkProviders(selectedSalesInfo[0].id);
                         }}
                       >
                         <FiUsers />
@@ -1006,12 +1006,11 @@ const Sales = () => {
         />
 
         <IndicateServiceProvider
-          isOpen={openIndServiceProviderModal}
-          onClose={() => setOpenIndServiceProviderModal(false)}
-          sales={selectedSalesInfo.map(sale => ({
-            id: sale.id,
-            client_id: sale.client_id,
-          }))}
+          isOpen={openLinkServiceProviderToSalesModal}
+          onClose={() => {
+            setOpenLinkServiceProviderToSalesModal(false);
+          }}
+          saleId={saleToLinkProviders}
           serviceProviders={serviceProviders}
         />
       </Flex>

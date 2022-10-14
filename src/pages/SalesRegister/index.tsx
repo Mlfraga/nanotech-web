@@ -1,7 +1,7 @@
 import React, { useRef, useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { Box } from '@chakra-ui/core';
+import { Box, Spinner } from '@chakra-ui/core';
 import { Tooltip } from '@chakra-ui/core';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
@@ -526,7 +526,7 @@ const SalesRegister = () => {
 
             <div className="buttons_container">
               <Button isDisabled={!!loadingButton} type="submit">
-                Salvar
+                {loadingButton ? <Spinner color="#282828" /> : 'Salvar'}
               </Button>
             </div>
           </Form>
