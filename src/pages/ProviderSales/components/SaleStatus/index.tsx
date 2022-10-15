@@ -55,7 +55,7 @@ const SaleStatus: React.FC<ISaleStatusProps> = ({
       case 'PENDING':
         return <BiBlock color="#ff6f60" />;
       default:
-        return 'Status não encontrado';
+        return '';
     }
   }, [status]);
 
