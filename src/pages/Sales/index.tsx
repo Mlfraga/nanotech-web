@@ -41,6 +41,7 @@ import { IUser } from '../../interfaces/users';
 import api from '../../services/api';
 import formatMoney from '../../utils/formatMoney';
 import getSaleStatusTranslated from '../../utils/getSaleStatusTranslated';
+import SaleStatus from '../ProviderSales/components/SaleStatus';
 import FilterDrawer from './components/FilterDrawer';
 import WhatsappNumbersDrawer from './components/WhatsappNumbersDrawer';
 import {
@@ -58,6 +59,7 @@ interface ISaleRequestResponseData {
   availability_date: string;
   delivery_date: string;
   status: string;
+  production_status: string;
   company_value: number;
   cost_value: number;
   comments: string;
@@ -314,6 +316,7 @@ const Sales = () => {
           availability_date: sale.availability_date,
           delivery_date: sale.delivery_date,
           status: sale.status,
+          production_status: sale.production_status,
           services,
           unit: sale.unit.name,
           request_date: sale.request_date,
@@ -739,11 +742,11 @@ const Sales = () => {
             <div className="boxTitle">
               <span>N°</span>
               <span>Vendedor</span>
-              <span>Carro</span>
-              <span>Placa</span>
-              <span>Data de disponibilidade</span>
-              <span>Data de entrega</span>
-              <span>Situação</span>
+              <span>Carro - Placa/Chassi</span>
+              <span>Disponibilidade</span>
+              <span>Entrega</span>
+              <span>Status</span>
+              <span>Status Prod.</span>
             </div>
 
             {loading ? (
@@ -830,8 +833,7 @@ const Sales = () => {
                       >
                         <span>{sale.client_id}</span>
                         <span>{sale.seller}</span>
-                        <span>{sale.car}</span>
-                        <span>{sale.carPlate}</span>
+                        <span>{`${sale.car} - ${sale.carPlate}`}</span>
                         <span>
                           {format(
                             new Date(sale.availability_date),
@@ -846,12 +848,32 @@ const Sales = () => {
                             { locale: ptBR },
                           )}
                         </span>
+
                         <div className="status">
                           <span>
                             <div className={sale.status} />
                             {getSaleStatusTranslated(sale.status)}
                           </span>
                         </div>
+
+                        <SaleStatus
+                          sale_id={sale.id}
+                          status={
+                            sale.production_status as
+                              | 'PENDING'
+                              | 'TO_DO'
+                              | 'IN_PROGRESS'
+                              | 'DONE'
+                          }
+                          enableUpdateStatus={false}
+                          containerStyle={{
+                            justifyContent: 'start',
+                            margin: '0px',
+                            marginRight: '16px',
+                            border: '0px',
+                            padding: '0px',
+                          }}
+                        />
 
                         {openedServices.includes(sale.id) ? (
                           <FaArrowAltCircleUp

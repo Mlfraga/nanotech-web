@@ -17,7 +17,7 @@ interface IUpdateStatusPopoverContentProps {
   sale_id: string;
   currentStatus: string;
   close: () => void;
-  onUpdateStatus: () => Promise<void>;
+  onUpdateStatus?: () => Promise<void>;
 }
 
 const UpdateStatusPopoverContent: React.FC<IUpdateStatusPopoverContentProps> = ({
@@ -35,8 +35,10 @@ const UpdateStatusPopoverContent: React.FC<IUpdateStatusPopoverContentProps> = (
         sale_ids: [sale_id],
       })
       .then(() => {
-        onUpdateStatus();
-        close();
+        if (onUpdateStatus) {
+          onUpdateStatus();
+          close();
+        }
       });
   };
 

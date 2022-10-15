@@ -44,7 +44,7 @@ interface ISales {
       name: string;
     };
   };
-  services: { name: string }[];
+  services: { name: string; id: string }[];
 }
 
 const ProviderSales = () => {
@@ -157,6 +157,7 @@ const ProviderSales = () => {
             ) : (
               sales.map(sale => (
                 <Flex
+                  key={sale.id}
                   borderRadius={8}
                   border="1px solid #282828"
                   paddingX={6}
@@ -200,6 +201,7 @@ const ProviderSales = () => {
                       sale_id={sale.id}
                       status={sale.production_status}
                       onUpdateStatus={fetchSalesByProvider}
+                      enableUpdateStatus
                     />
 
                     <Flex flex={1} w="100%" justifyContent="flex-end">
@@ -275,6 +277,7 @@ const ProviderSales = () => {
                     </Text>
                     {sale.services.map(service => (
                       <Box
+                        key={service.id}
                         borderRadius={8}
                         mt={4}
                         border="1px solid #282828"

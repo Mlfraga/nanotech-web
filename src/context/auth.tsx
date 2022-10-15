@@ -311,6 +311,17 @@ export const AuthProvider: React.FC = ({ children }) => {
       ];
     }
 
+    if (user.role === 'SERVICE_PROVIDER') {
+      buttons = [
+        {
+          name: 'Vendas atribuídas a mim',
+          enable: false,
+          route: '/sales-by-provider',
+          icon: <FiList color="#fff" />,
+        },
+      ];
+    }
+
     localStorage.setItem('@TotalClean:access-token', access_token);
     localStorage.setItem('@TotalClean:refresh-token', refresh_token);
     localStorage.setItem('@TotalClean:user', JSON.stringify(user));
@@ -458,6 +469,17 @@ export const AuthProvider: React.FC = ({ children }) => {
               name: 'Vendas',
               enable: false,
               route: '/sales',
+              icon: <FiList color="#fff" />,
+            },
+          ];
+        }
+
+        if (userData.role === 'SERVICE_PROVIDER') {
+          buttons = [
+            {
+              name: 'Vendas atribuídas a mim',
+              enable: false,
+              route: '/sales-by-provider',
               icon: <FiList color="#fff" />,
             },
           ];

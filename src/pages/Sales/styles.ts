@@ -16,7 +16,7 @@ export const Content = styled(ChakraBox)`
     min-width: 1100px;
 
     display: grid;
-    grid-template-columns: 9% 14% 13% 13% 16% 16% 14% 5%;
+    grid-template-columns: 9% 17% 17% 14% 14% 12% 12% 5%;
     align-items: center;
     justify-content: center;
     padding-left: 10px;
@@ -99,7 +99,7 @@ export const Box = styled(ChakraBox)`
     padding-left: 10px;
     display: grid;
     width: 100%;
-    grid-template-columns: 9% 14% 13% 13% 16% 16% 14% 5%;
+    grid-template-columns: 9% 17% 17% 14% 14% 12% 12% 5%;
     align-items: center;
     justify-content: center;
 
@@ -129,7 +129,7 @@ export const Box = styled(ChakraBox)`
     padding-left: 10px;
     display: grid;
     width: 100%;
-    grid-template-columns: 9% 14% 13% 13% 16% 16% 14% 5%;
+    grid-template-columns: 9% 17% 17% 14% 14% 12% 12% 5%;
     align-items: center;
     justify-content: center;
 

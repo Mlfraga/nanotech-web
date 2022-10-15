@@ -15,13 +15,17 @@ import UpdateStatusPopoverContent from '../UpdateStatusPopoverContent';
 interface ISaleStatusProps {
   status: 'TO_DO' | 'IN_PROGRESS' | 'DONE' | 'PENDING';
   sale_id: string;
-  onUpdateStatus: () => Promise<void>;
+  onUpdateStatus?: () => Promise<void>;
+  enableUpdateStatus?: boolean;
+  containerStyle?: React.CSSProperties;
 }
 
 const SaleStatus: React.FC<ISaleStatusProps> = ({
   status,
   sale_id,
   onUpdateStatus,
+  enableUpdateStatus = false,
+  containerStyle = {},
 }) => {
   const { onOpen, onClose, isOpen } = useDisclosure();
 
@@ -73,6 +77,7 @@ const SaleStatus: React.FC<ISaleStatusProps> = ({
           alignItems="center"
           justifyContent="center"
           cursor="pointer"
+          style={containerStyle}
         >
           {displayStatusIcon}
 
@@ -82,12 +87,14 @@ const SaleStatus: React.FC<ISaleStatusProps> = ({
         </Flex>
       </PopoverTrigger>
 
-      <UpdateStatusPopoverContent
-        currentStatus={status}
-        close={onClose}
-        sale_id={sale_id}
-        onUpdateStatus={onUpdateStatus}
-      />
+      {enableUpdateStatus && (
+        <UpdateStatusPopoverContent
+          currentStatus={status}
+          close={onClose}
+          sale_id={sale_id}
+          onUpdateStatus={onUpdateStatus}
+        />
+      )}
     </Popover>
   );
 };
