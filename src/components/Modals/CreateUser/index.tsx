@@ -49,6 +49,10 @@ const CreateUserModal: React.FC<ICreateUserModalProps> = ({
     { value: 'SELLER', label: 'Vendedor' },
     { value: 'MANAGER', label: 'Gerente' },
     { value: 'NANOTECH_REPRESENTATIVE', label: 'Representante Nanotech' },
+    {
+      value: 'SERVICE_PROVIDER',
+      label: 'Responsável Técnico',
+    },
   ];
 
   useEffect(() => {
@@ -80,7 +84,7 @@ const CreateUserModal: React.FC<ICreateUserModalProps> = ({
           username: Yup.string().required('Nome de login obrigatório'),
           role: Yup.string().required('Cargo do usuário obrigatório'),
           company:
-            role !== 'NANOTECH_REPRESENTATIVE'
+            role !== 'NANOTECH_REPRESENTATIVE' && role !== 'SERVICE_PROVIDER'
               ? Yup.string()
                   .uuid()
                   .required('Concessionária do usuário obrigatório')
@@ -101,6 +105,7 @@ const CreateUserModal: React.FC<ICreateUserModalProps> = ({
 
         onSave();
       } catch (err) {
+        console.log('err: ', err);
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationsErrors(err);
 
@@ -137,10 +142,10 @@ const CreateUserModal: React.FC<ICreateUserModalProps> = ({
                 maxH="40px"
               >
                 <Flex mb={2} alignItems="center" justifyContent="space-between">
-                  <Text ml={2} fontSize="18px" fontFamily="Roboto">
+                  <Text ml={2} fontSize="18px" fontFamily="Inter">
                     Nome:
                   </Text>
-                  <Text fontSize="18px" fontFamily="Roboto">
+                  <Text fontSize="18px" fontFamily="Inter">
                     *
                   </Text>
                 </Flex>
@@ -162,10 +167,10 @@ const CreateUserModal: React.FC<ICreateUserModalProps> = ({
                 maxH="40px"
               >
                 <Flex mb={2} alignItems="center" justifyContent="space-between">
-                  <Text ml={2} fontSize="18px" fontFamily="Roboto">
+                  <Text ml={2} fontSize="18px" fontFamily="Inter">
                     Email:
                   </Text>
-                  <Text fontSize="18px" fontFamily="Roboto">
+                  <Text fontSize="18px" fontFamily="Inter">
                     *
                   </Text>
                 </Flex>
@@ -187,10 +192,10 @@ const CreateUserModal: React.FC<ICreateUserModalProps> = ({
                 maxH="40px"
               >
                 <Flex mb={2} alignItems="center" justifyContent="space-between">
-                  <Text ml={2} fontSize="18px" fontFamily="Roboto">
+                  <Text ml={2} fontSize="18px" fontFamily="Inter">
                     Telefone:
                   </Text>
-                  <Text fontSize="18px" fontFamily="Roboto">
+                  <Text fontSize="18px" fontFamily="Inter">
                     *
                   </Text>
                 </Flex>
@@ -215,10 +220,10 @@ const CreateUserModal: React.FC<ICreateUserModalProps> = ({
                 maxH="40px"
               >
                 <Flex mb={2} alignItems="center" justifyContent="space-between">
-                  <Text ml={2} fontSize="18px" fontFamily="Roboto">
+                  <Text ml={2} fontSize="18px" fontFamily="Inter">
                     Login:
                   </Text>
-                  <Text fontSize="18px" fontFamily="Roboto">
+                  <Text fontSize="18px" fontFamily="Inter">
                     *
                   </Text>
                 </Flex>
@@ -239,10 +244,10 @@ const CreateUserModal: React.FC<ICreateUserModalProps> = ({
                 maxH="40px"
               >
                 <Flex mb={2} alignItems="center" justifyContent="space-between">
-                  <Text ml={2} fontSize="18px" fontFamily="Roboto">
+                  <Text ml={2} fontSize="18px" fontFamily="Inter">
                     Cargo:
                   </Text>
-                  <Text fontSize="18px" fontFamily="Roboto">
+                  <Text fontSize="18px" fontFamily="Inter">
                     *
                   </Text>
                 </Flex>
@@ -268,47 +273,49 @@ const CreateUserModal: React.FC<ICreateUserModalProps> = ({
                 </Select>
               </Flex>
 
-              {role && role !== 'NANOTECH_REPRESENTATIVE' && (
-                <Flex
-                  w="100%"
-                  direction="column"
-                  maxW="calc(100% / 3)"
-                  maxH="40px"
-                >
+              {role &&
+                role !== 'NANOTECH_REPRESENTATIVE' &&
+                role !== 'SERVICE_PROVIDER' && (
                   <Flex
-                    mb={2}
-                    pl={2}
-                    alignItems="center"
-                    justifyContent="space-between"
+                    w="100%"
+                    direction="column"
+                    maxW="calc(100% / 3)"
+                    maxH="40px"
                   >
-                    <Text fontSize="18px" fontFamily="Roboto">
-                      Concessionária:
-                    </Text>
-                    <Text fontSize="18px" fontFamily="Roboto">
-                      *
-                    </Text>
-                  </Flex>
+                    <Flex
+                      mb={2}
+                      pl={2}
+                      alignItems="center"
+                      justifyContent="space-between"
+                    >
+                      <Text fontSize="18px" fontFamily="Inter">
+                        Concessionária:
+                      </Text>
+                      <Text fontSize="18px" fontFamily="Inter">
+                        *
+                      </Text>
+                    </Flex>
 
-                  <Select
-                    fontSize={16}
-                    height="50px"
-                    backgroundColor="#1c1c1c"
-                    color="White"
-                    name="company"
-                    placeholder="Concessionária"
-                    containerProps={{
-                      height: '52px',
-                      background: '#1c1c1c',
-                    }}
-                  >
-                    {companiesOptions.map(opt => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </option>
-                    ))}
-                  </Select>
-                </Flex>
-              )}
+                    <Select
+                      fontSize={16}
+                      height="50px"
+                      backgroundColor="#1c1c1c"
+                      color="White"
+                      name="company"
+                      placeholder="Concessionária"
+                      containerProps={{
+                        height: '52px',
+                        background: '#1c1c1c',
+                      }}
+                    >
+                      {companiesOptions.map(opt => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </Flex>
+                )}
             </Flex>
           </ModalBody>
 

@@ -20,7 +20,12 @@ import api from '../services/api';
 
 interface IUser {
   id: string;
-  role: 'ADMIN' | 'MANAGER' | 'SELLER' | 'NANOTECH_REPRESENTATIVE';
+  role:
+    | 'ADMIN'
+    | 'MANAGER'
+    | 'SELLER'
+    | 'NANOTECH_REPRESENTATIVE'
+    | 'SERVICE_PROVIDER';
   profile: {
     id: string;
     company_id: string;
@@ -115,7 +120,10 @@ export const AuthProvider: React.FC = ({ children }) => {
           ];
         }
 
-        if (userData.role === 'ADMIN') {
+        if (
+          userData.role === 'ADMIN' ||
+          userData.role === 'NANOTECH_REPRESENTATIVE'
+        ) {
           buttons = [
             {
               name: 'Concessionárias',
@@ -168,6 +176,17 @@ export const AuthProvider: React.FC = ({ children }) => {
               name: 'Vendas',
               enable: false,
               route: '/sales',
+              icon: <FiList color="#fff" />,
+            },
+          ];
+        }
+
+        if (userData.role === 'SERVICE_PROVIDER') {
+          buttons = [
+            {
+              name: 'Vendas atribuídas a mim',
+              enable: false,
+              route: '/sales-by-provider',
               icon: <FiList color="#fff" />,
             },
           ];
@@ -287,6 +306,17 @@ export const AuthProvider: React.FC = ({ children }) => {
           name: 'Vendas',
           enable: false,
           route: '/sales',
+          icon: <FiList color="#fff" />,
+        },
+      ];
+    }
+
+    if (user.role === 'SERVICE_PROVIDER') {
+      buttons = [
+        {
+          name: 'Vendas atribuídas a mim',
+          enable: false,
+          route: '/sales-by-provider',
           icon: <FiList color="#fff" />,
         },
       ];
@@ -439,6 +469,17 @@ export const AuthProvider: React.FC = ({ children }) => {
               name: 'Vendas',
               enable: false,
               route: '/sales',
+              icon: <FiList color="#fff" />,
+            },
+          ];
+        }
+
+        if (userData.role === 'SERVICE_PROVIDER') {
+          buttons = [
+            {
+              name: 'Vendas atribuídas a mim',
+              enable: false,
+              route: '/sales-by-provider',
               icon: <FiList color="#fff" />,
             },
           ];

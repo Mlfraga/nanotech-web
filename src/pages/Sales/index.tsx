@@ -6,7 +6,7 @@ import React, {
   useMemo,
 } from 'react';
 import { FaArrowAltCircleDown, FaArrowAltCircleUp } from 'react-icons/fa';
-import { FiEdit3, FiFilter, FiTrash, FiSave } from 'react-icons/fi';
+import { FiEdit3, FiFilter, FiTrash, FiSave, FiUsers } from 'react-icons/fi';
 import { FiSettings } from 'react-icons/fi';
 
 import {
@@ -21,12 +21,14 @@ import {
 } from '@chakra-ui/core';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
+import { AxiosResponse } from 'axios';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 import Breadcrumb from '../../components/Breadcrumb';
 import AlertDialog from '../../components/Dialogs/Alert';
 import Menu from '../../components/Menu';
+import IndicateServiceProvider from '../../components/Modals/IndicateServiceProvider';
 import UpdateSalesModal from '../../components/Modals/UpdateSales';
 import Pagination from '../../components/Pagination';
 import Select from '../../components/Select';
@@ -34,10 +36,12 @@ import { useAuth } from '../../context/auth';
 import { useToast } from '../../context/toast';
 import { ICompany } from '../../interfaces/companies';
 import { ISelectOptions } from '../../interfaces/select';
+import { IServiceProvider } from '../../interfaces/service_provider';
 import { IUser } from '../../interfaces/users';
 import api from '../../services/api';
 import formatMoney from '../../utils/formatMoney';
 import getSaleStatusTranslated from '../../utils/getSaleStatusTranslated';
+import SaleStatus from '../ProviderSales/components/SaleStatus';
 import FilterDrawer from './components/FilterDrawer';
 import WhatsappNumbersDrawer from './components/WhatsappNumbersDrawer';
 import {
@@ -55,6 +59,7 @@ interface ISaleRequestResponseData {
   availability_date: string;
   delivery_date: string;
   status: string;
+  production_status: string;
   company_value: number;
   cost_value: number;
   comments: string;
@@ -119,6 +124,9 @@ const Sales = () => {
   );
 
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
+  const [saleToLinkProviders, setSaleToLinkProviders] = useState<string | null>(
+    null,
+  );
 
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(0);
@@ -135,9 +143,16 @@ const Sales = () => {
   const [filterDrawerOpened, setFilterDrawerOpened] = useState<boolean>(false);
   const [deleteDialogOpened, setDeleteDialogOpened] = useState<boolean>(false);
   const [openEditSalesModal, setOpenEditSalesModal] = useState<boolean>(false);
+  const [
+    openLinkServiceProviderToSalesModal,
+    setOpenLinkServiceProviderToSalesModal,
+  ] = useState<boolean>(false);
   const [saleToEdit, setSaleToEdit] = useState<
     ISaleRequestResponseData | undefined
   >({} as ISaleRequestResponseData);
+  const [serviceProviders, setServiceProviders] = useState<IServiceProvider[]>(
+    [],
+  );
 
   const loadSales = useCallback(async () => {
     setLoading(true);
@@ -231,10 +246,13 @@ const Sales = () => {
       });
 
       api.get('companies').then(response => {
-        const newCompanies: ICompany[] = response.data;
+        const newCompaniesOptions: ICompany[] = response.data;
 
         setCompaniesOptions(
-          newCompanies.map(company => ({ id: company.id, name: company.name })),
+          newCompaniesOptions.map(company => ({
+            id: company.id,
+            name: company.name,
+          })),
         );
       });
     }
@@ -247,6 +265,16 @@ const Sales = () => {
       });
     }
   }, [user]);
+
+  useEffect(() => {
+    api
+      .get('/profiles', {
+        params: { role: 'SERVICE_PROVIDER' },
+      })
+      .then((response: AxiosResponse) => {
+        setServiceProviders(response.data);
+      });
+  }, []);
 
   const formattedSales = useMemo(
     () =>
@@ -288,6 +316,7 @@ const Sales = () => {
           availability_date: sale.availability_date,
           delivery_date: sale.delivery_date,
           status: sale.status,
+          production_status: sale.production_status,
           services,
           unit: sale.unit.name,
           request_date: sale.request_date,
@@ -491,6 +520,10 @@ const Sales = () => {
     setDeleteDialogOpened(false);
   }, [selectedSales, addToast, currentPage]);
 
+  const selectedSalesInfo = formattedSales.filter(sale =>
+    selectedSales.some((id: string) => id === sale.id),
+  );
+
   return (
     <Container>
       <Menu />
@@ -675,6 +708,31 @@ const Sales = () => {
                       </ChakraButton>
                     </Tooltip>
                   )}
+
+                  {canHandleSales && selectedSales.length === 1 && (
+                    <Tooltip
+                      label="Atribuir responsáveis técnicos"
+                      aria-label="Atribuir responsáveis técnicos"
+                    >
+                      <ChakraButton
+                        _hover={{
+                          bg: '#5580b9',
+                          color: '#fff',
+                        }}
+                        _focusWithin={{
+                          border: 0,
+                        }}
+                        backgroundColor="#355a9d"
+                        style={{ padding: 12 }}
+                        onClick={() => {
+                          setOpenLinkServiceProviderToSalesModal(true);
+                          setSaleToLinkProviders(selectedSalesInfo[0].id);
+                        }}
+                      >
+                        <FiUsers />
+                      </ChakraButton>
+                    </Tooltip>
+                  )}
                 </ActionButttonsContainer>
               </Form>
             </ChakraBox>
@@ -684,11 +742,11 @@ const Sales = () => {
             <div className="boxTitle">
               <span>N°</span>
               <span>Vendedor</span>
-              <span>Carro</span>
-              <span>Placa</span>
-              <span>Data de disponibilidade</span>
-              <span>Data de entrega</span>
-              <span>Situação</span>
+              <span>Carro - Placa/Chassi</span>
+              <span>Disponibilidade</span>
+              <span>Entrega</span>
+              <span>Status</span>
+              <span>Status Prod.</span>
             </div>
 
             {loading ? (
@@ -775,8 +833,7 @@ const Sales = () => {
                       >
                         <span>{sale.client_id}</span>
                         <span>{sale.seller}</span>
-                        <span>{sale.car}</span>
-                        <span>{sale.carPlate}</span>
+                        <span>{`${sale.car} - ${sale.carPlate}`}</span>
                         <span>
                           {format(
                             new Date(sale.availability_date),
@@ -791,12 +848,32 @@ const Sales = () => {
                             { locale: ptBR },
                           )}
                         </span>
+
                         <div className="status">
                           <span>
                             <div className={sale.status} />
                             {getSaleStatusTranslated(sale.status)}
                           </span>
                         </div>
+
+                        <SaleStatus
+                          sale_id={sale.id}
+                          status={
+                            sale.production_status as
+                              | 'PENDING'
+                              | 'TO_DO'
+                              | 'IN_PROGRESS'
+                              | 'DONE'
+                          }
+                          enableUpdateStatus={false}
+                          containerStyle={{
+                            justifyContent: 'start',
+                            margin: '0px',
+                            marginRight: '16px',
+                            border: '0px',
+                            padding: '0px',
+                          }}
+                        />
 
                         {openedServices.includes(sale.id) ? (
                           <FaArrowAltCircleUp
@@ -948,6 +1025,15 @@ const Sales = () => {
           onClose={() => setOpenEditSalesModal(false)}
           onSave={loadSales}
           sale={saleToEdit}
+        />
+
+        <IndicateServiceProvider
+          isOpen={openLinkServiceProviderToSalesModal}
+          onClose={() => {
+            setOpenLinkServiceProviderToSalesModal(false);
+          }}
+          saleId={saleToLinkProviders}
+          serviceProviders={serviceProviders}
         />
       </Flex>
     </Container>

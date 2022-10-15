@@ -7,6 +7,7 @@ import CompaniesRegister from '../pages/CompaniesRegister';
 import FirstLogin from '../pages/FirstLogin';
 import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
+import ProviderSales from '../pages/ProviderSales';
 import Reports from '../pages/Reports';
 import Sales from '../pages/Sales';
 import SalesRegister from '../pages/SalesRegister';
@@ -27,7 +28,12 @@ const Routes: React.FC = () => (
     <Route path="/" exact component={Login} />
     <Route path="/home" exact component={Login} />
     <Route path="/first-login" component={FirstLogin} isPrivate />
-    <Route path="/services" component={Services} isPrivate />
+    <Route
+      path="/services"
+      component={Services}
+      isPrivate
+      permissions={['MANAGER', 'SELLER', 'ADMIN', 'NANOTECH_REPRESENTATIVE']}
+    />
     <Route path="/service/vitrificacao" component={Service} isPrivate />
     <Route
       path="/services-register/:company_id"
@@ -64,6 +70,12 @@ const Routes: React.FC = () => (
       component={Sales}
       isPrivate
       permissions={['MANAGER', 'SELLER', 'ADMIN', 'NANOTECH_REPRESENTATIVE']}
+    />
+    <Route
+      path="/sales-by-provider"
+      component={ProviderSales}
+      isPrivate
+      permissions={['SERVICE_PROVIDER']}
     />
     <Route
       path="/prices"
