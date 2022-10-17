@@ -28,6 +28,7 @@ interface IUpdateCompanyModalProps {
   onClose: () => void;
   saleId: string | null;
   serviceProviders: IServiceProvider[];
+  selectedProviderServiceSales: IServiceProviderInfo;
 }
 
 interface IFormData {
@@ -35,11 +36,18 @@ interface IFormData {
   date_to_be_done: Date;
 }
 
+interface IServiceProviderInfo {
+  serviceProviders: IServiceProvider[];
+  techinical_comments: string;
+  date_to_be_done?: Date;
+}
+
 const IndicateServiceProviderModal: React.FC<IUpdateCompanyModalProps> = ({
   isOpen,
   onClose,
   saleId,
   serviceProviders,
+  selectedProviderServiceSales,
 }) => {
   const { addToast } = useToast();
   const formRef = useRef<FormHandles>(null);
@@ -48,9 +56,6 @@ const IndicateServiceProviderModal: React.FC<IUpdateCompanyModalProps> = ({
   const [initialDateToBeDone, setInitialDateToBeDone] = useState<
     Date | undefined
   >();
-  const [initialTechinicalComments, setInitialTechinicalComments] = useState(
-    '',
-  );
   const [selectedProviders, setSelectedProviders] = useState<
     {
       name: string;
@@ -59,31 +64,20 @@ const IndicateServiceProviderModal: React.FC<IUpdateCompanyModalProps> = ({
   >([]);
 
   useEffect(() => {
-    if (saleId) {
-      api
-        .get(`/service-sale-providers/sale/${saleId}`)
-        .then(response => {
-          setSelectedProviders(response.data.providers || []);
-          setInitialDateToBeDone(
-            response.data.date_to_be_done
-              ? new Date(response.data.date_to_be_done)
-              : undefined,
-          );
+    if (selectedProviderServiceSales) {
+      setSelectedProviders(selectedProviderServiceSales.serviceProviders);
+      setInitialDateToBeDone(selectedProviderServiceSales.date_to_be_done);
 
-          const techinicalCommentsFieldRef = formRef.current?.getFieldRef(
-            'techinical_comments',
-          );
+      const techinicalCommentsFieldRef = formRef.current?.getFieldRef(
+        'techinical_comments',
+      );
 
-          techinicalCommentsFieldRef.value =
-            response.data.techinical_comments || '';
-        })
-        .catch(() => {
-          setSelectedProviders([]);
-          setInitialDateToBeDone(undefined);
-          setInitialTechinicalComments('');
-        });
+      if (selectedProviderServiceSales.techinical_comments) {
+        techinicalCommentsFieldRef.value =
+          selectedProviderServiceSales.techinical_comments;
+      }
     }
-  }, [saleId, formRef]);
+  }, [selectedProviderServiceSales, formRef]);
 
   const handleLinkSalesToProviders = useCallback(
     (data: IFormData) => {
@@ -116,7 +110,7 @@ const IndicateServiceProviderModal: React.FC<IUpdateCompanyModalProps> = ({
         })
         .finally(() => setLoading(false));
     },
-    [saleId, selectedProviders, addToast, onClose],
+    [saleId, onClose, selectedProviders, addToast],
   );
 
   return (
@@ -142,10 +136,7 @@ const IndicateServiceProviderModal: React.FC<IUpdateCompanyModalProps> = ({
                   <Text fontWeight="semibold" fontSize={16} mb={2}>
                     Observações Técnicas:{' '}
                   </Text>
-                  <Textarea
-                    defaultValue={initialTechinicalComments}
-                    name="techinical_comments"
-                  />
+                  <Textarea name="techinical_comments" />
                 </Flex>
 
                 <Flex w="100%" direction="row" style={{ gap: '8px' }}>

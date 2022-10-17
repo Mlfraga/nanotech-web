@@ -153,6 +153,18 @@ const Sales = () => {
   const [serviceProviders, setServiceProviders] = useState<IServiceProvider[]>(
     [],
   );
+  const [
+    selectedProviderServiceSales,
+    setSelectedProviderServiceSales,
+  ] = useState<{
+    serviceProviders: IServiceProvider[];
+    techinical_comments: string;
+    date_to_be_done?: Date;
+  }>({
+    serviceProviders: [],
+    techinical_comments: '',
+    date_to_be_done: undefined,
+  });
 
   const loadSales = useCallback(async () => {
     setLoading(true);
@@ -727,6 +739,21 @@ const Sales = () => {
                         onClick={() => {
                           setOpenLinkServiceProviderToSalesModal(true);
                           setSaleToLinkProviders(selectedSalesInfo[0].id);
+
+                          api
+                            .get(
+                              `/service-sale-providers/sale/${selectedSalesInfo[0].id}`,
+                            )
+                            .then(response => {
+                              setSelectedProviderServiceSales({
+                                serviceProviders: response.data.providers,
+                                date_to_be_done: response.data.date_to_be_done
+                                  ? new Date(response.data.date_to_be_done)
+                                  : undefined,
+                                techinical_comments:
+                                  response.data.techinical_comments,
+                              });
+                            });
                         }}
                       >
                         <FiUsers />
@@ -1032,6 +1059,7 @@ const Sales = () => {
           onClose={() => {
             setOpenLinkServiceProviderToSalesModal(false);
           }}
+          selectedProviderServiceSales={selectedProviderServiceSales}
           saleId={saleToLinkProviders}
           serviceProviders={serviceProviders}
         />
