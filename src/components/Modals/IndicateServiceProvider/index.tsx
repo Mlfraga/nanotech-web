@@ -26,6 +26,7 @@ import { Content, CustomChip } from './styles';
 interface IUpdateCompanyModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSave: () => void;
   saleId: string | null;
   serviceProviders: IServiceProvider[];
   selectedProviderServiceSales: IServiceProviderInfo;
@@ -46,6 +47,7 @@ const IndicateServiceProviderModal: React.FC<IUpdateCompanyModalProps> = ({
   isOpen,
   onClose,
   saleId,
+  onSave,
   serviceProviders,
   selectedProviderServiceSales,
 }) => {
@@ -98,7 +100,7 @@ const IndicateServiceProviderModal: React.FC<IUpdateCompanyModalProps> = ({
             description:
               'Os responsáveis pelo serviço foram indicados com sucesso!',
           });
-          onClose();
+          onSave();
         })
         .catch(() => {
           addToast({
@@ -110,7 +112,7 @@ const IndicateServiceProviderModal: React.FC<IUpdateCompanyModalProps> = ({
         })
         .finally(() => setLoading(false));
     },
-    [saleId, onClose, selectedProviders, addToast],
+    [saleId, onSave, selectedProviders, addToast],
   );
 
   return (

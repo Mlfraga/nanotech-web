@@ -1059,6 +1059,10 @@ const Sales = () => {
           onClose={() => {
             setOpenLinkServiceProviderToSalesModal(false);
           }}
+          onSave={() => {
+            setOpenLinkServiceProviderToSalesModal(false);
+            loadSales();
+          }}
           selectedProviderServiceSales={selectedProviderServiceSales}
           saleId={saleToLinkProviders}
           serviceProviders={serviceProviders}
