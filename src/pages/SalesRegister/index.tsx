@@ -360,7 +360,7 @@ const SalesRegister = () => {
 
               <InputContainer>
                 <div className="labels">
-                  <span>Carro:</span>
+                  <span>Marca do Carro:</span>
                   <span>*</span>
                 </div>
                 <Input
@@ -374,7 +374,7 @@ const SalesRegister = () => {
 
               <InputContainer>
                 <div className="labels">
-                  <span>Modelo:</span>
+                  <span>Modelo do Carro:</span>
                   <span>*</span>
                 </div>
                 <Input

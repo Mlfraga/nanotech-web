@@ -7,7 +7,7 @@ import React, {
 } from 'react';
 import { FaArrowAltCircleDown, FaArrowAltCircleUp } from 'react-icons/fa';
 import { FiEdit3, FiFilter, FiTrash, FiSave, FiUsers } from 'react-icons/fi';
-import { FiSettings } from 'react-icons/fi';
+import { FiSettings, FiNavigation } from 'react-icons/fi';
 
 import {
   Button as ChakraButton,
@@ -60,6 +60,7 @@ interface ISaleRequestResponseData {
   delivery_date: string;
   status: string;
   production_status: string;
+  hasAlreadyBeenDirected: boolean;
   company_value: number;
   cost_value: number;
   comments: string;
@@ -315,16 +316,28 @@ const Sales = () => {
           });
         }
 
+        const formattedSellerName = `${sale.seller.name.split(' ')[0]} ${
+          sale.seller.name.split(' ')[1]?.charAt(0) ?? ''
+        }`;
+
+        const formattedCar = `${sale.car.brand} ${sale.car.model}`
+          .split(' ')
+          .filter((item, i, allItems) => i === allItems.indexOf(item));
+
         return {
           id: sale.id,
           client_id: `${sale.seller.company.client_identifier}${sale.unit.client_identifier}${sale.client_identifier}`,
-          seller: sale.seller.name,
+          seller: formattedSellerName,
           customer: sale.person.name,
           comments: sale.comments,
-          car: `${sale.car.brand} ${sale.car.model}`,
+          car:
+            formattedCar.length > 2
+              ? `${formattedCar[0]} ${formattedCar[1]} ${formattedCar[2]}`
+              : formattedCar.join(' '),
           carPlate: sale.car.plate,
           company_value: sale.company_value,
           cost_value: sale.cost_value,
+          hasAlreadyBeenDirected: sale.hasAlreadyBeenDirected,
           availability_date: sale.availability_date,
           delivery_date: sale.delivery_date,
           status: sale.status,
@@ -858,7 +871,17 @@ const Sales = () => {
                             : { borderRadius: '15px', cursor: 'pointer' }
                         }
                       >
-                        <span>{sale.client_id}</span>
+                        <span>
+                          {sale.hasAlreadyBeenDirected &&
+                            (user.role === 'ADMIN' ||
+                              user.role === 'NANOTECH_REPRESENTATIVE') && (
+                              <FiNavigation
+                                style={{ marginRight: '6px' }}
+                                color="#355a9d"
+                              />
+                            )}
+                          {sale.client_id}
+                        </span>
                         <span>{sale.seller}</span>
                         <span>{`${sale.car} - ${sale.carPlate}`}</span>
                         <span>
@@ -1010,7 +1033,7 @@ const Sales = () => {
                   ))}
 
                   <Pagination
-                    minWidth="1100px"
+                    minWidth="1000px"
                     setPage={setCurrentPage}
                     page={currentPage}
                     total_pages={totalPages}
