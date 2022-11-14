@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { FiSave, FiTrash, FiXSquare } from 'react-icons/fi';
 import { FiPlus } from 'react-icons/fi';
 import { NumberFormatValues } from 'react-number-format';
@@ -29,7 +29,7 @@ import { TelephoneField, StyledStack } from './styles';
 interface INumber {
   id: string;
   number: string;
-  company_id: string;
+  company_id?: string;
   restricted_to_especific_company: boolean;
 }
 
@@ -38,10 +38,14 @@ type IWhatsappNumbersDrawerProps = Omit<IDrawer, 'children'>;
 const WhatsappNumbersDrawer: React.FC<IWhatsappNumbersDrawerProps> = ({
   ...rest
 }) => {
+  const numbersListContainerRef = React.useRef<HTMLDivElement>(null);
+
   const { addToast } = useToast();
 
   const [companiesOptions, setCompaniesOptions] = useState<ISelectOption[]>([]);
-  const [newNumber, setNewNumber] = useState<INumber>({} as INumber);
+  const [newNumber, setNewNumber] = useState<INumber>({
+    restricted_to_especific_company: false,
+  } as INumber);
   const [numbers, setNumbers] = useState<INumber[]>([]);
 
   const [createNumberMode, setCreateNumberMode] = useState(false);
@@ -59,11 +63,13 @@ const WhatsappNumbersDrawer: React.FC<IWhatsappNumbersDrawerProps> = ({
     });
 
     api.get<INumber[]>('/whatsapp-numbers').then(response => {
-      setNumbers(response.data);
+      setNumbers(
+        response.data.map(n => ({ ...n, number: n.number.replace('+55', '') })),
+      );
     });
   }, []);
 
-  const validate = (): boolean => {
+  const validate = useCallback((): boolean => {
     const numberIsNullValidation = !newNumber?.number;
 
     if (numberIsNullValidation) {
@@ -80,7 +86,7 @@ const WhatsappNumbersDrawer: React.FC<IWhatsappNumbersDrawerProps> = ({
       number => number.number === newNumber?.number,
     );
     const numberLengthValidation =
-      newNumber?.number?.replace('_', '').length !== 13;
+      newNumber?.number?.replace('_', '').length !== 12;
     const companyIsNullValidation =
       !newNumber?.company_id && newNumber?.restricted_to_especific_company;
 
@@ -114,7 +120,7 @@ const WhatsappNumbersDrawer: React.FC<IWhatsappNumbersDrawerProps> = ({
       numberLengthValidation ||
       companyIsNullValidation
     );
-  };
+  }, [numbers, addToast, newNumber]);
 
   const handleAddNumber = () => {
     const isValid = validate();
@@ -125,21 +131,114 @@ const WhatsappNumbersDrawer: React.FC<IWhatsappNumbersDrawerProps> = ({
         ...numbers,
         { ...newNumber, id: String(numbers.length + 1) },
       ]);
+
+      setNewNumber({
+        restricted_to_especific_company: false,
+      } as INumber);
     }
+  };
+
+  const handleUpdateValue = ({
+    fieldName,
+    value,
+    numberId,
+  }: {
+    fieldName: 'number' | 'company_id' | 'restricted_to_especific_company';
+    value: string | boolean;
+    numberId: string;
+  }) => {
+    const newList = numbers.map(n =>
+      n.id === numberId
+        ? {
+            ...n,
+            [fieldName]: value,
+            ...(fieldName === 'restricted_to_especific_company' &&
+              value === false && { company_id: '' }),
+          }
+        : n,
+    );
+
+    setNumbers(newList);
+  };
+
+  const handleChangeValue = ({
+    fieldName,
+    value,
+  }: {
+    fieldName: 'number' | 'company_id' | 'restricted_to_especific_company';
+    value: string | boolean;
+  }) => {
+    setNewNumber({ ...newNumber, [fieldName]: value });
+  };
+
+  const handleCancelNumberCreation = () => {
+    setCreateNumberMode(false);
+    setNewNumber({
+      restricted_to_especific_company: false,
+    } as INumber);
+  };
+
+  const handleOpenCreateNumberMode = () => {
+    setCreateNumberMode(true);
+
+    setTimeout(() => {
+      numbersListContainerRef.current?.scrollTo({
+        top: numbersListContainerRef.current?.scrollHeight,
+        behavior: 'auto',
+      });
+    }, 100);
+  };
+
+  const handleSaveNumbers = () => {
+    const formattedNumbers = numbers.map(n => ({
+      number: String(n.number).replace(' ', '').replace('-', ''),
+      restricted_to_especific_company: n.restricted_to_especific_company,
+      company_id:
+        typeof n.company_id === 'string' && n?.company_id?.length <= 1
+          ? null
+          : n.company_id,
+    }));
+
+    const payload = {
+      numbers: formattedNumbers,
+    };
+
+    api
+      .post('/whatsapp-numbers', payload)
+      .then(() => {
+        addToast({
+          type: 'success',
+          title: 'Sucesso',
+          description: 'Números salvos com sucesso',
+        });
+      })
+      .catch(() => {
+        addToast({
+          type: 'error',
+          title: 'Erro ao salvar números',
+          description: 'Ocorreu um erro ao salvar os números',
+        });
+      });
+  };
+
+  const handleRemoveNumber = (numberId: string) => {
+    const newList = numbers.filter(n => n.id !== numberId);
+
+    setNumbers(newList);
   };
 
   return (
     <Drawer {...rest}>
       <DrawerOverlay />
-      <DrawerContent overflow="auto" bg="#383838" minW={800}>
+      <DrawerContent overflowY="auto" bg="#383838" minW={800}>
         <DrawerCloseButton />
         <DrawerHeader borderBottomWidth="1px">
           Números a receber vendas por Whatsapp
         </DrawerHeader>
 
-        <DrawerBody mt={6}>
-          <StyledStack paddingX={2}>
-            <Grid templateColumns="25% 25% 30% 6%" gap="2%" pr={4}>
+        <DrawerBody mt={6} flex={1} display="flex">
+          <StyledStack flex={1} display="flex" paddingX={2}>
+            <Grid templateColumns="25% 25% 30% 6%" gap="2%">
               <Flex borderRight="1px solid #282828" paddingY="4px">
                 <Text fontWeight="bold" fontSize={18}>
                   Número *
@@ -158,23 +257,22 @@ const WhatsappNumbersDrawer: React.FC<IWhatsappNumbersDrawerProps> = ({
               <Text> </Text>
             </Grid>
 
-            <Grid
+            <Flex
+              ref={numbersListContainerRef}
               className="numbers-list"
               mt="16px"
-              pr={2}
-              templateColumns="25% 25% 30% 6%"
-              gap="2%"
-              overflowY="scroll"
-              maxH={{
-                xs: '40vh',
-                sm: '40vh',
-                md: '40vh',
-                xl: '50vh',
-                lg: '70vh',
+              direction="column"
+              overflow="auto"
+              height={{
+                xs: '180px',
+                sm: '180px',
+                md: '180px',
+                lg: '400px',
+                xl: '400px',
               }}
             >
               {numbers.map(number => (
-                <>
+                <Grid templateColumns="25% 25% 30% 6%" gap="2%">
                   <Flex
                     key={number.id}
                     w="100%"
@@ -182,9 +280,16 @@ const WhatsappNumbersDrawer: React.FC<IWhatsappNumbersDrawerProps> = ({
                     paddingY="4px"
                   >
                     <TelephoneField
-                      format="## #####-####"
+                      format="## ####-####"
                       mask="_"
                       value={number.number}
+                      onValueChange={(values: NumberFormatValues) => {
+                        handleUpdateValue({
+                          fieldName: 'number',
+                          value: values.formattedValue,
+                          numberId: number.id,
+                        });
+                      }}
                     />
                   </Flex>
 
@@ -192,6 +297,13 @@ const WhatsappNumbersDrawer: React.FC<IWhatsappNumbersDrawerProps> = ({
                     <Checkbox
                       name="receive_only_company_sales"
                       isChecked={number.restricted_to_especific_company}
+                      onChange={e => {
+                        handleUpdateValue({
+                          fieldName: 'restricted_to_especific_company',
+                          value: e.target.checked,
+                          numberId: number.id,
+                        });
+                      }}
                     ></Checkbox>
                   </Flex>
 
@@ -200,6 +312,13 @@ const WhatsappNumbersDrawer: React.FC<IWhatsappNumbersDrawerProps> = ({
                       bg="#383838"
                       borderColor="#282828"
                       value={number?.company_id}
+                      onChange={e => {
+                        handleUpdateValue({
+                          fieldName: 'company_id',
+                          value: e.target.value,
+                          numberId: number.id,
+                        });
+                      }}
                       placeholder="Concessionária"
                       isDisabled={!number.restricted_to_especific_company}
                     >
@@ -217,24 +336,25 @@ const WhatsappNumbersDrawer: React.FC<IWhatsappNumbersDrawerProps> = ({
                     display="flex"
                     alignItems="center"
                     justifyContent="center"
+                    onClick={() => handleRemoveNumber(number.id)}
                   >
                     <FiTrash size={18} />
                   </PseudoBox>
-                </>
+                </Grid>
               ))}
 
               {createNumberMode && (
-                <>
+                <Grid templateColumns="25% 25% 30% 6%" gap="2%">
                   <Flex w="100%" borderRight="1px solid #282828" paddingY="4px">
                     <TelephoneField
-                      format="## #####-####"
+                      format="## ####-####"
                       mask="_"
                       value={newNumber?.number}
                       onValueChange={(values: NumberFormatValues) => {
-                        setNewNumber(oldValue => ({
-                          ...oldValue,
-                          number: values.formattedValue,
-                        }));
+                        handleChangeValue({
+                          fieldName: 'number',
+                          value: values.formattedValue,
+                        });
                       }}
                     />
                   </Flex>
@@ -243,12 +363,11 @@ const WhatsappNumbersDrawer: React.FC<IWhatsappNumbersDrawerProps> = ({
                     <Checkbox
                       name="receive_only_company_sales"
                       isChecked={newNumber?.restricted_to_especific_company}
-                      onChange={_e => {
-                        setNewNumber(oldValue => ({
-                          ...oldValue,
-                          // eslint-disable-next-line max-len
-                          restricted_to_especific_company: !oldValue.restricted_to_especific_company,
-                        }));
+                      onChange={e => {
+                        handleChangeValue({
+                          fieldName: 'restricted_to_especific_company',
+                          value: e.target.checked,
+                        });
                       }}
                     />
                   </Flex>
@@ -261,10 +380,10 @@ const WhatsappNumbersDrawer: React.FC<IWhatsappNumbersDrawerProps> = ({
                       placeholder="Concessionária"
                       isDisabled={!newNumber?.restricted_to_especific_company}
                       onChange={e => {
-                        setNewNumber(odValue => ({
-                          ...odValue,
-                          company: e?.target?.value,
-                        }));
+                        handleChangeValue({
+                          fieldName: 'company_id',
+                          value: e?.target?.value,
+                        });
                       }}
                     >
                       {companiesOptions.map(company => (
@@ -292,24 +411,32 @@ const WhatsappNumbersDrawer: React.FC<IWhatsappNumbersDrawerProps> = ({
                       display="flex"
                       alignItems="center"
                       justifyContent="center"
-                      onClick={() => setCreateNumberMode(false)}
+                      onClick={handleCancelNumberCreation}
                     >
                       <FiXSquare size={18} />
                     </PseudoBox>
                   </Flex>
-                </>
+                </Grid>
               )}
-            </Grid>
+            </Flex>
 
-            <Flex alignItems="center" justifyContent="flex-end" flex={1} mt={8}>
+            <Flex alignItems="center" mt={8}>
               <Button
-                variantColor="green"
-                leftIcon={FiPlus}
-                onClick={() => {
-                  setCreateNumberMode(true);
-                }}
+                variantColor="transparent"
+                onClick={handleOpenCreateNumberMode}
               >
-                Adicionar número
+                <FiPlus />
+              </Button>
+            </Flex>
+
+            <Flex
+              alignItems="flex-end"
+              justifyContent="flex-end"
+              flex={1}
+              mt={8}
+            >
+              <Button variantColor="green" onClick={handleSaveNumbers}>
+                Salvar
               </Button>
             </Flex>
           </StyledStack>
