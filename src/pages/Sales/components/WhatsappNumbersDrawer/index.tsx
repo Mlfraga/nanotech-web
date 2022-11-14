@@ -420,21 +420,20 @@ const WhatsappNumbersDrawer: React.FC<IWhatsappNumbersDrawerProps> = ({
               )}
             </Flex>
 
-            <Flex alignItems="center" mt={8}>
-              <Button
-                variantColor="transparent"
-                onClick={handleOpenCreateNumberMode}
-              >
-                <FiPlus />
-              </Button>
-            </Flex>
-
             <Flex
               alignItems="flex-end"
               justifyContent="flex-end"
               flex={1}
               mt={8}
             >
+              <Button
+                variantColor="blue"
+                onClick={handleOpenCreateNumberMode}
+                leftIcon={FiPlus}
+                style={{ marginRight: 4 }}
+              >
+                Adicionar
+              </Button>
               <Button variantColor="green" onClick={handleSaveNumbers}>
                 Salvar
               </Button>
