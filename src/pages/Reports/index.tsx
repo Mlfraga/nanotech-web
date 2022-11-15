@@ -58,6 +58,7 @@ const Reports: React.FC = () => {
 
   const [companies, setCompanies] = useState<ICompaniesResponseData[]>([]);
   const [isReportLoading, setIsReportLoading] = useState(false);
+  const [finishedSelected, setFinishedSelected] = useState(false);
 
   const canHandleSales = useMemo(
     () => user?.role === 'ADMIN' || user?.role === 'NANOTECH_REPRESENTATIVE',
@@ -176,24 +177,6 @@ const Reports: React.FC = () => {
                 </Select>
               )}
 
-              <DatePicker
-                placeholderText="Data de entrega inicial"
-                name="initialDate"
-                containerProps={{
-                  marginRight: 6,
-                  width: '100%',
-                }}
-              />
-
-              <DatePicker
-                containerProps={{
-                  marginRight: 6,
-                  width: '100%',
-                }}
-                placeholderText="Data de entrega final"
-                name="finalDate"
-              />
-
               <Select
                 name="status"
                 height={8}
@@ -207,12 +190,41 @@ const Reports: React.FC = () => {
                   borderColor: '#585858',
                   backgroundColor: '#424242',
                 }}
+                onChange={e => {
+                  if (e.target.value === 'FINISHED') {
+                    setFinishedSelected(true);
+                  } else {
+                    setFinishedSelected(false);
+                  }
+                }}
               >
                 <option value="PENDING">Pendente</option>
                 <option value="CONFIRMED">Confirmado</option>
                 <option value="CANCELED">Cancelado</option>
                 <option value="FINISHED">Finalizado</option>
               </Select>
+
+              {finishedSelected && (
+                <>
+                  <DatePicker
+                    placeholderText="Data da conclusão (inicial)"
+                    name="initialDate"
+                    containerProps={{
+                      marginRight: 6,
+                      width: '100%',
+                    }}
+                  />
+
+                  <DatePicker
+                    containerProps={{
+                      marginRight: 6,
+                      width: '100%',
+                    }}
+                    placeholderText="Data da conclusão (final)"
+                    name="finalDate"
+                  />
+                </>
+              )}
             </Grid>
 
             <Flex>
