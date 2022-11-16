@@ -331,7 +331,7 @@ const Sales = () => {
           customer: sale.person.name,
           comments: sale.comments,
           car:
-            formattedCar.length >= 2
+            formattedCar.length > 2
               ? `${formattedCar[0]} ${formattedCar[1]} ${formattedCar[2]}`
               : formattedCar.join(' '),
           carPlate: sale.car.plate,
