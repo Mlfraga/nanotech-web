@@ -245,18 +245,15 @@ const Sales = () => {
 
   useEffect(() => {
     if (user.role === 'ADMIN' || user.role === 'NANOTECH_REPRESENTATIVE') {
-      api.get<IUser[]>('profiles').then(response => {
-        setSellersOptions(
-          response.data
-            .filter(
-              u =>
-                u.id !== user.profile.id &&
-                u.user.role !== 'ADMIN' &&
-                u.user.role !== 'NANOTECH_REPRESENTATIVE',
-            )
-            .map(seller => ({ id: seller.id, name: seller.name })),
-        );
-      });
+      api
+        .get<IUser[]>('/profiles', {
+          params: { role: 'SELLER', showDisabled: true },
+        })
+        .then(response => {
+          setSellersOptions(
+            response.data.map(seller => ({ id: seller.id, name: seller.name })),
+          );
+        });
 
       api.get('companies').then(response => {
         const newCompaniesOptions: ICompany[] = response.data;
@@ -282,7 +279,7 @@ const Sales = () => {
   useEffect(() => {
     api
       .get('/profiles', {
-        params: { role: 'SERVICE_PROVIDER' },
+        params: { role: 'SERVICE_PROVIDER', showDisabled: false },
       })
       .then((response: AxiosResponse) => {
         setServiceProviders(response.data);
