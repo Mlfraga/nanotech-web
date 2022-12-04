@@ -75,7 +75,7 @@ const Reports: React.FC = () => {
     }
   }, [user.role]);
 
-  const handleGetReport = useCallback(
+  const handleGetPdfReport = useCallback(
     async (data: IFormData) => {
       setIsReportLoading(true);
 
@@ -129,6 +129,56 @@ const Reports: React.FC = () => {
     [addToast, history, user.profile.company_id, user.role],
   );
 
+  const handleGetExcelReport = useCallback(
+    async (data: IFormData) => {
+      setIsReportLoading(true);
+
+      const reqData = {
+        startRangeFinishedDate: data.initialDate,
+        endRangeFinishedDate: data.finalDate,
+        ...(data.status && { status: data.status }),
+        ...(data.company && { company: data.company }),
+      };
+
+      try {
+        const file = await api.get<IGetReportResponseData>(
+          '/sales/excel-sales-report',
+          {
+            params: reqData,
+          },
+        );
+
+        setTimeout(() => {
+          setIsReportLoading(false);
+          formRef.current?.reset();
+
+          window.open(
+            file.data.url_to_download,
+            '_blank',
+            'noopener,noreferrer',
+          );
+
+          history.push('services');
+
+          addToast({
+            title: 'Relatório exportado com sucesso.',
+            description: 'Verifique no local de download escolhido.',
+            type: 'success',
+          });
+        }, 1000);
+      } catch (e) {
+        addToast({
+          title: 'Ocorreu um erro ao exportar o relatório.',
+          description: 'Tente novamente mais tarde.',
+          type: 'error',
+        });
+
+        setIsReportLoading(false);
+      }
+    },
+    [addToast, history],
+  );
+
   return (
     <Container>
       <Menu />
@@ -151,7 +201,7 @@ const Reports: React.FC = () => {
             xl: '90vw',
           }}
         >
-          <Form ref={formRef} onSubmit={handleGetReport}>
+          <Form ref={formRef} onSubmit={handleGetPdfReport}>
             <Grid templateColumns="repeat(4, 1fr)" paddingY={8} gap={4}>
               {canHandleSales && (
                 <Select
@@ -227,7 +277,7 @@ const Reports: React.FC = () => {
               )}
             </Grid>
 
-            <Flex>
+            <Flex style={{ gap: '16px' }}>
               <ChakraButton
                 isDisabled={isReportLoading}
                 width="100%"
@@ -238,6 +288,20 @@ const Reports: React.FC = () => {
                 type="submit"
               >
                 {isReportLoading ? <FiLoader /> : 'Gerar arquivo'}
+              </ChakraButton>
+
+              <ChakraButton
+                isDisabled={isReportLoading}
+                width="100%"
+                backgroundColor="#355a9d"
+                _hover={{
+                  backgroundColor: '#5580b9',
+                }}
+                onClick={() => {
+                  handleGetExcelReport(formRef.current?.getData() as IFormData);
+                }}
+              >
+                {isReportLoading ? <FiLoader /> : 'Gerar arquivo excel'}
               </ChakraButton>
             </Flex>
           </Form>
