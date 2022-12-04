@@ -279,6 +279,8 @@ const Reports: React.FC = () => {
 
             <Flex style={{ gap: '16px' }}>
               <ChakraButton
+                alignItems="center"
+                justifyContent="center"
                 isDisabled={isReportLoading}
                 width="100%"
                 backgroundColor="#355a9d"
@@ -287,10 +289,12 @@ const Reports: React.FC = () => {
                 }}
                 type="submit"
               >
-                {isReportLoading ? <FiLoader /> : 'Gerar arquivo'}
+                {isReportLoading ? <FiLoader /> : 'Gerar relatório PDF'}
               </ChakraButton>
 
               <ChakraButton
+                alignItems="center"
+                justifyContent="center"
                 isDisabled={isReportLoading}
                 width="100%"
                 backgroundColor="#355a9d"
@@ -301,7 +305,7 @@ const Reports: React.FC = () => {
                   handleGetExcelReport(formRef.current?.getData() as IFormData);
                 }}
               >
-                {isReportLoading ? <FiLoader /> : 'Gerar arquivo excel'}
+                {isReportLoading ? <FiLoader /> : 'Gerar relatório Excel'}
               </ChakraButton>
             </Flex>
           </Form>
