@@ -1,13 +1,15 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import { FiEdit2 } from 'react-icons/fi';
 import { MdPassword } from 'react-icons/md';
 
 import {
   Button as ChakraButton,
+  Tooltip,
   Skeleton,
   Stack,
-  Tooltip,
   Switch,
+  Flex,
+  Box,
 } from '@chakra-ui/core';
 
 import Breadcrumb from '../../components/Breadcrumb';
@@ -20,14 +22,7 @@ import { useToast } from '../../context/toast';
 import { IUser } from '../../interfaces/users';
 import api from '../../services/api';
 import getUserRoleTranslated from '../../utils/getUserRoleTranslated';
-import {
-  Container,
-  Content,
-  ButtonContainer,
-  List,
-  Box,
-  CellContainer,
-} from './styles';
+import { Container, Header, List, Row } from './styles';
 
 interface IFetchedUser {
   id: string;
@@ -60,7 +55,7 @@ interface IDisabledService {
   enabled: boolean;
 }
 
-const UsersByUnits = () => {
+const Users = () => {
   const { addToast } = useToast();
 
   const [users, setUsers] = useState<IFetchedUser[]>([]);
@@ -211,128 +206,10 @@ const UsersByUnits = () => {
 
     fetchUsers();
     setDisableUserAlertOpened(false);
-    setDisableUser(
-      {} as {
-        id: string;
-        enabled: boolean;
-      },
-    );
   }, [disableUser, addToast, fetchUsers]);
 
   return (
     <Container>
-      <Menu />
-
-      <Breadcrumb text="Usuários" />
-      <Content
-        marginLeft="auto"
-        marginRight="auto"
-        width="100%"
-        marginTop="26px"
-        maxWidth="90vw"
-      >
-        <div className="boxTitle">
-          <span>Nome</span>
-          <span>Login</span>
-          <span>Concessionária</span>
-          <span>Cargo</span>
-          <span>Ativo</span>
-        </div>
-
-        {loading ? (
-          <Stack marginTop="16px">
-            <Skeleton
-              height="60px"
-              borderRadius="md"
-              colorStart="#505050"
-              colorEnd="#404040"
-              marginTop="8px"
-            />
-            <Skeleton
-              height="60px"
-              borderRadius="md"
-              colorStart="#505050"
-              colorEnd="#404040"
-              marginTop="8px"
-            />
-            <Skeleton
-              height="60px"
-              borderRadius="md"
-              colorStart="#505050"
-              colorEnd="#404040"
-              marginTop="8px"
-            />
-            <Skeleton
-              height="60px"
-              borderRadius="md"
-              colorStart="#505050"
-              colorEnd="#404040"
-              marginTop="8px"
-            />
-            <Skeleton
-              height="60px"
-              borderRadius="md"
-              colorStart="#505050"
-              colorEnd="#404040"
-              marginTop="8px"
-            />
-          </Stack>
-        ) : (
-          <>
-            <List height={{ lg: '40vh', xl: '55vh' }}>
-              {formattedUsers.map(user => (
-                <Box key={user.id}>
-                  <div className="header" style={{ borderRadius: 15 }}>
-                    <CellContainer>
-                      <span>{user.name}</span>
-                    </CellContainer>
-
-                    <CellContainer>
-                      <span>{user.login}</span>
-                    </CellContainer>
-
-                    <CellContainer>
-                      <span>{user.companyName}</span>
-                    </CellContainer>
-
-                    <CellContainer>
-                      <span>{user.role}</span>
-                    </CellContainer>
-
-                    <Switch
-                      id="enabled"
-                      isChecked={user.enabled}
-                      color="green"
-                      onClick={_e => {
-                        setDisableUserAlertOpened(true);
-                        setDisableUser({
-                          id: user.id,
-                          enabled: !user.enabled,
-                        });
-                      }}
-                    />
-
-                    <CellContainer>{user.update_user_button}</CellContainer>
-
-                    <CellContainer>{user.reset_pass_button}</CellContainer>
-                  </div>
-                </Box>
-              ))}
-            </List>
-          </>
-        )}
-
-        <ButtonContainer>
-          <Button
-            onClick={() => {
-              setOpenCreateUserModal(true);
-            }}
-          >
-            Adicionar Novo Usuário
-          </Button>
-        </ButtonContainer>
-      </Content>
-
       <AlertDialog
         isOpen={disableUserAlertOpened}
         onConfirm={toggleEnabled}
@@ -345,9 +222,171 @@ const UsersByUnits = () => {
             ? 'Tem Certeza Que Deseja Ativar Usuário?'
             : 'Tem Certeza Que Deseja Desativar Usuário?'
         }
-        confirmButtonVariantColor={disableUser.enabled ? 'green' : 'red'}
-        saveText={disableUser.enabled ? 'Ativar' : 'Desativar'}
       />
+      <AlertDialog
+        isOpen={resetPassDialogOpened}
+        onConfirm={handleResetPassoword}
+        setIsOpen={setResetPassDialogOpened}
+        headerText="Resetar senha"
+        bodyText={`Tem certeza que deseja resetar a senha do(a) ${userToResetPassword?.name}?`}
+      />
+
+      <Menu />
+
+      <Flex
+        direction="column"
+        w={{
+          xs: '100%',
+          sm: '100%',
+          md: '100% ',
+          lg: 'calc(100% - 80px)',
+          xl: '100%',
+        }}
+        ml={{
+          xs: '0px',
+          sm: '0px',
+          md: '0px',
+          lg: '80px',
+          xl: '0px',
+        }}
+        paddingX={8}
+      >
+        <Breadcrumb text="Usuários" />
+
+        <Box
+          width="100%"
+          maxWidth="90vw"
+          marginLeft="auto"
+          marginRight="auto"
+          mt={8}
+          overflowY="auto"
+        >
+          <Header>
+            <span>Nome</span>
+            <span>Login</span>
+            <span>Concessionária</span>
+            <span>Cargo</span>
+            <span>Ativo</span>
+          </Header>
+
+          {loading ? (
+            <Stack marginTop="16px">
+              <Skeleton
+                height="60px"
+                borderRadius="md"
+                colorStart="#505050"
+                colorEnd="#404040"
+                marginTop="8px"
+              />
+              <Skeleton
+                height="60px"
+                borderRadius="md"
+                colorStart="#505050"
+                colorEnd="#404040"
+                marginTop="8px"
+              />
+              <Skeleton
+                height="60px"
+                borderRadius="md"
+                colorStart="#505050"
+                colorEnd="#404040"
+                marginTop="8px"
+              />
+              <Skeleton
+                height="60px"
+                borderRadius="md"
+                colorStart="#505050"
+                colorEnd="#404040"
+                marginTop="8px"
+              />
+              <Skeleton
+                height="60px"
+                borderRadius="md"
+                colorStart="#505050"
+                colorEnd="#404040"
+                marginTop="8px"
+              />
+              <Skeleton
+                height="60px"
+                borderRadius="md"
+                colorStart="#505050"
+                colorEnd="#404040"
+                marginTop="8px"
+              />
+              <Skeleton
+                height="60px"
+                borderRadius="md"
+                colorStart="#505050"
+                colorEnd="#404040"
+                marginTop="8px"
+              />
+            </Stack>
+          ) : (
+            <List
+              width="100%"
+              marginTop={4}
+              marginBottom={12}
+              maxH={{
+                xs: '90vh',
+                sm: '90vh',
+                md: '70vh',
+                lg: '60vh',
+                xl: '60vh',
+              }}
+            >
+              {formattedUsers.map(user => (
+                <Row key={user.id} style={{ borderRadius: 15 }}>
+                  <Flex>
+                    <span>{user.name}</span>
+                  </Flex>
+
+                  <Flex>
+                    <span>{user.login}</span>
+                  </Flex>
+
+                  <Flex>
+                    <span>{user.companyName}</span>
+                  </Flex>
+
+                  <Flex>
+                    <span>{user.role}</span>
+                  </Flex>
+
+                  <Switch
+                    id="enabled"
+                    isChecked={user.enabled}
+                    color="green"
+                    onClick={e => {
+                      e.preventDefault();
+
+                      setDisableUserAlertOpened(true);
+                      setDisableUser({
+                        id: user.id,
+                        enabled: !user.enabled,
+                      });
+                    }}
+                  />
+
+                  <Flex style={{ justifyContent: 'space-between' }}>
+                    {user.update_user_button}
+                    {user.reset_pass_button}
+                  </Flex>
+                </Row>
+              ))}
+            </List>
+          )}
+        </Box>
+
+        <Flex marginLeft="auto">
+          <Button
+            onClick={() => {
+              setOpenCreateUserModal(true);
+            }}
+          >
+            Adicionar Novo Usuário
+          </Button>
+        </Flex>
+      </Flex>
 
       <CreateUserModal
         isOpen={openCreateUserModal}
@@ -364,15 +403,7 @@ const UsersByUnits = () => {
         onSave={fetchUsers}
         user={userToUpdate}
       />
-      <AlertDialog
-        isOpen={resetPassDialogOpened}
-        onConfirm={handleResetPassoword}
-        setIsOpen={setResetPassDialogOpened}
-        headerText="Resetar senha"
-        bodyText={`Tem certeza que deseja resetar a senha do(a) ${userToResetPassword?.name}?`}
-      />
     </Container>
   );
 };
-
-export default UsersByUnits;
+export default Users;

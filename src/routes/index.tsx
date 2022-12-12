@@ -19,7 +19,7 @@ import ServicesRegister from '../pages/ServicesRegister';
 import SetCompanyFirstPrices from '../pages/SetCompanyFirstPrices';
 import UnitiesRegister from '../pages/UnitiesRegister';
 import UpdateCompanyPrices from '../pages/UpdateCompanyPrices';
-import Users from '../pages/UsersByCompanies';
+import Users from '../pages/Users';
 import UsersRegister from '../pages/UsersRegister';
 import Route from './Route';
 

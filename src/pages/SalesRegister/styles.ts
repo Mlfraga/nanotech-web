@@ -189,7 +189,8 @@ export const InputContainer = styled(ChakraBox)`
 `;
 
 export const ServiceBox = styled(ChakraFlex)`
-  height: 75px;
+  min-height: 75px;
+  word-break: break-word;
   background: #424242;
   border: 2px solid #555555;
 

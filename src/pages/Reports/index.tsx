@@ -8,7 +8,7 @@ import React, {
 import { FiLoader } from 'react-icons/fi';
 import { useHistory } from 'react-router-dom';
 
-import { Box, Flex, Button as ChakraButton, Grid } from '@chakra-ui/core';
+import { Flex, Button as ChakraButton } from '@chakra-ui/core';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 
@@ -185,131 +185,124 @@ const Reports: React.FC = () => {
       <Breadcrumb text="Relatórios" />
       <Flex
         direction="column"
-        alignItems="center"
-        justifyContent="center"
         width="100%"
+        maxWidth="90vw"
+        marginLeft="auto"
+        marginRight="auto"
+        padding="0px 0px 26px 8px"
       >
-        <Box
-          marginLeft="auto"
-          marginRight="auto"
-          width="100%"
-          maxWidth={{
-            xs: '90vw',
-            sm: '90vw',
-            md: '80vw',
-            lg: '78vw',
-            xl: '90vw',
-          }}
-        >
-          <Form ref={formRef} onSubmit={handleGetPdfReport}>
-            <Grid templateColumns="repeat(4, 1fr)" paddingY={8} gap={4}>
-              {canHandleSales && (
-                <Select
-                  name="company"
-                  height={8}
-                  backgroundColor="#424242"
-                  color="White"
-                  placeholder="Concessionárias"
-                  containerProps={{
-                    marginRight: 8,
-                    width: '100%',
-                    height: 10,
-                    border: '2px solid',
-                    borderColor: '#585858',
-                    backgroundColor: '#424242',
-                  }}
-                >
-                  {companies.map(company => (
-                    <option value={company.id} key={company.id}>
-                      {company.name}
-                    </option>
-                  ))}
-                </Select>
-              )}
-
+        <Form ref={formRef} onSubmit={handleGetPdfReport}>
+          <Flex
+            flexWrap="wrap"
+            style={{ gap: '6px' }}
+            direction="row"
+            mt="16px"
+          >
+            {canHandleSales && (
               <Select
-                name="status"
+                name="company"
                 height={8}
                 backgroundColor="#424242"
                 color="White"
-                placeholder="Status"
+                placeholder="Concessionárias"
                 containerProps={{
-                  width: '100%',
                   height: 10,
                   border: '2px solid',
                   borderColor: '#585858',
                   backgroundColor: '#424242',
-                }}
-                onChange={e => {
-                  if (e.target.value === 'FINISHED') {
-                    setFinishedSelected(true);
-                  } else {
-                    setFinishedSelected(false);
-                  }
+                  maxWidth: '300px',
                 }}
               >
-                <option value="PENDING">Pendente</option>
-                <option value="CONFIRMED">Confirmado</option>
-                <option value="CANCELED">Cancelado</option>
-                <option value="FINISHED">Finalizado</option>
+                {companies.map(company => (
+                  <option value={company.id} key={company.id}>
+                    {company.name}
+                  </option>
+                ))}
               </Select>
+            )}
 
-              {finishedSelected && (
-                <>
-                  <DatePicker
-                    placeholderText="Data da conclusão (inicial)"
-                    name="initialDate"
-                    containerProps={{
-                      marginRight: 6,
-                      width: '100%',
-                    }}
-                  />
+            <Select
+              name="status"
+              height={8}
+              backgroundColor="#424242"
+              color="White"
+              placeholder="Status"
+              containerProps={{
+                height: 10,
+                border: '2px solid',
+                borderColor: '#585858',
+                backgroundColor: '#424242',
+                maxWidth: '300px',
+              }}
+              onChange={e => {
+                if (e.target.value === 'FINISHED') {
+                  setFinishedSelected(true);
+                } else {
+                  setFinishedSelected(false);
+                }
+              }}
+            >
+              <option value="PENDING">Pendente</option>
+              <option value="CONFIRMED">Confirmado</option>
+              <option value="CANCELED">Cancelado</option>
+              <option value="FINISHED">Finalizado</option>
+            </Select>
 
-                  <DatePicker
-                    containerProps={{
-                      marginRight: 6,
-                      width: '100%',
-                    }}
-                    placeholderText="Data da conclusão (final)"
-                    name="finalDate"
-                  />
-                </>
-              )}
-            </Grid>
+            {finishedSelected && (
+              <>
+                <DatePicker
+                  placeholderText="Data da conclusão (inicial)"
+                  name="initialDate"
+                  containerProps={{
+                    width: '100%',
+                    maxWidth: '300px',
+                  }}
+                />
 
-            <Flex style={{ gap: '16px' }}>
-              <ChakraButton
-                alignItems="center"
-                justifyContent="center"
-                isDisabled={isReportLoading}
-                width="100%"
-                backgroundColor="#355a9d"
-                _hover={{
-                  backgroundColor: '#5580b9',
-                }}
-                type="submit"
-              >
-                {isReportLoading ? <FiLoader /> : 'Gerar relatório PDF'}
-              </ChakraButton>
+                <DatePicker
+                  containerProps={{
+                    width: '100%',
+                    maxWidth: '300px',
+                  }}
+                  placeholderText="Data da conclusão (final)"
+                  name="finalDate"
+                />
+              </>
+            )}
+          </Flex>
 
-              <ChakraButton
-                alignItems="center"
-                justifyContent="center"
-                isDisabled={isReportLoading}
-                width="100%"
-                backgroundColor="#355a9d"
-                _hover={{
-                  backgroundColor: '#5580b9',
-                }}
-                onClick={() => {
-                  handleGetExcelReport(formRef.current?.getData() as IFormData);
-                }}
-              >
-                {isReportLoading ? <FiLoader /> : 'Gerar relatório Excel'}
-              </ChakraButton>
-            </Flex>
-          </Form>
-        </Box>
+          <Flex style={{ gap: '16px', marginTop: '16px' }}>
+            <ChakraButton
+              alignItems="center"
+              justifyContent="center"
+              isDisabled={isReportLoading}
+              width="100%"
+              backgroundColor="#355a9d"
+              _hover={{
+                backgroundColor: '#5580b9',
+              }}
+              type="submit"
+            >
+              {isReportLoading ? <FiLoader /> : 'Gerar relatório PDF'}
+            </ChakraButton>
+
+            <ChakraButton
+              alignItems="center"
+              justifyContent="center"
+              isDisabled={isReportLoading}
+              width="100%"
+              backgroundColor="#355a9d"
+              _hover={{
+                backgroundColor: '#5580b9',
+              }}
+              onClick={() => {
+                handleGetExcelReport(formRef.current?.getData() as IFormData);
+              }}
+            >
+              {isReportLoading ? <FiLoader /> : 'Gerar relatório Excel'}
+            </ChakraButton>
+          </Flex>
+        </Form>
       </Flex>
     </Container>
   );

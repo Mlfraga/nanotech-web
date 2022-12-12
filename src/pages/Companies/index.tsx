@@ -22,7 +22,14 @@ import UpdateUnitModal from '../../components/Modals/UpdateUnit';
 import { ICompany, IFormattedCompany } from '../../interfaces/companies';
 import { IUnit } from '../../interfaces/unit';
 import api from '../../services/api';
-import { Container, Content, Separator, List, Box } from './styles';
+import {
+  Container,
+  Content,
+  Separator,
+  List,
+  Box,
+  ButtonContainer,
+} from './styles';
 
 const Companies = () => {
   const [companies, setCompanies] = useState<ICompany[]>([]);
@@ -183,6 +190,7 @@ const Companies = () => {
         width="100%"
         marginTop="26px"
         maxWidth="90vw"
+        overflowX="auto"
       >
         <div className="boxTitle">
           <span>Nome</span>
@@ -314,30 +322,32 @@ const Companies = () => {
             </List>
           </>
         )}
-        <UpdateUnitModal
-          isOpen={!!unitToUpdate}
-          onClose={handleCloseUpdateUnitData}
-          onSave={getCompanies}
-          unit={unitToUpdate}
-        />
-
-        <UpdateCompanyModal
-          isOpen={!!companyToUpdate}
-          onClose={handleCloseUpdateCompanyModal}
-          onSave={getCompanies}
-          company={companyToUpdate}
-        />
-
-        <div className="button">
-          <Button
-            onClick={() => {
-              history.push('companies-register');
-            }}
-          >
-            Registrar nova concessionária
-          </Button>
-        </div>
       </Content>
+
+      <ButtonContainer>
+        <Button
+          maxW="300px"
+          onClick={() => {
+            history.push('companies-register');
+          }}
+        >
+          Registrar nova concessionária
+        </Button>
+      </ButtonContainer>
+
+      <UpdateUnitModal
+        isOpen={!!unitToUpdate}
+        onClose={handleCloseUpdateUnitData}
+        onSave={getCompanies}
+        unit={unitToUpdate}
+      />
+
+      <UpdateCompanyModal
+        isOpen={!!companyToUpdate}
+        onClose={handleCloseUpdateCompanyModal}
+        onSave={getCompanies}
+        company={companyToUpdate}
+      />
     </Container>
   );
 };

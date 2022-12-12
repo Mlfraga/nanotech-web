@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { Skeleton, Stack } from '@chakra-ui/core';
+import { Skeleton, Stack, Flex } from '@chakra-ui/core';
 
 import Breadcrumb from '../../components/Breadcrumb';
 import Button from '../../components/Button';
@@ -48,6 +48,7 @@ const Sellers = () => {
       <Menu />
 
       <Breadcrumb text="Vendedores" />
+
       <Content
         marginLeft="auto"
         marginRight="auto"
@@ -122,32 +123,47 @@ const Sellers = () => {
             />
           </Stack>
         ) : (
-          <>
-            <List height={{ lg: '40vh', xl: '55vh' }}>
-              {rows.map(row => (
-                <div key={row.id} className="box">
-                  <span>{row.name}</span>
-                  <span>{row.user.telephone}</span>
-                  <span>{row.user.email}</span>
-                  <span>{row.company.name}</span>
-                  <span>
-                    {row.user?.role === 'MANAGER' ? 'Gerente' : 'Vendedor'}
-                  </span>
-                </div>
-              ))}
-            </List>
-          </>
-        )}
-        <div className="button">
-          <Button
-            onClick={() => {
-              history.push('sellers-register');
+          <List
+            maxH={{
+              xs: '90vh',
+              sm: '90vh',
+              md: '70vh',
+              lg: '60vh',
+              xl: '60vh',
             }}
           >
-            Registrar novo vendedor
-          </Button>
-        </div>
+            {rows.map(row => (
+              <div key={row.id} className="box">
+                <span>{row.name}</span>
+                <span>{row.user.telephone}</span>
+                <span>{row.user.email}</span>
+                <span>{row.company.name}</span>
+                <span>
+                  {row.user?.role === 'MANAGER' ? 'Gerente' : 'Vendedor'}
+                </span>
+              </div>
+            ))}
+          </List>
+        )}
       </Content>
+
+      <Flex
+        marginLeft="auto"
+        maxW="90vw"
+        mr="auto"
+        ml="auto"
+        alignItems="flex-end"
+        justifyContent="flex-end"
+      >
+        <Button
+          maxW="300px"
+          onClick={() => {
+            history.push('sellers-register');
+          }}
+        >
+          Registrar novo vendedor
+        </Button>
+      </Flex>
     </Container>
   );
 };
