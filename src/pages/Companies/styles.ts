@@ -114,4 +114,70 @@ export const Box = styled.div`
       }
     }
   }
+
+  .dropDown {
+    background: #353535;
+    border-radius: 0 0 15px 15px;
+    padding: 10px 16px 20px 16px;
+
+    .createNewCompanyLink {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+
+      font: 14px 'Ubuntu', sans-serif;
+      font-weight: 400;
+
+      color: #355a9d;
+      transition: color 0.2s;
+
+      margin-top: 16px;
+      &:hover {
+        color: #5580b9;
+      }
+    }
+
+    div.separator {
+      margin-top: 5px;
+      span {
+        font: 16px 'Ubuntu', sans-serif;
+      }
+    }
+
+    div.title {
+      margin-top: 16px;
+      background: #424242;
+      min-height: 35px;
+      border-radius: 8px;
+      padding-left: 26px;
+
+      display: grid;
+      grid-template-columns: 30% 30% 10% 30%;
+      align-items: center;
+
+      & + div {
+        margin-top: 8px;
+      }
+
+      span {
+        font: 16px 'Ubuntu', sans-serif;
+        font-weight: bold;
+      }
+    }
+
+    div.unit {
+      margin-top: 16px;
+      background: #424242;
+      min-height: 35px;
+      border-radius: 8px;
+      padding-left: 26px;
+
+      display: grid;
+      grid-template-columns: 30% 30% 10% 30%;
+      align-items: center;
+      & + div {
+        margin-top: 8px;
+      }
+    }
+  }
 `;
