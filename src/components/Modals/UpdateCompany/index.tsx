@@ -51,11 +51,6 @@ const UpdateCompanyModal: React.FC<IUpdateCompanyModalProps> = ({
   const formRef = useRef<FormHandles>(null);
   const toast = useToast();
 
-  // useEffect(() => {
-  //   setTelephone(company?.telephone);
-  //   setCnpj(company?.cnpj);
-  // }, [company]);
-
   const handleSubmit = useCallback(
     async (data: IFormData, event) => {
       try {

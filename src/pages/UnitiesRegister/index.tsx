@@ -88,17 +88,15 @@ const UnitiesRegister = () => {
           client_identifier: data?.unitIdentifier,
         };
 
-        const response = await api.post('units', requestDataSubmit);
+        await api.post('units', requestDataSubmit);
 
-        if (response.status === 200) {
-          addToast({
-            title: 'Sucesso',
-            description: `Unidade adicionada a concessionária ${company?.name}, com sucesso`,
-            type: 'success',
-          });
+        addToast({
+          title: 'Sucesso',
+          description: `Unidade adicionada a concessionária ${company?.name}, com sucesso`,
+          type: 'success',
+        });
 
-          reset();
-        }
+        reset();
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationsErrors(err);

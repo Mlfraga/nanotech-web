@@ -134,13 +134,13 @@ const SalesRegister = () => {
       setLoadingButton(true);
 
       const responseCompanyBudget = await api.post(
-        '/sales/getcompanysalebudget',
-        { companyId: user?.profile.company_id, services: selectedServices },
+        '/sales/company-sale-budget',
+        { services: selectedServices },
       );
 
       const { companyPrice } = responseCompanyBudget.data;
 
-      const responseCostBudget = await api.post('/sales/getsalebudget', {
+      const responseCostBudget = await api.post('/sales/sale-budget', {
         services: selectedServices,
       });
 
@@ -185,76 +185,43 @@ const SalesRegister = () => {
           throw new Error('Services are required.');
         }
 
-        let createSaleData;
-
-        if (data.comments) {
-          createSaleData = {
-            unitId: data.unitId,
-            deliveryDate: new Date(data.deliveryDate).toISOString(),
-            availabilityDate: new Date(data.availabilityDate).toISOString(),
-            companyPrice,
-            costPrice,
-            source: data.sourceCar,
-            name: data.name,
-            cpf: formattedCpf,
+        const createSaleData = {
+          unitId: data.unitId,
+          deliveryDate: new Date(data.deliveryDate).toISOString(),
+          availabilityDate: new Date(data.availabilityDate).toISOString(),
+          companyPrice,
+          costPrice,
+          source: data.sourceCar,
+          name: data.name,
+          cpf: formattedCpf,
+          ...(data?.comments && {
             comments: data?.comments?.replace(/(\r\n|\n|\r)/gm, ' '),
-            car: data.car,
-            carModel: data.carModel,
-            carPlate: data.carPlate,
-            carColor: data.carColor,
-          };
-        } else {
-          createSaleData = {
-            unitId: data.unitId,
-            deliveryDate: new Date(data.deliveryDate).toISOString(),
-            availabilityDate: new Date(data.availabilityDate).toISOString(),
-            companyPrice,
-            costPrice,
-            source: data.sourceCar,
-            name: data.name,
-            cpf: formattedCpf,
-            car: data.car,
-            carModel: data.carModel,
-            carPlate: data.carPlate,
-            carColor: data.carColor,
-          };
-        }
+          }),
+          car: data.car,
+          carModel: data.carModel,
+          carPlate: data.carPlate,
+          carColor: data.carColor,
+        };
 
         const responseCreatedSale = await api.post('sales', createSaleData);
 
-        if (responseCreatedSale.status === 200) {
-          const createServiceSaleData = {
-            saleId: responseCreatedSale.data.id,
-            serviceIds: selectedServices,
-          };
+        const createServiceSaleData = {
+          saleId: responseCreatedSale.data.id,
+          serviceIds: selectedServices,
+        };
 
-          const responseCreatedServiceSale = await api.post(
-            'service-sales',
-            createServiceSaleData,
-          );
+        await api.post('service-sales', createServiceSaleData);
 
-          if (responseCreatedServiceSale.status === 200) {
-            addToast({
-              title: 'Sucesso',
-              type: 'success',
-              description: 'Pedido registrado com sucesso.',
-            });
-            setLoadingButton(false);
-            setSelectedServices([]);
+        addToast({
+          title: 'Sucesso',
+          type: 'success',
+          description: 'Pedido registrado com sucesso.',
+        });
+        setLoadingButton(false);
+        setSelectedServices([]);
 
-            reset();
-            setDocument('');
-          } else {
-            addToast({
-              title: 'Erro',
-              type: 'error',
-              description:
-                'Não foi possível registrar esse pedido, tente novamente.',
-            });
-
-            setLoadingButton(false);
-          }
-        }
+        reset();
+        setDocument('');
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           if (selectedServices.length <= 0) {
@@ -277,7 +244,7 @@ const SalesRegister = () => {
         setLoadingButton(false);
       }
     },
-    [addToast, selectedServices, user],
+    [addToast, selectedServices],
   );
 
   return (

@@ -102,11 +102,11 @@ const Reports: React.FC = () => {
           setIsReportLoading(false);
           formRef.current?.reset();
 
-          window.open(
-            file.data.url_to_download,
-            '_blank',
-            'noopener,noreferrer',
-          );
+          const link = document.createElement('a');
+
+          link.setAttribute('target', '_blank');
+          link.setAttribute('href', file.data.url_to_download);
+          link.dispatchEvent(new MouseEvent('click'));
 
           history.push('services');
 
@@ -152,11 +152,11 @@ const Reports: React.FC = () => {
           setIsReportLoading(false);
           formRef.current?.reset();
 
-          window.open(
-            file.data.url_to_download,
-            '_blank',
-            'noopener,noreferrer',
-          );
+          const link = document.createElement('a');
+
+          link.setAttribute('target', '_blank');
+          link.setAttribute('href', file.data.url_to_download);
+          link.dispatchEvent(new MouseEvent('click'));
 
           history.push('services');
 

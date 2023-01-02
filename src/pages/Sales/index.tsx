@@ -294,6 +294,7 @@ const Sales = () => {
           name: string;
           price: string;
         }> = [];
+
         if (user?.role === 'ADMIN') {
           sale.services_sales.forEach(service => {
             services.push({
@@ -301,6 +302,7 @@ const Sales = () => {
               name: service.service.name,
               price: formatMoney(service.cost_value),
             });
+
             return services;
           });
         } else {
@@ -1061,32 +1063,36 @@ const Sales = () => {
           cleanFilter={handleCleanFilter}
         />
 
-        <WhatsappNumbersDrawer
-          isOpen={whatsappNumbersDrawerOpened}
-          placement="right"
-          onClose={() => setWhatsappNumbersDrawerOpened(false)}
-        />
+        {canHandleSales && (
+          <>
+            <WhatsappNumbersDrawer
+              isOpen={whatsappNumbersDrawerOpened}
+              placement="right"
+              onClose={() => setWhatsappNumbersDrawerOpened(false)}
+            />
 
-        <UpdateSalesModal
-          isOpen={openEditSalesModal}
-          onClose={() => setOpenEditSalesModal(false)}
-          onSave={loadSales}
-          sale={saleToEdit}
-        />
+            <UpdateSalesModal
+              isOpen={openEditSalesModal}
+              onClose={() => setOpenEditSalesModal(false)}
+              onSave={loadSales}
+              sale={saleToEdit}
+            />
 
-        <IndicateServiceProvider
-          isOpen={openLinkServiceProviderToSalesModal}
-          onClose={() => {
-            setOpenLinkServiceProviderToSalesModal(false);
-          }}
-          onSave={() => {
-            setOpenLinkServiceProviderToSalesModal(false);
-            loadSales();
-          }}
-          selectedProviderServiceSales={selectedProviderServiceSales}
-          saleId={saleToLinkProviders}
-          serviceProviders={serviceProviders}
-        />
+            <IndicateServiceProvider
+              isOpen={openLinkServiceProviderToSalesModal}
+              onClose={() => {
+                setOpenLinkServiceProviderToSalesModal(false);
+              }}
+              onSave={() => {
+                setOpenLinkServiceProviderToSalesModal(false);
+                loadSales();
+              }}
+              selectedProviderServiceSales={selectedProviderServiceSales}
+              saleId={saleToLinkProviders}
+              serviceProviders={serviceProviders}
+            />
+          </>
+        )}
       </Flex>
     </Container>
   );
