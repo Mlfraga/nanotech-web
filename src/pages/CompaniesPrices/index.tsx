@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { FiEdit } from 'react-icons/fi';
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import {
   Button as ChakraButton,
@@ -37,7 +37,6 @@ export interface ICompanyPrices {
 
 const CompaniesPrices = () => {
   const { id: companyId } = useParams<ICompanyPricesRouterParams>();
-  const history = useHistory();
   const { addToast } = useToast();
 
   const [

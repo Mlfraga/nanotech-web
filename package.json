@@ -10,6 +10,9 @@
     "lint:fix": "eslint --fix ./ --ext ts,tsx",
     "eject": "react-scripts eject"
   },
+  "engines": {
+    "node": ">=16.17.0 <=16.17.0"
+  },
   "dependencies": {
     "@chakra-ui/core": "^0.8.0",
     "@chakra-ui/css-reset": "^2.0.7",
