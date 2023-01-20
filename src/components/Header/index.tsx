@@ -9,9 +9,9 @@ import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 
-import Logo from '../../assets/Nanotech/Logo.png';
+import Logo from '../../assets/Constec/Logo.png';
 import { useAuth } from '../../context/auth';
-import { Container, Buttons } from './styles';
+import { Buttons, Container } from './styles';
 
 interface IHeaderProp {
   disableButtons?: boolean;

@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 
 import { Button, Flex, Image, Tooltip } from '@chakra-ui/core';
 
-import Logo from '../../assets/Nanotech/SmallLogo.png';
+import Logo from '../../assets/Constec/SmallLogo.png';
 import { useAuth } from '../../context/auth';
 import Header from '../Header';
 
@@ -59,7 +59,7 @@ const Sidebar: React.FC<ISidebarProps> = ({ disableButton = false }) => {
             background="#282828"
             borderBottom="1px solid #545454"
           >
-            <Image width={20} src={Logo}></Image>
+            <Image width={10} src={Logo}></Image>
           </Flex>
           <Flex
             background="#282828"
