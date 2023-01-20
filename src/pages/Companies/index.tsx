@@ -3,41 +3,53 @@ import { AiOutlineTool } from 'react-icons/ai';
 import { FaArrowAltCircleDown, FaArrowAltCircleUp } from 'react-icons/fa';
 import { FiEdit } from 'react-icons/fi';
 import { RiAddFill } from 'react-icons/ri';
-import { useHistory, Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 import {
-  Flex as ChakraFlex,
   Button as ChakraButton,
-  Tooltip,
+  Flex as ChakraFlex,
+  Flex,
   Skeleton,
   Stack,
-  Flex,
+  Tooltip
 } from '@chakra-ui/core';
 
 import Breadcrumb from '../../components/Breadcrumb';
 import Button from '../../components/Button';
 import Menu from '../../components/Menu';
+import CreateCompanyModal from '../../components/Modals/CreateCompany';
+import CreateUnitModal from '../../components/Modals/CreateUnit';
 import UpdateCompanyModal from '../../components/Modals/UpdateCompany';
 import UpdateUnitModal from '../../components/Modals/UpdateUnit';
 import { ICompany, IFormattedCompany } from '../../interfaces/companies';
 import { IUnit } from '../../interfaces/unit';
 import api from '../../services/api';
 import {
-  Container,
-  Content,
-  Separator,
-  List,
   Box,
   ButtonContainer,
+  Container,
+  Content,
+  List,
+  Separator
 } from './styles';
 
 const Companies = () => {
   const [companies, setCompanies] = useState<ICompany[]>([]);
   const [openedCompanies, setOpenedCompanies] = useState<string[]>([]);
+  const [
+    createCompanyModalIsOpen,
+    setCreateCompanyModalIsOpen,
+  ] = useState<boolean>(false);
 
   const [companyToUpdate, setCompanyToUpdate] = useState<ICompany | undefined>(
     undefined,
   );
+  const [createUnitModalIsOpen, setCreateUnitModalIsOpen] = useState<boolean>(
+    false,
+  );
+  const [companyToCreateUnit, setCompanyToCreateUnit] = useState<
+    IFormattedCompany | undefined
+  >(undefined);
 
   const [unitToUpdate, setUnitToUpdate] = useState<IUnit | undefined>(
     undefined,
@@ -101,6 +113,28 @@ const Companies = () => {
     setUnitToUpdate(undefined);
   }, []);
 
+  const handleCloseCreateCompanyModal = useCallback(
+    () => setCreateCompanyModalIsOpen(false),
+    [],
+  );
+
+  const handleCloseCreateUnitModal = useCallback(
+    () => setCreateUnitModalIsOpen(false),
+    [],
+  );
+
+  const handleOpenCreateCompanyModal = useCallback(() => {
+    setCreateCompanyModalIsOpen(true);
+  }, []);
+
+  const handleOpenCreateUnitModal = useCallback(
+    (company: IFormattedCompany) => {
+      setCompanyToCreateUnit(company);
+      setCreateUnitModalIsOpen(true);
+    },
+    [],
+  );
+
   const formattedCompanies: IFormattedCompany[] = useMemo(
     () =>
       companies.map<IFormattedCompany>(company => ({
@@ -123,10 +157,12 @@ const Companies = () => {
                 _hover={{ background: '#353535', border: 0 }}
                 _focusWithin={{ border: 0 }}
                 background="#282828"
+                width="48%"
               >
                 <FiEdit />
               </ChakraButton>
             </Tooltip>
+
             <Tooltip
               aria-label="Serviços da concessionária"
               label="Serviços da concessionária"
@@ -136,10 +172,11 @@ const Companies = () => {
                 _hover={{
                   background: '#353535',
                   border: 0,
-                  marginLeft: '12px',
                 }}
+                marginLeft="12px"
                 _focusWithin={{ border: 0 }}
                 background="#282828"
+                width="48%"
               >
                 <AiOutlineTool color="#fff" />
               </ChakraButton>
@@ -152,23 +189,27 @@ const Companies = () => {
           telephone: unit.telephone,
           client_identifier: unit.client_identifier,
           button: (
-            <Tooltip
-              aria-label="Alterar dados da unidade"
-              label="Alterar dados da unidade"
-            >
-              <ChakraButton
-                onClick={() => handleOpenUpdateUnitData(unit)}
-                _hover={{
-                  backgroundColor: '#404040',
-                  color: '#ccc',
-                  border: 0,
-                }}
-                _focusWithin={{ border: 0 }}
-                background="#424242"
+            <Flex alignItems="center" justifyContent="center">
+              <Tooltip
+                aria-label="Alterar dados da unidade"
+                label="Alterar dados da unidade"
               >
-                <FiEdit />
-              </ChakraButton>
-            </Tooltip>
+                <ChakraButton
+                  onClick={() => handleOpenUpdateUnitData(unit)}
+                  _hover={{
+                    backgroundColor: '#404040',
+                    color: '#ccc',
+                    border: 0,
+                  }}
+                  w="20px"
+                  h="20px"
+                  _focusWithin={{ border: 0 }}
+                  background="#424242"
+                >
+                  <FiEdit />
+                </ChakraButton>
+              </Tooltip>
+            </Flex>
           ),
         })),
       })),
@@ -183,157 +224,184 @@ const Companies = () => {
   return (
     <Container>
       <Menu />
-      <Breadcrumb text="Concessionárias cadastradas" />
-      <Content
-        marginLeft="auto"
-        marginRight="auto"
-        width="100%"
-        marginTop="26px"
-        maxWidth="90vw"
-        overflowX="auto"
+      <Flex
+        direction="column"
+        w={{
+          xs: '100%',
+          sm: '100%',
+          md: '100% ',
+          lg: 'calc(100% - 80px)',
+          xl: '100%',
+        }}
+        ml={{
+          xs: '0px',
+          sm: '0px',
+          md: '0px',
+          lg: '80px',
+          xl: '0px',
+        }}
+        paddingX={8}
       >
-        <div className="boxTitle">
-          <span>Nome</span>
-          <span>Contato</span>
-          <span>CNPJ</span>
-          <span>Identificador</span>
-        </div>
+        <Breadcrumb text="Concessionárias cadastradas" />
+        <Content
+          marginLeft="auto"
+          marginRight="auto"
+          width="100%"
+          marginTop="26px"
+          maxWidth="90vw"
+          overflowX="auto"
+        >
+          <div className="boxTitle">
+            <span>Nome</span>
+            <span>Contato</span>
+            <span>CNPJ</span>
+            <span>Identificador</span>
+          </div>
 
-        {loading ? (
-          <Stack marginTop="16px">
-            <Skeleton
-              height="60px"
-              borderRadius="md"
-              colorStart="#505050"
-              colorEnd="#404040"
-              marginTop="8px"
-            />
-            <Skeleton
-              height="60px"
-              borderRadius="md"
-              colorStart="#505050"
-              colorEnd="#404040"
-              marginTop="8px"
-            />
-            <Skeleton
-              height="60px"
-              borderRadius="md"
-              colorStart="#505050"
-              colorEnd="#404040"
-              marginTop="8px"
-            />
-            <Skeleton
-              height="60px"
-              borderRadius="md"
-              colorStart="#505050"
-              colorEnd="#404040"
-              marginTop="8px"
-            />
-            <Skeleton
-              height="60px"
-              borderRadius="md"
-              colorStart="#505050"
-              colorEnd="#404040"
-              marginTop="8px"
-            />
-            <Skeleton
-              height="60px"
-              borderRadius="md"
-              colorStart="#505050"
-              colorEnd="#404040"
-              marginTop="8px"
-            />
-            <Skeleton
-              height="60px"
-              borderRadius="md"
-              colorStart="#505050"
-              colorEnd="#404040"
-              marginTop="8px"
-            />
-          </Stack>
-        ) : (
-          <>
-            <List height={{ lg: '40vh', xl: '55vh' }}>
-              {formattedCompanies.map(company => (
-                <Box key={company.id}>
-                  <div
-                    className="header"
-                    style={
-                      openedCompanies.includes(company.id)
-                        ? { borderRadius: '15px 15px 0 0' }
-                        : { borderRadius: 15 }
-                    }
-                  >
-                    <span>{company.name}</span>
-                    <span>{company.telephone}</span>
-                    <span>{company.cnpj}</span>
-                    <span>{company.client_identifier}</span>
-                    {company.buttons}
+          {loading ? (
+            <Stack marginTop="16px">
+              <Skeleton
+                height="60px"
+                borderRadius="md"
+                colorStart="#505050"
+                colorEnd="#404040"
+                marginTop="8px"
+              />
+              <Skeleton
+                height="60px"
+                borderRadius="md"
+                colorStart="#505050"
+                colorEnd="#404040"
+                marginTop="8px"
+              />
+              <Skeleton
+                height="60px"
+                borderRadius="md"
+                colorStart="#505050"
+                colorEnd="#404040"
+                marginTop="8px"
+              />
+              <Skeleton
+                height="60px"
+                borderRadius="md"
+                colorStart="#505050"
+                colorEnd="#404040"
+                marginTop="8px"
+              />
+              <Skeleton
+                height="60px"
+                borderRadius="md"
+                colorStart="#505050"
+                colorEnd="#404040"
+                marginTop="8px"
+              />
+              <Skeleton
+                height="60px"
+                borderRadius="md"
+                colorStart="#505050"
+                colorEnd="#404040"
+                marginTop="8px"
+              />
+              <Skeleton
+                height="60px"
+                borderRadius="md"
+                colorStart="#505050"
+                colorEnd="#404040"
+                marginTop="8px"
+              />
+            </Stack>
+          ) : (
+            <>
+              <List height={{ lg: '40vh', xl: '55vh' }}>
+                {formattedCompanies.map(company => (
+                  <Box key={company.id}>
+                    <div
+                      className="header"
+                      style={
+                        openedCompanies.includes(company.id)
+                          ? { borderRadius: '15px 15px 0 0' }
+                          : { borderRadius: 15 }
+                      }
+                    >
+                      <span>{company.name}</span>
+                      <span>{company.telephone}</span>
+                      <span>{company.cnpj}</span>
+                      <span>{company.client_identifier}</span>
+                      {company.buttons}
 
-                    <ChakraFlex marginRight={8} justifyContent="flex-end">
-                      {openedCompanies.includes(company.id) ? (
-                        <FaArrowAltCircleUp
-                          onClick={() => handleCloseCompanies(company.id)}
-                          style={{ cursor: 'pointer', alignContent: 'right' }}
-                          size={26}
-                        />
-                      ) : (
-                        <FaArrowAltCircleDown
-                          onClick={() => handleOpenCompanies(company.id)}
-                          style={{ cursor: 'pointer', alignSelf: 'right' }}
-                          size={26}
-                        />
-                      )}
-                    </ChakraFlex>
-                  </div>
-
-                  <div
-                    className="dropDown"
-                    hidden={!openedCompanies.includes(company.id)}
-                  >
-                    <Separator className="separator">
-                      <span>Unidades</span>
-                      <div />
-                    </Separator>
-
-                    <div className="title">
-                      <span>Nome</span>
-                      <span>Telefone</span>
-                      <span>Identificador</span>
+                      <ChakraFlex marginRight={8} justifyContent="flex-end">
+                        {openedCompanies.includes(company.id) ? (
+                          <FaArrowAltCircleUp
+                            onClick={() => handleCloseCompanies(company.id)}
+                            style={{ cursor: 'pointer', alignContent: 'right' }}
+                            size={26}
+                          />
+                        ) : (
+                          <FaArrowAltCircleDown
+                            onClick={() => handleOpenCompanies(company.id)}
+                            style={{ cursor: 'pointer', alignSelf: 'right' }}
+                            size={26}
+                          />
+                        )}
+                      </ChakraFlex>
                     </div>
 
-                    {company.units.map(unit => (
-                      <div className="unit" key={unit.id}>
-                        <span>{unit.name}</span>
-                        <span>{unit.telephone}</span>
-                        <span>{unit.client_identifier}</span>
-                        {unit.button}
-                      </div>
-                    ))}
-                    <Link
-                      className="createNewCompanyLink"
-                      to={`unities-register/?company=${company.id}`}
+                    <div
+                      className="dropDown"
+                      hidden={!openedCompanies.includes(company.id)}
                     >
-                      <RiAddFill size={18} /> Adicionar nova unidade
-                    </Link>
-                  </div>
-                </Box>
-              ))}
-            </List>
-          </>
-        )}
-      </Content>
+                      <Separator className="separator">
+                        <span>Unidades</span>
+                        <div />
+                      </Separator>
 
+                      <div className="title">
+                        <span>Nome</span>
+                        <span>Telefone</span>
+                        <span>Identificador</span>
+                      </div>
+
+                      {company.units.map(unit => (
+                        <div className="unit" key={unit.id}>
+                          <span>{unit.name}</span>
+                          <span>{unit.telephone}</span>
+                          <span>{unit.client_identifier}</span>
+                          {unit.button}
+                        </div>
+                      ))}
+
+                      <button
+                        className="createNewCompanyLink"
+                        onClick={() => handleOpenCreateUnitModal(company)}
+                      >
+                        <RiAddFill size={18} /> Adicionar nova unidade
+                      </button>
+                    </div>
+                  </Box>
+                ))}
+              </List>
+            </>
+          )}
+        </Content>
+      </Flex>
       <ButtonContainer>
-        <Button
-          maxW="300px"
-          onClick={() => {
-            history.push('companies-register');
-          }}
-        >
+        <Button maxW="300px" onClick={handleOpenCreateCompanyModal}>
           Registrar nova concessionária
         </Button>
       </ButtonContainer>
+
+      <CreateCompanyModal
+        isOpen={!!createCompanyModalIsOpen}
+        onClose={handleCloseCreateCompanyModal}
+        onSave={getCompanies}
+      />
+
+      <CreateUnitModal
+        isOpen={!!createUnitModalIsOpen}
+        onClose={handleCloseCreateUnitModal}
+        onSave={getCompanies}
+        company={companyToCreateUnit}
+      />
 
       <UpdateUnitModal
         isOpen={!!unitToUpdate}

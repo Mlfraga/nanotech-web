@@ -3,22 +3,23 @@ import { FiEdit } from 'react-icons/fi';
 import { useHistory, useParams } from 'react-router-dom';
 
 import {
+  Button as ChakraButton,
   Skeleton,
   Stack,
-  Tooltip,
-  Button as ChakraButton,
   Switch,
+  Tooltip
 } from '@chakra-ui/core';
 
 import Breadcrumb from '../../components/Breadcrumb';
 import Button from '../../components/Button';
 import AlertDialog from '../../components/Dialogs/Alert';
 import Menu from '../../components/Menu';
+import CreateService from '../../components/Modals/CreateService';
 import UpdateService from '../../components/Modals/UpdateService';
 import { useToast } from '../../context/toast';
 import { ICompany } from '../../interfaces/companies';
 import api from '../../services/api';
-import { Container, Content, List, Box } from './styles';
+import { Box, Container, Content, List } from './styles';
 
 interface ICompanyPricesRouterParams {
   id: string;
@@ -53,6 +54,10 @@ const CompaniesPrices = () => {
     },
   );
   const [loading, setLoading] = useState<boolean>(false);
+  const [
+    createServiceModalOpened,
+    setCreateServiceModalOpened,
+  ] = useState<boolean>(false);
   const [companyPrices, setCompanyPrices] = useState<ICompanyPrices[]>([]);
   const [company, setCompany] = useState<ICompany>({} as ICompany);
 
@@ -255,7 +260,7 @@ const CompaniesPrices = () => {
             <div className="button">
               <Button
                 onClick={() => {
-                  history.push(`/services-register/${companyId}`);
+                  setCreateServiceModalOpened(true);
                 }}
               >
                 Registrar novo serviço
@@ -270,6 +275,13 @@ const CompaniesPrices = () => {
         onClose={() => setOpenUpdateService(false)}
         onSave={getServices}
         service={serviceToEdit}
+      />
+
+      <CreateService
+        isOpen={!!createServiceModalOpened}
+        onClose={() => setCreateServiceModalOpened(false)}
+        onSave={getServices}
+        company={{ id: companyId, name: company?.name }}
       />
 
       <AlertDialog
