@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { FiDollarSign } from 'react-icons/fi';
 
 import {
@@ -17,9 +17,8 @@ import { Form } from '@unform/web';
 import * as Yup from 'yup';
 
 import { useToast } from '../../../context/toast';
-import { ICompanyPrices } from '../../../pages/CompaniesPrices';
 import api from '../../../services/api';
-import getValidationErrors from '../../../utils/getValidationError';
+import getValidationsErrors from '../../../utils/getValidationError';
 import { currencyMasker } from '../../../utils/masks';
 import Input from '../../Input';
 
@@ -28,24 +27,26 @@ interface IFormData {
   price: number;
 }
 
-interface IUpdateServicePriceModalProps {
+interface ICreateServicePriceModalProps {
   isOpen: boolean;
-  onClose: (
-    event: React.MouseEvent | React.KeyboardEvent,
-    reason?: 'pressedEscape' | 'clickedOverlay',
-  ) => void;
+  company: {
+    id: string;
+    name: string;
+  };
+  onClose: () => void;
   onSave: () => void | undefined;
-  service: ICompanyPrices;
 }
 
-const UpdateServicePriceModal: React.FC<IUpdateServicePriceModalProps> = ({
+const CreateServicePriceModal: React.FC<ICreateServicePriceModalProps> = ({
   isOpen,
   onClose,
   onSave,
-  service,
+  company,
 }) => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
+
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleKeyUp = useCallback(
     (event: React.FormEvent<HTMLInputElement>) => {
@@ -56,52 +57,59 @@ const UpdateServicePriceModal: React.FC<IUpdateServicePriceModalProps> = ({
   );
 
   const handleSubmit = useCallback(
-    async (data: IFormData, event) => {
+    async (data: IFormData) => {
+      setLoading(true);
+
       try {
         formRef.current?.setErrors({});
 
         const schema = Yup.object().shape({
-          name: !data.price
-            ? Yup.string().required('Nome obrigatório')
-            : Yup.string(),
-          price: !data.name
-            ? Yup.number().required('Preço obrigatório')
-            : Yup.string(),
+          name: Yup.string().required('Nome do serviço obrigatório.'),
+          price: Yup.number().required('O valor do serviço é obrigatório.'),
         });
 
-        await schema.validate(data, { abortEarly: false });
-
-        await api.put(`services/${service.id}`, {
-          ...(data.name && { name: data.name }),
-          ...(data.price && { price: data.price }),
+        await schema.validate(data, {
+          abortEarly: false,
         });
 
-        addToast({
-          type: 'success',
-          title: 'Serviço alterado com sucesso',
-        });
+        const formData = {
+          name: data.name,
+          price: data.price,
+          company_id: company.id,
+        };
 
-        onClose(event);
+        const response = await api.post('services', formData);
 
-        onSave();
+        if (response.status === 200) {
+          addToast({
+            title: 'Cadastro realizado com sucesso.',
+            type: 'success',
+            description: 'O serviço foi cadastrado com sucesso.',
+          });
+
+          onClose();
+          onSave();
+          setLoading(false);
+        }
       } catch (err) {
+        setLoading(false);
+
         if (err instanceof Yup.ValidationError) {
-          const errors = getValidationErrors(err);
+          const errors = getValidationsErrors(err);
 
           formRef.current?.setErrors(errors);
-
           return;
         }
 
         addToast({
-          type: 'error',
-          title: 'Erro ao atualizar o serviço',
+          title: 'Não foi possível realizar o caadastro.',
           description:
-            'Ocorreu um erro ao atualizar dados do serviço, tente novamente.',
+            'Esse serviço já foi criado ou ocorreu um erro, tente novamente.',
+          type: 'error',
         });
       }
     },
-    [service, onClose, onSave, addToast],
+    [onClose, onSave, addToast, company.id],
   );
 
   return (
@@ -113,24 +121,19 @@ const UpdateServicePriceModal: React.FC<IUpdateServicePriceModalProps> = ({
           maxWidth={900}
           borderRadius="md"
         >
-          <ModalHeader>Alterar dados do serviço</ModalHeader>
+          <ModalHeader>{`Adicionar serviço a concessionária ${company.name}`}</ModalHeader>
           <ModalCloseButton />
 
           <Form ref={formRef} onSubmit={handleSubmit}>
             <ModalBody paddingBottom={4}>
               <Flex direction="column">
-                <Input
-                  placeholder="Nome"
-                  name="name"
-                  defaultValue={service.name}
-                />
+                <Input placeholder="Nome" name="name" />
 
                 <Input
                   placeholder="Preço Nanotech"
                   onKeyUp={handleKeyUp}
                   name="price"
                   icon={FiDollarSign}
-                  defaultValue={Number(service.price).toFixed(2)}
                 />
               </Flex>
             </ModalBody>
@@ -147,6 +150,7 @@ const UpdateServicePriceModal: React.FC<IUpdateServicePriceModalProps> = ({
 
               <Button
                 type="submit"
+                isLoading={loading}
                 backgroundColor="#355a9d"
                 _hover={{
                   backgroundColor: '#5580b9',
@@ -162,4 +166,4 @@ const UpdateServicePriceModal: React.FC<IUpdateServicePriceModalProps> = ({
   );
 };
 
-export default UpdateServicePriceModal;
+export default CreateServicePriceModal;
