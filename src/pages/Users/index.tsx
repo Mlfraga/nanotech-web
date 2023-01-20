@@ -1,15 +1,11 @@
-import React, { useCallback, useEffect, useState, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FiEdit2 } from 'react-icons/fi';
 import { MdPassword } from 'react-icons/md';
 
 import {
-  Button as ChakraButton,
-  Tooltip,
-  Skeleton,
+  Box, Button as ChakraButton, Flex, Skeleton,
   Stack,
-  Switch,
-  Flex,
-  Box,
+  Switch, Tooltip
 } from '@chakra-ui/core';
 
 import Breadcrumb from '../../components/Breadcrumb';
@@ -258,7 +254,7 @@ const Users = () => {
           maxWidth="90vw"
           marginLeft="auto"
           marginRight="auto"
-          mt={8}
+          mt={4}
           overflowY="auto"
         >
           <Header>

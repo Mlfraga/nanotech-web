@@ -1,23 +1,13 @@
 import React, {
-  useRef,
   useCallback,
-  useEffect,
-  useState,
-  useMemo,
+  useEffect, useMemo, useRef, useState
 } from 'react';
 import { FaArrowAltCircleDown, FaArrowAltCircleUp } from 'react-icons/fa';
-import { FiEdit3, FiFilter, FiTrash, FiSave, FiUsers } from 'react-icons/fi';
-import { FiSettings, FiNavigation } from 'react-icons/fi';
+import { FiEdit3, FiFilter, FiNavigation, FiSave, FiSettings, FiTrash, FiUsers } from 'react-icons/fi';
 
 import {
-  Button as ChakraButton,
-  Tooltip,
-  Text,
-  Box as ChakraBox,
-  Flex as ChakraFlex,
-  Skeleton,
-  Stack,
-  Flex,
+  Box as ChakraBox, Button as ChakraButton, Flex as ChakraFlex, Flex, Skeleton,
+  Stack, Text, Tooltip
 } from '@chakra-ui/core';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
@@ -45,12 +35,8 @@ import SaleStatus from '../ProviderSales/components/SaleStatus';
 import FilterDrawer from './components/FilterDrawer';
 import WhatsappNumbersDrawer from './components/WhatsappNumbersDrawer';
 import {
-  Container,
-  Content,
-  Separator,
-  List,
-  Box,
-  ActionButttonsContainer,
+  ActionButttonsContainer, Box, Container,
+  Content, List, Separator
 } from './styles';
 
 interface ISaleRequestResponseData {
@@ -623,7 +609,7 @@ const Sales = () => {
           maxWidth="90vw"
           marginLeft="auto"
           marginRight="auto"
-          mt={8}
+          mt={4}
         >
           {canHandleSales && (
             <ChakraBox

@@ -247,7 +247,7 @@ const Companies = () => {
           marginLeft="auto"
           marginRight="auto"
           width="100%"
-          marginTop="26px"
+          marginTop={4}
           maxWidth="90vw"
           overflowX="auto"
         >

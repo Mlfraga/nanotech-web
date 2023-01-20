@@ -21,7 +21,7 @@ export const Content = styled(ChakraBox)`
     justify-content: center;
     padding-left: 10px;
 
-    margin-top: 25px;
+    margin-top: 12px;
     background: #282828;
     height: 60px;
     border-radius: 15px;
