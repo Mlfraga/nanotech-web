@@ -13,23 +13,25 @@ export const Container = styled(ChakraBox)`
 `;
 
 export const Content = styled(ChakraBox)`
-  .boxTitle {
-    min-width: 800px;
-    display: grid;
-    grid-template-columns: 15% 20% 20% 45%;
-    align-items: center;
-    justify-content: center;
-    padding-left: 10px;
 
-    margin-top: 12px;
-    background: #282828;
-    height: 60px;
-    border-radius: 15px;
+`;
 
-    span {
-      font: 16px 'Ubuntu', sans-serif;
-      font-weight: bold;
-    }
+export const BoxTitle = styled.div`
+  min-width: 600px;
+  display: grid;
+  grid-template-columns: 40% 30% 10% 20%;
+  align-items: center;
+  justify-content: center;
+  padding-left: 10px;
+
+  margin-top: 12px;
+  background: #282828;
+  height: 60px;
+  border-radius: 15px;
+
+  span {
+    font: 16px 'Ubuntu', sans-serif;
+    font-weight: bold;
   }
 `;
 
@@ -65,7 +67,7 @@ export const Separator = styled.div`
 `;
 
 export const List = styled(ChakraBox)`
-  min-width: 800px;
+  min-width: 600px;
   width: 100%;
 
   overflow-x: hidden;
@@ -81,6 +83,32 @@ export const List = styled(ChakraBox)`
   ::-webkit-scrollbar-thumb {
     background: #525252;
     border-radius: 20px;
+  }
+`;
+
+export const ListItem = styled.div`
+  padding-left: 10px;
+  display: grid;
+  width: 100%;
+  grid-template-columns: 40% 30% 10% 20%;
+  align-items: center;
+  justify-content: center;
+
+  background: #303030;
+  height: 60px;
+  border-radius: 16px;
+
+  span {
+    display: flex;
+    align-items: center;
+    font: 15px 'Ubuntu', sans-serif;
+    font-weight: 400;
+    div {
+      margin-right: 6px;
+      border-radius: 50%;
+      width: 12px;
+      height: 12px;
+    }
   }
 `;
 

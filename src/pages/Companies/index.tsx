@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { AiOutlineTool } from 'react-icons/ai';
 import { FaArrowAltCircleDown, FaArrowAltCircleUp } from 'react-icons/fa';
-import { FiEdit } from 'react-icons/fi';
+import { FiEdit, FiPercent } from 'react-icons/fi';
 import { RiAddFill } from 'react-icons/ri';
 import { useHistory } from 'react-router-dom';
 
@@ -26,6 +26,7 @@ import { IUnit } from '../../interfaces/unit';
 import api from '../../services/api';
 import {
   Box,
+  ButtonArea,
   ButtonContainer,
   Container,
   Content,
@@ -147,7 +148,7 @@ const Companies = () => {
         ),
         client_identifier: company.client_identifier,
         buttons: (
-          <Flex justifyContent="space-between">
+          <ButtonArea>
             <Tooltip
               aria-label="Alterar dados da concessionária"
               label="Alterar dados da concessionária"
@@ -157,9 +158,32 @@ const Companies = () => {
                 _hover={{ background: '#353535', border: 0 }}
                 _focusWithin={{ border: 0 }}
                 background="#282828"
-                width="48%"
+                flex={1}
+                display="flex"
+                maxW="50px"
               >
                 <FiEdit />
+              </ChakraButton>
+            </Tooltip>
+
+            <Tooltip
+              aria-label="Comissionários da concessionária"
+              label="Comissionários da concessionária"
+            >
+              <ChakraButton
+                onClick={() => history.push(`commissioners/${company.id}`)}
+                _hover={{
+                  background: '#353535',
+                  border: 0,
+                }}
+                marginLeft="12px"
+                _focusWithin={{ border: 0 }}
+                background="#282828"
+                flex={1}
+                display="flex"
+                maxW="50px"
+              >
+                <FiPercent color="#fff" />
               </ChakraButton>
             </Tooltip>
 
@@ -176,12 +200,14 @@ const Companies = () => {
                 marginLeft="12px"
                 _focusWithin={{ border: 0 }}
                 background="#282828"
-                width="48%"
+                flex={1}
+                display="flex"
+                maxW="50px"
               >
                 <AiOutlineTool color="#fff" />
               </ChakraButton>
             </Tooltip>
-          </Flex>
+          </ButtonArea>
         ),
         units: company.unities.map(unit => ({
           id: unit.id,
@@ -224,6 +250,7 @@ const Companies = () => {
   return (
     <Container>
       <Menu />
+
       <Flex
         direction="column"
         w={{
@@ -255,7 +282,7 @@ const Companies = () => {
             <span>Nome</span>
             <span>Contato</span>
             <span>CNPJ</span>
-            <span>Identificador</span>
+            <span>Id</span>
           </div>
 
           {loading ? (
@@ -384,6 +411,7 @@ const Companies = () => {
           )}
         </Content>
       </Flex>
+
       <ButtonContainer>
         <Button maxW="300px" onClick={handleOpenCreateCompanyModal}>
           Registrar nova concessionária

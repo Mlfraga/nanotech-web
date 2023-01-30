@@ -1,7 +1,5 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { AiOutlineIdcard } from 'react-icons/ai';
 import { FiPhone } from 'react-icons/fi';
-import { MdBusiness } from 'react-icons/md';
 
 import {
   Button,
@@ -20,28 +18,27 @@ import * as Yup from 'yup';
 
 import { useToast } from '../../../context/toast';
 import api from '../../../services/api';
-import CpfCnpjUtils from '../../../utils/CpfCnpjUtils';
 import getValidationsErrors from '../../../utils/getValidationError';
 import FormattedInput from '../../FormattedInput';
 import Input from '../../Input';
 
-interface ICreateCompanyModalProps {
+interface ICreateCommissionerModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: () => void | undefined;
+  company_id: string;
 }
 
 interface IFormData {
-  companyName: string;
-  companyTelephone: string;
-  companyCnpj: string;
-  companyClientIdentifier: string;
+  name: string;
+  telephone: string;
 }
 
-const CreateCompanyModal: React.FC<ICreateCompanyModalProps> = ({
+const CreateCommissionerModal: React.FC<ICreateCommissionerModalProps> = ({
   isOpen,
   onClose,
   onSave,
+  company_id,
 }) => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
@@ -56,45 +53,29 @@ const CreateCompanyModal: React.FC<ICreateCompanyModalProps> = ({
         formRef.current?.setErrors({});
 
         const schema = Yup.object().shape({
-          companyName: Yup.string().required(
-            'Nome da concessionária obrigatório',
+          name: Yup.string().required(
+            'Nome do comissionário obrigatório',
           ),
-          companyTelephone: Yup.string()
-            .required('Telefone da concessionária obrigatório')
+          telephone: Yup.string()
+            .required('Telefone do comissionário obrigatório')
             .min(9, 'O telefone deve ter no mínimo 9 dígitos')
             .max(11, 'O telefone deve ter no máximo 11 dígitos'),
-          companyCnpj: Yup.string()
-            .required('Cnpj da concessionária obrigatório')
-            .length(14, 'O CNPJ deve ter 14 dígitos.'),
-          companyClientIdentifier: Yup.string()
-            .required('Identificador da concessionária obrigatório')
-            .length(2, 'Identificador da concessionária deve ter 2 dígitos.'),
         });
 
         await schema.validate(data, {
           abortEarly: false,
         });
 
-        const isCnpjValid = CpfCnpjUtils.isCnpjValid(data.companyCnpj);
-
-        if (isCnpjValid !== true) {
-          formRef.current?.setErrors({ companyCnpj: 'Cnpj inválido.' });
-          return;
-        }
-
-        const response = await api.post('companies', {
-          name: data.companyName,
-          telephone: data.companyTelephone,
-          cnpj: data.companyCnpj,
-          client_identifier: data.companyClientIdentifier,
+        const response = await api.post('commissioners', {
+          name: data.name,
+          telephone: data.telephone,
+          company_id,
         });
 
         if (response.status === 200) {
           addToast({
             title: 'Cadastro realizado com sucesso.',
             type: 'success',
-            description:
-              'Agora você já pode registrar unidades, vendedores e gerentes a essa concessionária.',
           });
 
           setLoading(false);
@@ -114,8 +95,7 @@ const CreateCompanyModal: React.FC<ICreateCompanyModalProps> = ({
 
         addToast({
           title: 'Não foi possível realizar o caadastro.',
-          description:
-            'Essa concessionária já foi criada ou ocorreu um erro, tente novamente.',
+          description: 'Tente novamente mais tarde.',
           type: 'error',
         });
       }
@@ -127,35 +107,22 @@ const CreateCompanyModal: React.FC<ICreateCompanyModalProps> = ({
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent backgroundColor="#383838" maxWidth="70%" borderRadius="md">
-        <ModalHeader>Criar nova concessionária</ModalHeader>
+        <ModalHeader>Criar novo comissionário</ModalHeader>
         <ModalCloseButton />
 
         <Form ref={formRef} onSubmit={handleSubmit}>
           <ModalBody paddingBottom={4}>
             <Flex direction="column">
-              <Input placeholder="Nome" name="companyName" icon={MdBusiness} />
+              <Input placeholder="Nome" name="name" />
 
               <FormattedInput
-                className="companyInput"
+                className="commissionerInput"
                 id="telephone"
                 placeholder="Telefone"
-                name="companyTelephone"
+                name="telephone"
                 format="## #####-####"
                 mask="_"
                 icon={FiPhone}
-              />
-
-              <FormattedInput
-                placeholder="CNPJ"
-                mask="_"
-                name="companyCnpj"
-                icon={AiOutlineIdcard}
-                format="##.###.###/####-##"
-              />
-
-              <Input
-                placeholder="Identificador"
-                name="companyClientIdentifier"
               />
             </Flex>
           </ModalBody>
@@ -187,4 +154,4 @@ const CreateCompanyModal: React.FC<ICreateCompanyModalProps> = ({
   );
 };
 
-export default CreateCompanyModal;
+export default CreateCommissionerModal;

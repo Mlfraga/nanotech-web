@@ -1,5 +1,6 @@
 import React from 'react';
 import { Switch } from 'react-router-dom';
+import Commissioners from '../pages/Commissioners';
 
 import Companies from '../pages/Companies';
 import CompaniesPrices from '../pages/CompaniesPrices';
@@ -82,6 +83,13 @@ const Routes: React.FC = () => (
       exact
       path="/company/prices/:id"
       component={CompaniesPrices}
+      isPrivate
+      permissions={['ADMIN', 'NANOTECH_REPRESENTATIVE']}
+    />
+    <Route
+      exact
+      path="/commissioners/:id"
+      component={Commissioners}
       isPrivate
       permissions={['ADMIN', 'NANOTECH_REPRESENTATIVE']}
     />
