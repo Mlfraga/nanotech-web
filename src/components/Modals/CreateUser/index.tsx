@@ -8,9 +8,7 @@ import {
   ModalCloseButton,
   ModalContent,
   ModalFooter,
-  ModalHeader,
-  Text,
-  ModalOverlay,
+  ModalHeader, ModalOverlay, Text
 } from '@chakra-ui/core';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
@@ -19,6 +17,8 @@ import * as Yup from 'yup';
 import { useToast } from '../../../context/toast';
 import { ICompany } from '../../../interfaces/companies';
 import api from '../../../services/api';
+import pixKeyTypes from '../../../static/PixKeyTypes';
+import roleOptions from '../../../static/RoleOptions';
 import getValidationsErrors from '../../../utils/getValidationError';
 import FormattedInput from '../../FormattedInput';
 import Input from '../../Input';
@@ -33,6 +33,20 @@ interface ICreateUserModalProps {
   onSave: () => void | undefined;
 }
 
+interface IFormData {
+  name: string;
+  email: string;
+  telephone: string;
+  username: string;
+  role: string;
+  company: 'SELLER' | 'MANAGER'| 'NANOTECH_REPRESENTATIVE' | 'COMMISSIONER' | 'SERVICE_PROVIDER';
+  pixKeyType: 'RANDOM' | 'CPF' | 'PHONE' | 'EMAIL';
+  phonePixKey: string;
+  cpfPixKey: string;
+  emailPixKey: string;
+  randomPixKey: string;
+}
+
 const CreateUserModal: React.FC<ICreateUserModalProps> = ({
   isOpen,
   onClose,
@@ -44,16 +58,7 @@ const CreateUserModal: React.FC<ICreateUserModalProps> = ({
   const [role, setRole] = useState<null | string>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [companiesOptions, setCompaniesOptions] = useState<ISelectOption[]>([]);
-
-  const roleOptions = [
-    { value: 'SELLER', label: 'Vendedor' },
-    { value: 'MANAGER', label: 'Gerente' },
-    { value: 'NANOTECH_REPRESENTATIVE', label: 'Representante Nanotech' },
-    {
-      value: 'SERVICE_PROVIDER',
-      label: 'Responsável Técnico',
-    },
-  ];
+  const [pixKeyType, setPixKeyType] = useState<'RANDOM' | 'CPF' | 'PHONE' | 'EMAIL'>();
 
   useEffect(() => {
     api.get('companies/').then(response => {
@@ -69,7 +74,7 @@ const CreateUserModal: React.FC<ICreateUserModalProps> = ({
   }, []);
 
   const handleSubmit = useCallback(
-    async data => {
+    async (data: IFormData) => {
       setLoading(true);
 
       try {
@@ -89,13 +94,54 @@ const CreateUserModal: React.FC<ICreateUserModalProps> = ({
                   .uuid()
                   .required('Concessionária do usuário obrigatório')
               : Yup.string(),
+          ...(role === 'COMMISSIONER' && {
+            pixKeyType: Yup.string().required('Tipo de chave do PIX do comissionário obrigatório')
+          }),
+          ...(data.pixKeyType === 'PHONE' && {
+            phonePixKey: Yup.string()
+            .min(9, 'O telefone deve ter no mínimo 9 dígitos')
+            .max(13, 'O telefone deve ter no máximo 11 dígitos').required('Tipo da chave PIX do comissionário obrigatório'),
+          }),
+          ...(data.pixKeyType === 'CPF' && {
+            cpfPixKey: Yup.string().length(11, 'A chave PIX CPF deve ter 11 dígitos').required('Chave PIX do comissionário obrigatório'),
+          }),
+          ...(data.pixKeyType === 'EMAIL' && {
+            emailPixKey: Yup.string().email('A chave PIX email deve ser um email válido').required('Chave PIX do comissionário obrigatório'),
+          }),
+          ...(data.pixKeyType === 'RANDOM' && {
+            randomPixKey: Yup.string().uuid('A chave PIX email deve ser um código válido').required('Chave PIX do comissionário obrigatório'),
+          }),
         });
 
         await schema.validate(data, {
           abortEarly: false,
         });
 
-        await api.post('/users', data);
+        const pix_key = () => {
+          switch(data.pixKeyType) {
+            case 'CPF':
+              return data.cpfPixKey;
+            case 'EMAIL':
+              return data.emailPixKey;
+            case 'PHONE':
+              return data.phonePixKey;
+            case 'RANDOM':
+              return data.randomPixKey;
+          }
+        }
+
+        const payload = {
+          name: data.name,
+          username: data.username,
+          role: data.role,
+          email: data.email,
+          telephone: data.telephone,
+          pix_key_type: data.pixKeyType,
+          pix_key: pix_key(),
+          company: data.company,
+        };
+
+        await api.post('/users', payload);
 
         addToast({
           title: 'Usuário criado com sucesso.',
@@ -125,8 +171,15 @@ const CreateUserModal: React.FC<ICreateUserModalProps> = ({
     [role, addToast, onSave],
   );
 
+  const close = (e: React.MouseEvent | React.KeyboardEvent) => {
+    setPixKeyType(undefined);
+    setRole(null);
+
+    onClose(e);
+  }
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={close}>
       <ModalOverlay />
       <ModalContent backgroundColor="#383838" maxWidth="70%" borderRadius="md">
         <ModalHeader>Criar novo usuário</ModalHeader>
@@ -254,11 +307,14 @@ const CreateUserModal: React.FC<ICreateUserModalProps> = ({
 
                 <Select
                   fontSize={16}
-                  height="50px"
+                  height="48px"
                   backgroundColor="#1c1c1c"
                   color="White"
                   name="role"
-                  onChange={event => setRole(event.target.value)}
+                  onChange={event => {
+                    setRole(event.target.value);
+                    setPixKeyType(undefined)
+                  }}
                   placeholder="Selecione o cargo do usuário"
                   containerProps={{
                     height: '52px',
@@ -275,7 +331,7 @@ const CreateUserModal: React.FC<ICreateUserModalProps> = ({
 
               {role &&
                 role !== 'NANOTECH_REPRESENTATIVE' &&
-                role !== 'SERVICE_PROVIDER' && (
+                role !== 'SERVICE_PROVIDER' &&  (
                   <Flex
                     w="100%"
                     direction="column"
@@ -298,7 +354,7 @@ const CreateUserModal: React.FC<ICreateUserModalProps> = ({
 
                     <Select
                       fontSize={16}
-                      height="50px"
+                      height="48px"
                       backgroundColor="#1c1c1c"
                       color="White"
                       name="company"
@@ -315,14 +371,155 @@ const CreateUserModal: React.FC<ICreateUserModalProps> = ({
                       ))}
                     </Select>
                   </Flex>
-                )}
+              )}
+            </Flex>
+
+            <Flex style={{ gap: 8 }} mt={16}>
+              {role === 'COMMISSIONER' && (
+                <Flex
+                  w="100%"
+                  direction="column"
+                  maxW="calc(100% / 3)"
+                  maxH="40px"
+                >
+                  <Flex mb={2} alignItems="center" justifyContent="space-between">
+                    <Text ml={2} fontSize="18px" fontFamily="Inter">
+                      Tipo Chave Pix:
+                    </Text>
+                    <Text fontSize="18px" fontFamily="Inter">
+                      *
+                    </Text>
+                  </Flex>
+                  <Select
+                    fontSize={16}
+                    height="48px"
+                    backgroundColor="#1c1c1c"
+                    color="White"
+                    name="pixKeyType"
+                    onChange={event => {
+                      setPixKeyType(event.target.value as 'RANDOM' | 'CPF' | 'PHONE' | 'EMAIL')
+                    }}
+                    placeholder="Selecione o tipo da chave PIX"
+                    containerProps={{
+                      height: '52px',
+                      marginBottom: '8px',
+                      background: '#1c1c1c',
+                    }}
+                  >
+                    {pixKeyTypes.map(opt => (
+                      <option key={opt.id} value={opt.id}>
+                        {opt.name}
+                      </option>
+                    ))}
+                  </Select>
+                </Flex>
+              )}
+
+              {pixKeyType === 'PHONE' && (
+                <Flex
+                  w="100%"
+                  direction="column"
+                  maxW="calc(100% / 3)"
+                  maxH="40px"
+                >
+                  <Flex mb={2} alignItems="center" justifyContent="space-between">
+                    <Text ml={2} fontSize="18px" fontFamily="Inter">
+                      N˚ Telefone:
+                    </Text>
+                    <Text fontSize="18px" fontFamily="Inter">
+                      *
+                    </Text>
+                  </Flex>
+
+                  <FormattedInput
+                    id="phonePixKey"
+                    name="phonePixKey"
+                    format="## #####-####"
+                    mask="_"
+                  />
+                </Flex>
+              )}
+
+              {pixKeyType === 'CPF' && (
+                <Flex
+                  w="100%"
+                  direction="column"
+                  maxW="calc(100% / 3)"
+                  maxH="40px"
+                >
+                  <Flex mb={2} alignItems="center" justifyContent="space-between">
+                    <Text ml={2} fontSize="18px" fontFamily="Inter">
+                      CPF:
+                    </Text>
+                    <Text fontSize="18px" fontFamily="Inter">
+                      *
+                    </Text>
+                  </Flex>
+                  <FormattedInput
+                    id="cpfPixKey"
+                    name="cpfPixKey"
+                    format="###.###.###-##"
+                    mask="_"
+                  />
+                </Flex>
+              )}
+
+              {pixKeyType === 'EMAIL' && (
+                <Flex
+                  w="100%"
+                  direction="column"
+                  maxW="calc(100% / 3)"
+                  maxH="40px"
+                >
+                  <Flex mb={2} alignItems="center" justifyContent="space-between">
+                    <Text ml={2} fontSize="18px" fontFamily="Inter">
+                      Email:
+                    </Text>
+                    <Text fontSize="18px" fontFamily="Inter">
+                      *
+                    </Text>
+                  </Flex>
+                  <Input
+                    disabled={loading}
+                    className="input"
+                    id="emailPixKey"
+                    type="emailPixKey"
+                    name="emailPixKey"
+                  />
+                </Flex>
+              )}
+
+              {pixKeyType === 'RANDOM' && (
+                <Flex
+                  w="100%"
+                  direction="column"
+                  maxW="calc(100% / 3)"
+                  maxH="40px"
+                >
+                  <Flex mb={2} alignItems="center" justifyContent="space-between">
+                    <Text ml={2} fontSize="18px" fontFamily="Inter">
+                      Chave PIX Aleatória:
+                    </Text>
+                    <Text fontSize="18px" fontFamily="Inter">
+                      *
+                    </Text>
+                  </Flex>
+                  <Input
+                    disabled={loading}
+                    className="input"
+                    id="randomPixKey"
+                    type="randomPixKey"
+                    name="randomPixKey"
+                  />
+                </Flex>
+              )}
             </Flex>
           </ModalBody>
 
           <ModalFooter mt={16}>
             <Button
               variant="ghost"
-              onClick={onClose}
+              onClick={close}
               _hover={{ background: '#323232' }}
               marginRight={4}
             >

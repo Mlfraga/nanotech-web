@@ -8,7 +8,7 @@ export const Container = styled(ChakraBox)`
 
   @media (min-width: 1224px) {
     padding-left: 80px;
-    padding-top: 45px;
+    padding-top: 25px;
   }
 `;
 
@@ -19,7 +19,7 @@ export const Content = styled(ChakraBox)`
 export const BoxTitle = styled.div`
   min-width: 600px;
   display: grid;
-  grid-template-columns: 40% 30% 10% 20%;
+  grid-template-columns: 25% 20% 25% 10% 20%;
   align-items: center;
   justify-content: center;
   padding-left: 10px;
@@ -90,7 +90,7 @@ export const ListItem = styled.div`
   padding-left: 10px;
   display: grid;
   width: 100%;
-  grid-template-columns: 40% 30% 10% 20%;
+  grid-template-columns: 25% 20% 25% 10% 20%;
   align-items: center;
   justify-content: center;
 
@@ -98,10 +98,15 @@ export const ListItem = styled.div`
   height: 60px;
   border-radius: 16px;
 
+  label {
+    padding: 8px;
+  }
+
   span {
     display: flex;
     align-items: center;
     font: 15px 'Ubuntu', sans-serif;
+    padding: 8px;
     font-weight: 400;
     div {
       margin-right: 6px;
@@ -211,6 +216,8 @@ export const Box = styled.div`
 `;
 
 export const ButtonArea = styled.div`
+  padding: 8px;
+
   display: flex;
   align-items: center;
   justify-content: center;

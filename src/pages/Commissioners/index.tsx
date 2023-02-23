@@ -32,6 +32,8 @@ interface ICommissionerRouterParams {
 
 export interface ICommissioner {
   id: string;
+  pix_key: string;
+  pix_key_type: string;
   name: string;
   telephone: string;
   enabled: boolean;
@@ -49,10 +51,6 @@ const Commissioners = () => {
   const [userToToggleEnable, setUserToToggleEnable] = useState<ICommissioner>({} as ICommissioner);
   const [commissioners, setCommissioners] = useState<ICommissioner[]>([]);
 
-  useEffect(() => {
-    fetchCommissioners()
-  }, []);
-
   const fetchCommissioners = useCallback(async (): Promise<void> => {
     setLoading(true);
 
@@ -61,7 +59,11 @@ const Commissioners = () => {
     setCommissioners(response.data);
 
     setLoading(false);
-  }, []);
+  }, [companyId]);
+
+  useEffect(() => {
+    fetchCommissioners()
+  }, [fetchCommissioners]);
 
   const handleOpenCreateCommissionerModal = useCallback(() => {
     setCreateCommissionerModalOpened(true);
@@ -101,7 +103,7 @@ const Commissioners = () => {
     }
 
     setDisableCommissionerAlertOpened(false);
-  }, [userToToggleEnable]);
+  }, [userToToggleEnable, fetchCommissioners, addToast]);
 
   return (
     <Container>
@@ -116,6 +118,7 @@ const Commissioners = () => {
           lg: 'calc(100% - 80px)',
           xl: '100%',
         }}
+        h="10vh"
         ml={{
           xs: '0px',
           sm: '0px',
@@ -138,6 +141,7 @@ const Commissioners = () => {
           <BoxTitle>
             <span>Nome</span>
             <span>Telefone</span>
+            <span>Pix</span>
             <span>Ativo</span>
           </BoxTitle>
 
@@ -201,6 +205,7 @@ const Commissioners = () => {
                     <ListItem>
                       <span>{commissioner.name}</span>
                       <span>{commissioner.telephone}</span>
+                      <span>{`${commissioner.pix_key_type} - ${commissioner.pix_key}`}</span>
                       <Switch
                         id="enabled"
                         isChecked={commissioner.enabled}

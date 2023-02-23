@@ -1,9 +1,8 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import {
-  Select as ChakraSelect,
-  SelectProps as ChakraSelectProps,
-  PseudoBoxProps as ChakraPseudoBoxProps,
+  PseudoBoxProps as ChakraPseudoBoxProps, Select as ChakraSelect,
+  SelectProps as ChakraSelectProps
 } from '@chakra-ui/core';
 import { useField } from '@unform/core';
 

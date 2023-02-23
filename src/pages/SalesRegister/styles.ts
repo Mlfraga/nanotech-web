@@ -1,7 +1,7 @@
 import {
   Box as ChakraBox,
   Flex as ChakraFlex,
-  Grid as ChakraGrid,
+  Grid as ChakraGrid
 } from '@chakra-ui/core';
 import { shade } from 'polished';
 import styled from 'styled-components';
@@ -47,7 +47,7 @@ export const Container = styled.div`
 
   @media (min-width: 1224px) {
     padding-left: 80px;
-    padding-top: 45px;
+    padding-top: 25px;
   }
 `;
 
@@ -72,7 +72,7 @@ export const Content = styled(ChakraBox)`
         border: 0;
         display: flex;
         justify-content: space-between;
-        margin-top: 25px;
+        margin-top: 16px;
 
         span {
           font: 18px 'Ubuntu', sans-serif;
@@ -103,7 +103,7 @@ export const Separator = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
-  margin-top: 25px;
+  margin-top: 16px;
 
   span {
     font: 18px 'Ubuntu', sans-serif;

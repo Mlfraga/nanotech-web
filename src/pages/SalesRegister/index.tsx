@@ -1,8 +1,7 @@
-import React, { useRef, useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { Box, Spinner } from '@chakra-ui/core';
-import { Tooltip } from '@chakra-ui/core';
+import { Box, Checkbox, Flex, Spinner, Tooltip } from '@chakra-ui/core';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
@@ -12,6 +11,7 @@ import Button from '../../components/Button';
 import Datetime from '../../components/Datetime';
 import Input from '../../components/Input';
 import Menu from '../../components/Menu';
+import SetSaleReferral, { IReferralData } from '../../components/Modals/SetSaleReferral';
 import Select from '../../components/Select';
 import Textarea from '../../components/Textarea';
 import { useAuth } from '../../context/auth';
@@ -21,12 +21,8 @@ import getValidationsErrors from '../../utils/getValidationError';
 import { documentMask } from '../../utils/masks';
 import {
   Container,
-  Content,
-  Inputs,
-  Separator,
-  InputContainer,
-  Services,
-  ServiceBox,
+  Content, InputContainer, Inputs,
+  Separator, ServiceBox, Services
 } from './styles';
 
 export interface IUnit {
@@ -44,6 +40,22 @@ interface ICompanyServices {
     price: number;
     enabled: boolean;
   };
+}
+
+export interface ISalePayload {
+  car: string;
+  carModel: string;
+  carPlate: string;
+  carColor: string;
+  comments?: string | undefined;
+  unitId: string;
+  deliveryDate: string;
+  availabilityDate: string;
+  companyPrice: any;
+  costPrice: any;
+  source: string;
+  name: string;
+  cpf: string;
 }
 
 interface IFormData {
@@ -69,11 +81,14 @@ const SalesRegister = () => {
 
   const [document, setDocument] = useState('');
   const [loadingButton, setLoadingButton] = useState(false);
+  const [saleCommissionerModalOpened, setSaleReferralModalOpened] = useState(false);
+  const [salePayload, setSalePayload] = useState<ISalePayload>({} as ISalePayload);
+  const [refferedSale, setRefferedSale] = useState(false);
 
   const [companyServices, setCompanyServices] = useState<ICompanyServices[]>(
     [],
   );
-  const [selectedServices, setSelectedServices] = useState<string[]>([]);
+  const [selectedServices, setSelectedServices] = useState<{value: string; label: string}[]>([]);
 
   const selectOptions: Array<{ value: string; label: string }> = [
     { value: 'NEW', label: '0 KM' },
@@ -115,33 +130,72 @@ const SalesRegister = () => {
   }, [history, user]);
 
   const handleSelectService = useCallback(
-    (id: string) => {
-      const alreadySelected = selectedServices.findIndex(item => item === id);
+    (companyService: ICompanyServices) => {
+      const alreadySelected = selectedServices.findIndex(item => item.value === companyService.id);
 
       if (alreadySelected >= 0) {
-        const filteredItems = selectedServices.filter(item => item !== id);
+        const filteredItems = selectedServices.filter(item => item.value !== companyService.id);
 
         setSelectedServices(filteredItems);
       } else {
-        setSelectedServices([...selectedServices, id]);
+        setSelectedServices([...selectedServices, {value: companyService.id, label: companyService.name}]);
       }
     },
     [selectedServices],
   );
 
+  const handleSubmitByReferral = useCallback(async (commissionerData: IReferralData) => {
+    try {
+      const formattedServices = selectedServices.map(service => service.value);
+
+      const responseCreatedSale = await api.post('sales', salePayload);
+
+      const createServiceSaleData = {
+        saleId: responseCreatedSale.data.id,
+        serviceIds: formattedServices,
+        isReferred: true,
+        referral_data: commissionerData,
+      };
+
+      await api.post('service-sales', createServiceSaleData);
+
+      addToast({
+        title: 'Sucesso',
+        type: 'success',
+        description: 'Pedido registrado com sucesso.',
+      });
+      setLoadingButton(false);
+      setSelectedServices([]);
+
+      formRef.current?.reset();
+      setDocument('');
+    } catch (err) {
+      addToast({
+        title: 'Erro',
+        description:
+          'Não foi possível registrar essa venda, tente novamente.',
+        type: 'error',
+      });
+
+      setLoadingButton(false);
+    }
+  }, [addToast, salePayload, selectedServices])
+
   const handleSubmit = useCallback(
     async (data: IFormData, { reset }) => {
       setLoadingButton(true);
 
+      const formattedServices = selectedServices.map(service => service.value);
+
       const responseCompanyBudget = await api.post(
         '/sales/company-sale-budget',
-        { services: selectedServices },
+        { services: formattedServices },
       );
 
       const { companyPrice } = responseCompanyBudget.data;
 
       const responseCostBudget = await api.post('/sales/sale-budget', {
-        services: selectedServices,
+        services: formattedServices,
       });
 
       const { costPrice } = responseCostBudget.data;
@@ -203,11 +257,18 @@ const SalesRegister = () => {
           carColor: data.carColor,
         };
 
+        if (refferedSale){
+          setSalePayload(createSaleData);
+          setSaleReferralModalOpened(true);
+
+          return;
+        }
+
         const responseCreatedSale = await api.post('sales', createSaleData);
 
         const createServiceSaleData = {
           saleId: responseCreatedSale.data.id,
-          serviceIds: selectedServices,
+          serviceIds: formattedServices,
         };
 
         await api.post('service-sales', createServiceSaleData);
@@ -244,7 +305,7 @@ const SalesRegister = () => {
         setLoadingButton(false);
       }
     },
-    [addToast, selectedServices],
+    [addToast, selectedServices, refferedSale],
   );
 
   return (
@@ -256,7 +317,7 @@ const SalesRegister = () => {
           marginLeft="auto"
           marginRight="auto"
           width="100%"
-          marginTop="26px"
+          marginTop="16px"
           maxWidth={{
             xs: '90vw',
             sm: '90vw',
@@ -294,7 +355,7 @@ const SalesRegister = () => {
               <div />
             </Separator>
 
-            <Inputs marginTop="20px">
+            <Inputs marginTop="16px">
               <InputContainer>
                 <div className="labels">
                   <span>Nome:</span>
@@ -396,7 +457,7 @@ const SalesRegister = () => {
                   name="sourceCar"
                   placeholder="Origem do carro"
                   containerProps={{
-                    marginTop: '16px',
+                    marginTop: '20px',
                     marginRight: 8,
                     width: '100%',
                     height: '37px',
@@ -415,7 +476,7 @@ const SalesRegister = () => {
 
               <Box flex={1} fontSize="18px" marginRight="18px">
                 <span style={{ marginBottom: '6px' }}>Observações:</span>
-                <Textarea name="comments" style={{ marginTop: '12px' }} />
+                <Textarea name="comments" style={{ marginTop: '16px' }} />
               </Box>
             </Inputs>
 
@@ -478,9 +539,9 @@ const SalesRegister = () => {
                   )}
                 >
                   <ServiceBox
-                    onClick={() => handleSelectService(companyService.id)}
+                    onClick={() => handleSelectService(companyService)}
                     className={
-                      selectedServices.includes(companyService.id)
+                      selectedServices.map(s => s.value).includes(companyService.id)
                         ? 'selected'
                         : ''
                     }
@@ -492,12 +553,31 @@ const SalesRegister = () => {
             </Services>
 
             <div className="buttons_container">
-              <Button isDisabled={!!loadingButton} type="submit">
+              <Flex w="100%" justifyContent="end" alignItems="center">
+                <Checkbox
+                  name="refferedSale"
+                  isChecked={refferedSale}
+                  onChange={() => {
+                    setRefferedSale(oldValue => !oldValue)
+                  }}
+                >
+                  Essa venda possui indicaçāo
+                </Checkbox>
+              </Flex>
+
+              <Button isDisabled={!!loadingButton} type="submit" mt={0}>
                 {loadingButton ? <Spinner color="#282828" /> : 'Salvar'}
               </Button>
             </div>
           </Form>
         </Content>
+
+        <SetSaleReferral
+          isOpen={!!saleCommissionerModalOpened}
+          onClose={() => setSaleReferralModalOpened(false)}
+          selectedServices={selectedServices}
+          handleSubmitByReferral={handleSubmitByReferral}
+        />
       </Container>
     </>
   );

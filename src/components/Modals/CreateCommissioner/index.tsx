@@ -18,9 +18,11 @@ import * as Yup from 'yup';
 
 import { useToast } from '../../../context/toast';
 import api from '../../../services/api';
+import pixKeyTypes from '../../../static/PixKeyTypes';
 import getValidationsErrors from '../../../utils/getValidationError';
 import FormattedInput from '../../FormattedInput';
 import Input from '../../Input';
+import Select from '../../Select';
 
 interface ICreateCommissionerModalProps {
   isOpen: boolean;
@@ -32,6 +34,11 @@ interface ICreateCommissionerModalProps {
 interface IFormData {
   name: string;
   telephone: string;
+  pixKeyType: 'RANDOM' | 'CPF' | 'PHONE' | 'EMAIL';
+  phonePixKey: string;
+  cpfPixKey: string;
+  emailPixKey: string;
+  randomPixKey: string;
 }
 
 const CreateCommissionerModal: React.FC<ICreateCommissionerModalProps> = ({
@@ -44,6 +51,7 @@ const CreateCommissionerModal: React.FC<ICreateCommissionerModalProps> = ({
   const { addToast } = useToast();
 
   const [loading, setLoading] = useState<boolean>(false);
+  const [pixKeyType, setPixKeyType] = useState<'RANDOM' | 'CPF' | 'PHONE' | 'EMAIL'>();
 
   const handleSubmit = useCallback(
     async (data: IFormData, { reset }) => {
@@ -60,15 +68,45 @@ const CreateCommissionerModal: React.FC<ICreateCommissionerModalProps> = ({
             .required('Telefone do comissionário obrigatório')
             .min(9, 'O telefone deve ter no mínimo 9 dígitos')
             .max(11, 'O telefone deve ter no máximo 11 dígitos'),
+          pixKeyType: Yup.string().required('Tipo de chave do PIX do comissionário obrigatório'),
+          ...(data.pixKeyType === 'PHONE' && {
+            phonePixKey: Yup.string()
+            .min(9, 'O telefone deve ter no mínimo 9 dígitos')
+            .max(13, 'O telefone deve ter no máximo 11 dígitos').required('Tipo da chave PIX do comissionário obrigatório'),
+          }),
+          ...(data.pixKeyType === 'CPF' && {
+            cpfPixKey: Yup.string().length(11, 'A chave PIX CPF deve ter 11 dígitos').required('Chave PIX do comissionário obrigatório'),
+          }),
+          ...(data.pixKeyType === 'EMAIL' && {
+            emailPixKey: Yup.string().email('A chave PIX email deve ser um email válido').required('Chave PIX do comissionário obrigatório'),
+          }),
+          ...(data.pixKeyType === 'RANDOM' && {
+            randomPixKey: Yup.string().uuid('A chave PIX email deve ser um código válido').required('Chave PIX do comissionário obrigatório'),
+          }),
         });
 
         await schema.validate(data, {
           abortEarly: false,
         });
 
+        const pix_key = () => {
+          switch(data.pixKeyType) {
+            case 'CPF':
+              return data.cpfPixKey;
+            case 'EMAIL':
+              return data.emailPixKey;
+            case 'PHONE':
+              return data.phonePixKey;
+            case 'RANDOM':
+              return data.randomPixKey;
+          }
+        }
+
         const response = await api.post('commissioners', {
           name: data.name,
           telephone: data.telephone,
+          pix_key_type: data.pixKeyType,
+          pix_key: pix_key(),
           company_id,
         });
 
@@ -100,7 +138,7 @@ const CreateCommissionerModal: React.FC<ICreateCommissionerModalProps> = ({
         });
       }
     },
-    [addToast, onSave, onClose],
+    [addToast, onSave, onClose, company_id],
   );
 
   return (
@@ -116,7 +154,6 @@ const CreateCommissionerModal: React.FC<ICreateCommissionerModalProps> = ({
               <Input placeholder="Nome" name="name" />
 
               <FormattedInput
-                className="commissionerInput"
                 id="telephone"
                 placeholder="Telefone"
                 name="telephone"
@@ -124,6 +161,71 @@ const CreateCommissionerModal: React.FC<ICreateCommissionerModalProps> = ({
                 mask="_"
                 icon={FiPhone}
               />
+
+              <Select
+                fontSize={16}
+                height="48px"
+                backgroundColor="#1c1c1c"
+                color="White"
+                name="pixKeyType"
+                onChange={event => {
+                  setPixKeyType(event.target.value as 'RANDOM' | 'CPF' | 'PHONE' | 'EMAIL')
+                }}
+                placeholder="Selecione o tipo da chave PIX"
+                containerProps={{
+                  height: '52px',
+                  marginBottom: '8px',
+                  background: '#1c1c1c',
+                }}
+              >
+                {pixKeyTypes.map(opt => (
+                  <option key={opt.id} value={opt.id}>
+                    {opt.name}
+                  </option>
+                ))}
+              </Select>
+
+              {pixKeyType === 'PHONE' && (
+                <FormattedInput
+                  id="phonePixKey"
+                  placeholder="Chave PIX"
+                  name="phonePixKey"
+                  format="## #####-####"
+                  mask="_"
+                />
+              )}
+
+              {pixKeyType === 'CPF' && (
+                <FormattedInput
+                  id="cpfPixKey"
+                  placeholder="Chave PIX"
+                  name="cpfPixKey"
+                  format="###.###.###-##"
+                  mask="_"
+                />
+              )}
+
+              {pixKeyType === 'EMAIL' && (
+                <Input
+                  disabled={loading}
+                  className="input"
+                  placeholder="Chave PIX"
+                  id="emailPixKey"
+                  type="emailPixKey"
+                  name="emailPixKey"
+                />
+              )}
+
+              {pixKeyType === 'RANDOM' && (
+                <Input
+                  disabled={loading}
+                  className="input"
+                  placeholder="Chave PIX"
+                  id="randomPixKey"
+                  type="randomPixKey"
+                  name="randomPixKey"
+                />
+              )}
             </Flex>
           </ModalBody>
 

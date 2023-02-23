@@ -16,12 +16,15 @@ import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
 
+import { useEffect } from 'react';
 import { useToast } from '../../../context/toast';
 import { ICommissioner } from '../../../pages/Commissioners';
 import api from '../../../services/api';
+import pixKeyTypes from '../../../static/PixKeyTypes';
 import getValidationsErrors from '../../../utils/getValidationError';
 import FormattedInput from '../../FormattedInput';
 import Input from '../../Input';
+import Select from '../../Select';
 
 interface IUpdateCommissionerModalProps {
   isOpen: boolean;
@@ -33,6 +36,11 @@ interface IUpdateCommissionerModalProps {
 interface IFormData {
   name: string;
   telephone: string;
+  pixKeyType: 'RANDOM' | 'CPF' | 'PHONE' | 'EMAIL';
+  phonePixKey: string;
+  cpfPixKey: string;
+  emailPixKey: string;
+  randomPixKey: string;
 }
 
 const UpdateCommissionerModal: React.FC<IUpdateCommissionerModalProps> = ({
@@ -43,6 +51,12 @@ const UpdateCommissionerModal: React.FC<IUpdateCommissionerModalProps> = ({
 }) => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
+
+  const [pixKeyType, setPixKeyType] = useState<'RANDOM' | 'CPF' | 'PHONE' | 'EMAIL'>();
+
+  useEffect(() => {
+    setPixKeyType(commissioner.pix_key_type as 'RANDOM' | 'CPF' | 'PHONE' | 'EMAIL');
+  }, [commissioner])
 
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -61,14 +75,44 @@ const UpdateCommissionerModal: React.FC<IUpdateCommissionerModalProps> = ({
             .required('Telefone do comissionário obrigatório')
             .min(9, 'O telefone deve ter no mínimo 9 dígitos')
             .max(11, 'O telefone deve ter no máximo 11 dígitos'),
+            pixKeyType: Yup.string().required('Tipo de chave do PIX do comissionário obrigatório'),
+          ...(data.pixKeyType === 'PHONE' && {
+            phonePixKey: Yup.string()
+            .min(9, 'O telefone deve ter no mínimo 9 dígitos')
+            .max(13, 'O telefone deve ter no máximo 11 dígitos').required('Tipo da chave PIX do comissionário obrigatório'),
+          }),
+          ...(data.pixKeyType === 'CPF' && {
+            cpfPixKey: Yup.string().length(11, 'A chave PIX CPF deve ter 11 dígitos').required('Chave PIX do comissionário obrigatório'),
+          }),
+          ...(data.pixKeyType === 'EMAIL' && {
+            emailPixKey: Yup.string().email('A chave PIX email deve ser um email válido').required('Chave PIX do comissionário obrigatório'),
+          }),
+          ...(data.pixKeyType === 'RANDOM' && {
+            randomPixKey: Yup.string().uuid('A chave PIX email deve ser um código válido').required('Chave PIX do comissionário obrigatório'),
+          }),
         });
 
         await schema.validate(data, {
           abortEarly: false,
         });
 
+        const pix_key = () => {
+          switch(data.pixKeyType) {
+            case 'CPF':
+              return data.cpfPixKey;
+            case 'EMAIL':
+              return data.emailPixKey;
+            case 'PHONE':
+              return data.phonePixKey;
+            case 'RANDOM':
+              return data.randomPixKey;
+          }
+        }
+
         const response = await api.patch(`commissioners/${commissioner.id}`, {
           name: data.name,
+          pix_key: pix_key(),
+          pix_key_type: data.pixKeyType,
           telephone: data.telephone,
           enabled: commissioner.enabled,
         });
@@ -101,7 +145,7 @@ const UpdateCommissionerModal: React.FC<IUpdateCommissionerModalProps> = ({
         });
       }
     },
-    [addToast, onSave, onClose],
+    [addToast, onSave, onClose, commissioner.enabled, commissioner.id],
   );
 
   return (
@@ -126,6 +170,76 @@ const UpdateCommissionerModal: React.FC<IUpdateCommissionerModalProps> = ({
                 mask="_"
                 icon={FiPhone}
               />
+
+              <Select
+                fontSize={16}
+                height="48px"
+                backgroundColor="#1c1c1c"
+                color="White"
+                defaultValue={commissioner.pix_key_type}
+                name="pixKeyType"
+                onChange={event => {
+                  setPixKeyType(event.target.value as 'RANDOM' | 'CPF' | 'PHONE' | 'EMAIL')
+                }}
+                placeholder="Selecione o tipo da chave PIX"
+                containerProps={{
+                  height: '52px',
+                  marginBottom: '8px',
+                  background: '#1c1c1c',
+                }}
+              >
+                {pixKeyTypes.map(opt => (
+                  <option key={opt.id} value={opt.id}>
+                    {opt.name}
+                  </option>
+                ))}
+              </Select>
+
+              {pixKeyType === 'PHONE' && (
+                <FormattedInput
+                  id="phonePixKey"
+                  placeholder="Chave PIX"
+                  name="phonePixKey"
+                  format="## #####-####"
+                  defaultValue={commissioner.pix_key_type === 'PHONE' ? commissioner.pix_key : undefined}
+                  mask="_"
+                />
+              )}
+
+              {pixKeyType === 'CPF' && (
+                <FormattedInput
+                  id="cpfPixKey"
+                  placeholder="Chave PIX"
+                  defaultValue={commissioner.pix_key_type === 'CPF' ? commissioner.pix_key : undefined}
+                  name="cpfPixKey"
+                  format="###.###.###-##"
+                  mask="_"
+                />
+              )}
+
+              {pixKeyType === 'EMAIL' && (
+                <Input
+                  disabled={loading}
+                  className="input"
+                  placeholder="Chave PIX"
+                  defaultValue={commissioner.pix_key_type === 'EMAIL' ? commissioner.pix_key : undefined}
+                  id="emailPixKey"
+                  type="emailPixKey"
+                  name="emailPixKey"
+                />
+              )}
+
+              {pixKeyType === 'RANDOM' && (
+                <Input
+                  disabled={loading}
+                  className="input"
+                  placeholder="Chave PIX"
+                  id="randomPixKey"
+                  defaultValue={commissioner.pix_key_type === 'RANDOM' ? commissioner.pix_key : undefined}
+                  type="randomPixKey"
+                  name="randomPixKey"
+                />
+              )}
             </Flex>
           </ModalBody>
 

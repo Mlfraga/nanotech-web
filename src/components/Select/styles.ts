@@ -22,6 +22,7 @@ export const Container = styled(Box)<IContainerProps>`
   align-items: center;
 
   transition: box-shadow 0.2s;
+  border: 2px solid #585858;
 
   ${props =>
     props.isErrored &&
@@ -61,5 +62,4 @@ export const Container = styled(Box)<IContainerProps>`
 
   margin-right: 8;
   width: 100%;
-  border: 2px solid #585858;
 `;
