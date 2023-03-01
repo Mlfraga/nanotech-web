@@ -8,7 +8,7 @@ export const Container = styled(ChakraBox)`
 
   @media (min-width: 1224px) {
     padding-left: 80px;
-    padding-top: 45px;
+    padding-top: 25px;
   }
 `;
 
@@ -93,7 +93,7 @@ export const Box = styled.div`
     padding-left: 10px;
     display: grid;
     width: 100%;
-    grid-template-columns: 15% 20% 20% 20% 10% 15%;
+    grid-template-columns: 15% 20% 20% 10% 20% 15%;
     align-items: center;
     justify-content: center;
 
@@ -179,5 +179,15 @@ export const Box = styled.div`
         margin-top: 8px;
       }
     }
+  }
+`;
+
+export const ButtonArea = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  button + button {
+    margin-left: 8px;
   }
 `;

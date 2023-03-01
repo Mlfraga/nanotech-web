@@ -25,6 +25,7 @@ import Input from '../../Input';
 interface IFormData {
   name: string;
   price: number;
+  commission_amount: number;
 }
 
 interface ICreateServicePriceModalProps {
@@ -66,6 +67,7 @@ const CreateServicePriceModal: React.FC<ICreateServicePriceModalProps> = ({
         const schema = Yup.object().shape({
           name: Yup.string().required('Nome do serviço obrigatório.'),
           price: Yup.number().required('O valor do serviço é obrigatório.'),
+          commission_amount: Yup.number(),
         });
 
         await schema.validate(data, {
@@ -75,6 +77,7 @@ const CreateServicePriceModal: React.FC<ICreateServicePriceModalProps> = ({
         const formData = {
           name: data.name,
           price: data.price,
+          commission_amount: data.commission_amount,
           company_id: company.id,
         };
 
@@ -133,6 +136,13 @@ const CreateServicePriceModal: React.FC<ICreateServicePriceModalProps> = ({
                   placeholder="Preço Nanotech"
                   onKeyUp={handleKeyUp}
                   name="price"
+                  icon={FiDollarSign}
+                />
+
+                <Input
+                  placeholder="Valor da Comissāo"
+                  onKeyUp={handleKeyUp}
+                  name="commission_amount"
                   icon={FiDollarSign}
                 />
               </Flex>

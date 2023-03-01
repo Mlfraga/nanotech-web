@@ -37,7 +37,7 @@
     "indent": "off",
     "camelcase": "off",
     "semi": "off",
-    "comma-dangle": "off",
+    "comma-dangle": "never",
     "function-paren-newline": "off",
     "class-methods-use-this": "off",
     "space-before-function-paren": "off",

@@ -3,47 +3,49 @@ import styled from 'styled-components';
 
 export const Container = styled(ChakraBox)`
   /* @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap'); */
+  height: 100%;
+  max-height: 100vh;
 
   @media (min-width: 1224px) {
     padding-left: 80px;
-    padding-top: 45px;
+    padding-top: 25px;
   }
 `;
 
-export const Header = styled.div`
-  display: grid;
-  grid-template-columns: 22% 16% 22% 16% 8% 10%;
-  min-width: 800px;
-  gap: 6px;
-  align-items: center;
-  justify-content: center;
+export const Content = styled(ChakraBox)`
+  .boxTitle {
+    min-width: 800px;
+    display: grid;
+    grid-template-columns: 15% 20% 20% 20% 10% 10%;
+    align-items: center;
+    justify-content: center;
 
-  padding-left: 10px;
-  padding-right: 10px;
+    margin-top: 12px;
+    background: #282828;
+    height: 60px;
+    border-radius: 15px;
 
-  margin-top: 12px;
-  background: #282828;
-  height: 60px;
-  border-radius: 15px;
-
-  span {
-    font: 16px 'Ubuntu', sans-serif;
-    font-weight: bold;
+    span {
+      font: 16px 'Ubuntu', sans-serif;
+      font-weight: bold;
+    }
   }
 `;
 
-export const InputsContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-gap: 0.5rem;
-  width: 100%;
+export const ButtonContainer = styled.div`
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 90vw;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
 `;
 
 export const Separator = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
-  margin-top: 14px;
+  margin-top: 25px;
 
   span {
     font: 20px 'Ubuntu', sans-serif;
@@ -62,63 +64,48 @@ export const Separator = styled.div`
 `;
 
 export const List = styled(ChakraBox)`
-  overflow-y: auto;
-  overflow-x: hidden;
   min-width: 800px;
+  width: 100%;
+
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  margin-top: 16px;
 
   ::-webkit-scrollbar {
     width: 6px;
-  }
-
-  ::-webkit-scrollbar-track {
+    background: #383838;
   }
 
   ::-webkit-scrollbar-thumb {
-    background-color: #282828;
-    border-radius: 10px;
+    background: #525252;
+    border-radius: 20px;
+  }
+
+  div + div {
+    margin-top: 12px;
   }
 `;
 
-export const Row = styled(ChakraBox)`
-  width: 100%;
-
-  padding-left: 10px;
-
-  padding-right: 10px;
+export const Row = styled.div`
   display: grid;
-
+  position: relative;
   width: 100%;
-  grid-template-columns: 22% 16% 22% 16% 8% 10%;
-  gap: 6px;
+  grid-template-columns: 15% 20% 20% 20% 10% 10%;
   align-items: center;
-
   justify-content: center;
 
   background: #303030;
   height: 60px;
-  border-radius: 15px 15px 0 0;
-
-  span {
-    display: flex;
-    align-items: center;
-    font: 15px 'Ubuntu', sans-serif;
-    font-weight: 200;
-    overflow-wrap: anywhere;
-
-    div {
-      margin-right: 6px;
-      border-radius: 50%;
-      width: 12px;
-      height: 12px;
-    }
-  }
-
-  & + div {
-    margin-top: 16px;
-  }
+  border-radius: 16px
 `;
 
-export const ActionButttonsContainer = styled.div`
+export const ButtonArea = styled.div`
   display: flex;
-  gap: 6px;
+  align-items: center;
+  justify-content: center;
+
+  button + button {
+    margin-left: 8px;
+  }
 `;

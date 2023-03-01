@@ -7,6 +7,6 @@ export const Container = styled(ChakraBox)`
 
   @media (min-width: 1224px) {
     padding-left: 80px;
-    padding-top: 45px;
+    padding-top: 25px;
   }
 `;

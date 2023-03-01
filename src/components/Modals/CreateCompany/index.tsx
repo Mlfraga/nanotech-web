@@ -76,7 +76,7 @@ const CreateCompanyModal: React.FC<ICreateCompanyModalProps> = ({
         });
 
         const isCnpjValid = CpfCnpjUtils.isCnpjValid(data.companyCnpj);
-        console.log(`isCnpjValid: ${isCnpjValid}`);
+
         if (isCnpjValid !== true) {
           formRef.current?.setErrors({ companyCnpj: 'Cnpj inválido.' });
           return;
@@ -103,7 +103,6 @@ const CreateCompanyModal: React.FC<ICreateCompanyModalProps> = ({
           reset();
         }
       } catch (err) {
-        console.log('opa', err);
         setLoading(false);
 
         if (err instanceof Yup.ValidationError) {

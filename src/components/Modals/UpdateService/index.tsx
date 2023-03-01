@@ -26,6 +26,7 @@ import Input from '../../Input';
 interface IFormData {
   name: string;
   price: number;
+  commission_amount: number;
 }
 
 interface IUpdateServicePriceModalProps {
@@ -67,6 +68,7 @@ const UpdateServicePriceModal: React.FC<IUpdateServicePriceModalProps> = ({
           price: !data.name
             ? Yup.number().required('Preço obrigatório')
             : Yup.string(),
+          commission_amount: Yup.number(),
         });
 
         await schema.validate(data, { abortEarly: false });
@@ -74,6 +76,7 @@ const UpdateServicePriceModal: React.FC<IUpdateServicePriceModalProps> = ({
         await api.put(`services/${service.id}`, {
           ...(data.name && { name: data.name }),
           ...(data.price && { price: data.price }),
+          commission_amount: data.commission_amount,
         });
 
         addToast({
@@ -131,6 +134,14 @@ const UpdateServicePriceModal: React.FC<IUpdateServicePriceModalProps> = ({
                   name="price"
                   icon={FiDollarSign}
                   defaultValue={Number(service.price).toFixed(2)}
+                />
+
+                <Input
+                  placeholder="Valor da Comissāo"
+                  onKeyUp={handleKeyUp}
+                  name="commission_amount"
+                  icon={FiDollarSign}
+                  defaultValue={Number(service.commission_amount).toFixed(2)}
                 />
               </Flex>
             </ModalBody>

@@ -1,4 +1,4 @@
-import React, { useEffect, InputHTMLAttributes, useRef } from 'react';
+import React, { InputHTMLAttributes, useEffect, useRef } from 'react';
 import { IconBaseProps } from 'react-icons/';
 import { FiAlertCircle } from 'react-icons/fi';
 
@@ -9,9 +9,10 @@ import { Container, Error } from './styles';
 interface IInputProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string;
   icon?: React.ComponentType<IconBaseProps>;
+  containerProps?: React.CSSProperties;
 }
 
-const Input: React.FC<IInputProps> = ({ name, icon: Icon, ...rest }) => {
+const Input: React.FC<IInputProps> = ({ name, icon: Icon, containerProps,...rest }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { fieldName, error, registerField } = useField(name);
@@ -25,7 +26,7 @@ const Input: React.FC<IInputProps> = ({ name, icon: Icon, ...rest }) => {
   }, [fieldName, registerField]);
 
   return (
-    <Container isErrored={!!error}>
+    <Container style={containerProps} isErrored={!!error}>
       {Icon && <Icon size={20} />}
       <input ref={inputRef} {...rest}></input>
 

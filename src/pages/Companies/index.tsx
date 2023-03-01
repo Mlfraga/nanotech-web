@@ -26,6 +26,7 @@ import { IUnit } from '../../interfaces/unit';
 import api from '../../services/api';
 import {
   Box,
+  ButtonArea,
   ButtonContainer,
   Container,
   Content,
@@ -147,7 +148,7 @@ const Companies = () => {
         ),
         client_identifier: company.client_identifier,
         buttons: (
-          <Flex justifyContent="space-between">
+          <ButtonArea>
             <Tooltip
               aria-label="Alterar dados da concessionária"
               label="Alterar dados da concessionária"
@@ -157,7 +158,9 @@ const Companies = () => {
                 _hover={{ background: '#353535', border: 0 }}
                 _focusWithin={{ border: 0 }}
                 background="#282828"
-                width="48%"
+                flex={1}
+                display="flex"
+                maxW="50px"
               >
                 <FiEdit />
               </ChakraButton>
@@ -176,12 +179,14 @@ const Companies = () => {
                 marginLeft="12px"
                 _focusWithin={{ border: 0 }}
                 background="#282828"
-                width="48%"
+                flex={1}
+                display="flex"
+                maxW="50px"
               >
                 <AiOutlineTool color="#fff" />
               </ChakraButton>
             </Tooltip>
-          </Flex>
+          </ButtonArea>
         ),
         units: company.unities.map(unit => ({
           id: unit.id,
@@ -224,6 +229,7 @@ const Companies = () => {
   return (
     <Container>
       <Menu />
+
       <Flex
         direction="column"
         w={{
@@ -243,6 +249,7 @@ const Companies = () => {
         paddingX={8}
       >
         <Breadcrumb text="Concessionárias cadastradas" />
+
         <Content
           marginLeft="auto"
           marginRight="auto"
@@ -255,7 +262,7 @@ const Companies = () => {
             <span>Nome</span>
             <span>Contato</span>
             <span>CNPJ</span>
-            <span>Identificador</span>
+            <span>Id</span>
           </div>
 
           {loading ? (
@@ -311,79 +318,78 @@ const Companies = () => {
               />
             </Stack>
           ) : (
-            <>
-              <List height={{ lg: '40vh', xl: '55vh' }}>
-                {formattedCompanies.map(company => (
-                  <Box key={company.id}>
-                    <div
-                      className="header"
-                      style={
-                        openedCompanies.includes(company.id)
-                          ? { borderRadius: '15px 15px 0 0' }
-                          : { borderRadius: 15 }
-                      }
-                    >
-                      <span>{company.name}</span>
-                      <span>{company.telephone}</span>
-                      <span>{company.cnpj}</span>
-                      <span>{company.client_identifier}</span>
-                      {company.buttons}
+            <List height={{ lg: '40vh', xl: '55vh' }}>
+              {formattedCompanies.map(company => (
+                <Box key={company.id}>
+                  <div
+                    className="header"
+                    style={
+                      openedCompanies.includes(company.id)
+                        ? { borderRadius: '15px 15px 0 0' }
+                        : { borderRadius: 15 }
+                    }
+                  >
+                    <span>{company.name}</span>
+                    <span>{company.telephone}</span>
+                    <span>{company.cnpj}</span>
+                    <span>{company.client_identifier}</span>
+                    {company.buttons}
 
-                      <ChakraFlex marginRight={8} justifyContent="flex-end">
-                        {openedCompanies.includes(company.id) ? (
-                          <FaArrowAltCircleUp
-                            onClick={() => handleCloseCompanies(company.id)}
-                            style={{ cursor: 'pointer', alignContent: 'right' }}
-                            size={26}
-                          />
-                        ) : (
-                          <FaArrowAltCircleDown
-                            onClick={() => handleOpenCompanies(company.id)}
-                            style={{ cursor: 'pointer', alignSelf: 'right' }}
-                            size={26}
-                          />
-                        )}
-                      </ChakraFlex>
+                    <ChakraFlex marginRight={8} justifyContent="flex-end">
+                      {openedCompanies.includes(company.id) ? (
+                        <FaArrowAltCircleUp
+                          onClick={() => handleCloseCompanies(company.id)}
+                          style={{ cursor: 'pointer', alignContent: 'right' }}
+                          size={26}
+                        />
+                      ) : (
+                        <FaArrowAltCircleDown
+                          onClick={() => handleOpenCompanies(company.id)}
+                          style={{ cursor: 'pointer', alignSelf: 'right' }}
+                          size={26}
+                        />
+                      )}
+                    </ChakraFlex>
+                  </div>
+
+                  <div
+                    className="dropDown"
+                    hidden={!openedCompanies.includes(company.id)}
+                  >
+                    <Separator className="separator">
+                      <span>Unidades</span>
+                      <div />
+                    </Separator>
+
+                    <div className="title">
+                      <span>Nome</span>
+                      <span>Telefone</span>
+                      <span>Identificador</span>
                     </div>
 
-                    <div
-                      className="dropDown"
-                      hidden={!openedCompanies.includes(company.id)}
-                    >
-                      <Separator className="separator">
-                        <span>Unidades</span>
-                        <div />
-                      </Separator>
-
-                      <div className="title">
-                        <span>Nome</span>
-                        <span>Telefone</span>
-                        <span>Identificador</span>
+                    {company.units.map(unit => (
+                      <div className="unit" key={unit.id}>
+                        <span>{unit.name}</span>
+                        <span>{unit.telephone}</span>
+                        <span>{unit.client_identifier}</span>
+                        {unit.button}
                       </div>
+                    ))}
 
-                      {company.units.map(unit => (
-                        <div className="unit" key={unit.id}>
-                          <span>{unit.name}</span>
-                          <span>{unit.telephone}</span>
-                          <span>{unit.client_identifier}</span>
-                          {unit.button}
-                        </div>
-                      ))}
-
-                      <button
-                        className="createNewCompanyLink"
-                        onClick={() => handleOpenCreateUnitModal(company)}
-                      >
-                        <RiAddFill size={18} /> Adicionar nova unidade
-                      </button>
-                    </div>
-                  </Box>
-                ))}
-              </List>
-            </>
+                    <button
+                      className="createNewCompanyLink"
+                      onClick={() => handleOpenCreateUnitModal(company)}
+                    >
+                      <RiAddFill size={18} /> Adicionar nova unidade
+                    </button>
+                  </div>
+                </Box>
+              ))}
+            </List>
           )}
         </Content>
       </Flex>
+
       <ButtonContainer>
         <Button maxW="300px" onClick={handleOpenCreateCompanyModal}>
           Registrar nova concessionária

@@ -1,16 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { FiEdit2 } from 'react-icons/fi';
-import { MdPassword } from 'react-icons/md';
+import { FiEdit2, FiFilter } from 'react-icons/fi';
 
 import {
-  Box, Button as ChakraButton, Flex, Skeleton,
-  Stack,
-  Switch, Tooltip
+  Button as ChakraButton, Flex,
+  Skeleton, Stack, Switch, Tooltip
 } from '@chakra-ui/core';
-
-import Breadcrumb from '../../components/Breadcrumb';
-import Button from '../../components/Button';
 import AlertDialog from '../../components/Dialogs/Alert';
+
+import { MdPassword } from 'react-icons/md';
+import Breadcrumb from '../../components/Breadcrumb';
 import Menu from '../../components/Menu';
 import CreateUserModal from '../../components/Modals/CreateUser';
 import UpdateUserModal from '../../components/Modals/UpdateUserData';
@@ -18,9 +16,15 @@ import { useToast } from '../../context/toast';
 import { IUser } from '../../interfaces/users';
 import api from '../../services/api';
 import getUserRoleTranslated from '../../utils/getUserRoleTranslated';
-import { Container, Header, List, Row } from './styles';
+import FilterUserModal, { IUserFilters } from './components/FilterDrawer';
+import {
+  Container,
+  Content,
+  List,
+  Row
+} from './styles';
 
-interface IFetchedUser {
+export interface IFetchedUser {
   id: string;
   email: string;
   enabled: boolean;
@@ -55,6 +59,8 @@ const Users = () => {
   const { addToast } = useToast();
 
   const [users, setUsers] = useState<IFetchedUser[]>([]);
+  const [filterDrawerOpened, setFilterDrawerOpened] = useState<boolean>(false);
+  const [filterValues, setFilterValues] = useState<IUserFilters>({} as IUserFilters);
   const [loading, setLoading] = useState<boolean>(false);
   const [disableUserAlertOpened, setDisableUserAlertOpened] = useState<boolean>(
     false,
@@ -74,10 +80,18 @@ const Users = () => {
     undefined,
   );
 
-  const fetchUsers = useCallback(() => {
+  const fetchUsers = useCallback((filters: IUserFilters) => {
     setLoading(true);
 
-    api.get('users').then(response => {
+    api.get('users', {
+      params: {
+        ...(filters?.name && { name: filters.name }),
+        ...(filters?.role && { role: filters.role }),
+        ...(filters?.telephone && { telephone: filters.telephone }),
+        ...(filters?.company_id && { company_id: filters.company_id }),
+        ...(filters?.enabled !== undefined && filters.enabled.length > 0 && { enabled: filters.enabled === 'true' ? true : false }),
+      }
+    }).then(response => {
       const fetchedProfiles: IFetchedUser[] = response.data;
 
       setUsers(fetchedProfiles);
@@ -86,7 +100,7 @@ const Users = () => {
   }, []);
 
   useEffect(() => {
-    fetchUsers();
+    fetchUsers({});
   }, [fetchUsers]);
 
   const handleOpenUpdateUserData = useCallback((user: IUser) => {
@@ -144,6 +158,7 @@ const Users = () => {
                   user,
                 })
               }
+              mr={2}
               _hover={{
                 backgroundColor: '#404040',
                 color: '#ccc',
@@ -200,33 +215,18 @@ const Users = () => {
       });
     }
 
-    fetchUsers();
+    fetchUsers({});
     setDisableUserAlertOpened(false);
   }, [disableUser, addToast, fetchUsers]);
 
+  const handleApplyFilters = useCallback((filters: IUserFilters) => {
+    setFilterValues(filters);
+
+    fetchUsers(filters);
+  }, [fetchUsers]);
+
   return (
     <Container>
-      <AlertDialog
-        isOpen={disableUserAlertOpened}
-        onConfirm={toggleEnabled}
-        setIsOpen={setDisableUserAlertOpened}
-        headerText={
-          disableUser.enabled ? 'Ativar Usuário' : 'Desativar Usuário'
-        }
-        bodyText={
-          disableUser.enabled
-            ? 'Tem Certeza Que Deseja Ativar Usuário?'
-            : 'Tem Certeza Que Deseja Desativar Usuário?'
-        }
-      />
-      <AlertDialog
-        isOpen={resetPassDialogOpened}
-        onConfirm={handleResetPassoword}
-        setIsOpen={setResetPassDialogOpened}
-        headerText="Resetar senha"
-        bodyText={`Tem certeza que deseja resetar a senha do(a) ${userToResetPassword?.name}?`}
-      />
-
       <Menu />
 
       <Flex
@@ -247,23 +247,54 @@ const Users = () => {
         }}
         paddingX={8}
       >
-        <Breadcrumb text="Usuários" />
+        <Breadcrumb text="Usuários" filterButton={
+          <Flex>
+          <Tooltip label="Filtros" aria-label="Filtros">
+            <ChakraButton
+              onClick={() => {
+                setFilterDrawerOpened(true);
+              }}
+              mr={2}
+              background="#2f5b9c"
+              _hover={{
+                bg: "#3d65a0"
+              }}
+            >
+              <FiFilter size={20} />
+            </ChakraButton>
+          </Tooltip>
 
-        <Box
-          width="100%"
-          maxWidth="90vw"
+          <Tooltip label="Criar Novo Contato" aria-label="Criar Novo Contato">
+            <ChakraButton
+              onClick={() => {
+                setOpenCreateUserModal(true);
+              }}
+              background="#2f5b9c"
+              _hover={{
+                bg: "#3d65a0"
+              }}
+            >
+              Novo Usuário
+            </ChakraButton>
+          </Tooltip>
+        </Flex>
+        } />
+
+        <Content
           marginLeft="auto"
           marginRight="auto"
-          mt={4}
-          overflowY="auto"
+          width="100%"
+          marginTop={4}
+          maxWidth="90vw"
+          overflowX="auto"
         >
-          <Header>
+          <div className="boxTitle">
             <span>Nome</span>
             <span>Login</span>
             <span>Concessionária</span>
             <span>Cargo</span>
             <span>Ativo</span>
-          </Header>
+          </div>
 
           {loading ? (
             <Stack marginTop="16px">
@@ -318,52 +349,32 @@ const Users = () => {
               />
             </Stack>
           ) : (
-            <List
-              width="100%"
-              marginTop={4}
-              marginBottom={12}
-              maxH={{
-                xs: '90vh',
-                sm: '90vh',
-                md: '70vh',
-                lg: '60vh',
-                xl: '60vh',
-              }}
-            >
+            <List height={{ lg: '40vh', xl: '55vh' }}>
               {formattedUsers.map(user => (
-                <Row key={user.id} style={{ borderRadius: 15 }}>
-                  <Flex>
-                    <span>{user.name}</span>
-                  </Flex>
-
-                  <Flex>
-                    <span>{user.login}</span>
-                  </Flex>
-
-                  <Flex>
-                    <span>{user.companyName}</span>
-                  </Flex>
-
-                  <Flex>
-                    <span>{user.role}</span>
-                  </Flex>
-
-                  <Switch
-                    id="enabled"
-                    isChecked={user.enabled}
-                    color="green"
-                    onClick={e => {
-                      e.preventDefault();
-
-                      setDisableUserAlertOpened(true);
-                      setDisableUser({
-                        id: user.id,
-                        enabled: !user.enabled,
-                      });
-                    }}
-                  />
+                <Row>
+                  <span>{user.name}</span>
+                  <span>{user.login}</span>
+                  <span>{user.companyName}</span>
+                  <span>{user.role}</span>
 
                   <Flex style={{ justifyContent: 'space-between' }}>
+                    <Switch
+                      id="enabled"
+                      isChecked={user.enabled}
+                      color="green"
+                      onClick={e => {
+                        e.preventDefault();
+
+                        setDisableUserAlertOpened(true);
+                        setDisableUser({
+                          id: user.id,
+                          enabled: !user.enabled,
+                        });
+                      }}
+                    />
+                  </Flex>
+
+                  <Flex style={{ justifyContent: 'center', marginTop: '0px' }}>
                     {user.update_user_button}
                     {user.reset_pass_button}
                   </Flex>
@@ -371,35 +382,55 @@ const Users = () => {
               ))}
             </List>
           )}
-        </Box>
-
-        <Flex marginLeft="auto">
-          <Button
-            onClick={() => {
-              setOpenCreateUserModal(true);
-            }}
-          >
-            Adicionar Novo Usuário
-          </Button>
-        </Flex>
+        </Content>
       </Flex>
 
       <CreateUserModal
         isOpen={openCreateUserModal}
         onClose={() => setOpenCreateUserModal(false)}
         onSave={() => {
-          fetchUsers();
+          fetchUsers({});
 
           setOpenCreateUserModal(false);
         }}
       />
+      <FilterUserModal
+        isOpen={filterDrawerOpened}
+        onClose={() => setFilterDrawerOpened(false)}
+        close={() => setFilterDrawerOpened(false)}
+        initialValues={filterValues}
+        applyFilter={handleApplyFilters}
+        cleanFilter={() => setFilterValues({} as IUserFilters)}
+      />
       <UpdateUserModal
         isOpen={!!userToUpdate}
         onClose={handleCloseUpdateUserModal}
-        onSave={fetchUsers}
+        onSave={() => fetchUsers({})}
         user={userToUpdate}
+      />
+
+      <AlertDialog
+        isOpen={disableUserAlertOpened}
+        onConfirm={toggleEnabled}
+        setIsOpen={setDisableUserAlertOpened}
+        headerText={
+          disableUser.enabled ? 'Ativar Usuário' : 'Desativar Usuário'
+        }
+        bodyText={
+          disableUser.enabled
+            ? 'Tem Certeza Que Deseja Ativar Usuário?'
+            : 'Tem Certeza Que Deseja Desativar Usuário?'
+        }
+      />
+      <AlertDialog
+        isOpen={resetPassDialogOpened}
+        onConfirm={handleResetPassoword}
+        setIsOpen={setResetPassDialogOpened}
+        headerText="Resetar senha"
+        bodyText={`Tem certeza que deseja resetar a senha do(a) ${userToResetPassword?.name}?`}
       />
     </Container>
   );
 };
+
 export default Users;

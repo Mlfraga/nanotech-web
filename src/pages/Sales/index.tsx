@@ -1,13 +1,30 @@
 import React, {
   useCallback,
-  useEffect, useMemo, useRef, useState
+  useEffect,
+  useMemo,
+  useRef,
+  useState
 } from 'react';
 import { FaArrowAltCircleDown, FaArrowAltCircleUp } from 'react-icons/fa';
-import { FiEdit3, FiFilter, FiNavigation, FiSave, FiSettings, FiTrash, FiUsers } from 'react-icons/fi';
+import {
+  FiEdit3,
+  FiFilter,
+  FiNavigation,
+  FiSave,
+  FiSettings,
+  FiTrash,
+  FiUsers
+} from 'react-icons/fi';
 
 import {
-  Box as ChakraBox, Button as ChakraButton, Flex as ChakraFlex, Flex, Skeleton,
-  Stack, Text, Tooltip
+  Box as ChakraBox,
+  Button as ChakraButton,
+  Flex as ChakraFlex,
+  Flex,
+  Skeleton,
+  Stack,
+  Text,
+  Tooltip
 } from '@chakra-ui/core';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
@@ -35,8 +52,12 @@ import SaleStatus from '../ProviderSales/components/SaleStatus';
 import FilterDrawer from './components/FilterDrawer';
 import WhatsappNumbersDrawer from './components/WhatsappNumbersDrawer';
 import {
-  ActionButttonsContainer, Box, Container,
-  Content, List, Separator
+  ActionButttonsContainer,
+  Box,
+  Container,
+  Content,
+  List,
+  Separator
 } from './styles';
 
 interface ISaleRequestResponseData {
@@ -50,6 +71,7 @@ interface ISaleRequestResponseData {
   company_value: number;
   cost_value: number;
   comments: string;
+  source: string;
   unit: {
     id: string;
     client_identifier: string;
@@ -322,6 +344,7 @@ const Sales = () => {
           carPlate: sale.car.plate,
           company_value: sale.company_value,
           cost_value: sale.cost_value,
+          source: sale.source,
           hasAlreadyBeenDirected: sale.hasAlreadyBeenDirected,
           availability_date: sale.availability_date,
           delivery_date: sale.delivery_date,
@@ -860,10 +883,18 @@ const Sales = () => {
                           {sale.hasAlreadyBeenDirected &&
                             (user.role === 'ADMIN' ||
                               user.role === 'NANOTECH_REPRESENTATIVE') && (
-                              <FiNavigation
-                                style={{ marginRight: '6px' }}
-                                color="#355a9d"
-                              />
+                                <Tooltip
+                                  label="Venda já direcionada para profissionais"
+                                  aria-label="Venda já direcionada para profissionais"
+                                  placement='top'
+                                >
+                                  <span>
+                                    <FiNavigation
+                                      style={{ marginRight: '6px' }}
+                                      color="#355a9d"
+                                    />
+                                  </span>
+                                </Tooltip>
                             )}
                           {sale.client_id}
                         </span>

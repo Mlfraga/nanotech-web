@@ -31,6 +31,7 @@ export interface ICompanyPrices {
   company_price: number;
   enabled: boolean;
   company_id: string;
+  commission_amount: string
   name: string;
   company: { name: string };
 }
@@ -145,6 +146,7 @@ const CompaniesPrices = () => {
           <h3>Nome</h3>
           <h3>Preço</h3>
           <h3>Preço Nanotech</h3>
+          <h3>Valor Comissāo</h3>
           <h3>Ativo</h3>
         </div>
 
@@ -218,6 +220,13 @@ const CompaniesPrices = () => {
 
                   <span>
                     {Number(row.price).toLocaleString('pt-br', {
+                      style: 'currency',
+                      currency: 'BRL',
+                    })}
+                  </span>
+
+                  <span>
+                    {Number(row.commission_amount).toLocaleString('pt-br', {
                       style: 'currency',
                       currency: 'BRL',
                     })}

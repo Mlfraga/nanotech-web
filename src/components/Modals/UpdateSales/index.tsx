@@ -9,7 +9,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  useToast,
+  useToast
 } from '@chakra-ui/core';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
@@ -195,6 +195,7 @@ const UpdateSalesModal: React.FC<IUpdateSalesModalProps> = ({
                       border: '2px solid',
                       borderColor: '#585858',
                     }}
+                    defaultValue={sale?.source || 'NEW'}
                   >
                     {selectOptions.map(opt => (
                       <option key={opt.value} value={opt.value}>

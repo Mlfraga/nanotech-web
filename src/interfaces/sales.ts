@@ -6,6 +6,7 @@ export interface ISale {
   status: string;
   company_value: number;
   cost_value: number;
+  source: string;
   comments: string;
   unit: {
     id: string;

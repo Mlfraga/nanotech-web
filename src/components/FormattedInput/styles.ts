@@ -52,6 +52,7 @@ export const Container = styled.div<IContainerProps>`
 export const Error = styled(ToolTip)`
   height: 20px;
   margin-left: 16px;
+  z-index: 1000;
 
   svg {
     margin: 0;
