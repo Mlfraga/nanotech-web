@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { AiOutlineTool } from 'react-icons/ai';
 import { FaArrowAltCircleDown, FaArrowAltCircleUp } from 'react-icons/fa';
-import { FiEdit, FiPercent } from 'react-icons/fi';
+import { FiEdit } from 'react-icons/fi';
 import { RiAddFill } from 'react-icons/ri';
 import { useHistory } from 'react-router-dom';
 
@@ -163,27 +163,6 @@ const Companies = () => {
                 maxW="50px"
               >
                 <FiEdit />
-              </ChakraButton>
-            </Tooltip>
-
-            <Tooltip
-              aria-label="Comissionários da concessionária"
-              label="Comissionários da concessionária"
-            >
-              <ChakraButton
-                onClick={() => history.push(`commissioners/${company.id}`)}
-                _hover={{
-                  background: '#353535',
-                  border: 0,
-                }}
-                marginLeft="12px"
-                _focusWithin={{ border: 0 }}
-                background="#282828"
-                flex={1}
-                display="flex"
-                maxW="50px"
-              >
-                <FiPercent color="#fff" />
               </ChakraButton>
             </Tooltip>
 

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as Yup from 'yup';
 
 import {
@@ -14,6 +14,8 @@ import {
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import { useToast } from '../../../context/toast';
+import { IFetchedUser } from '../../../pages/Users';
+import api from '../../../services/api';
 import Select from '../../Select';
 
 interface IFormData {
@@ -28,6 +30,7 @@ interface ISetSaleReferralProps {
   ) => void;
   selectedServices: {value: string; label: string}[];
   handleSubmitByReferral: (commissionerData: IReferralData) => Promise<void>;
+  companyId: string;
 }
 
 export interface IReferralData {
@@ -40,18 +43,35 @@ const SetSaleReferral: React.FC<ISetSaleReferralProps> = ({
   onClose,
   selectedServices,
   handleSubmitByReferral,
+  companyId,
 }) => {
   const formRef = useRef<FormHandles>(null);
-  const {addToast} = useToast();
+  const { addToast } = useToast();
 
   const [referredServices, setReferredServices] = useState<string[]>([]);
+  const [commissionerOptions, setCommissionerOptions] = useState<{value: string; label: string}[]>([]);
+
+  useEffect(() => {
+    const fetchCommissioners = async() => {
+      const {data: commissioners} = await api.get<IFetchedUser[]>('/users', {params: {role: 'COMMISSIONER', company_id: companyId}});
+
+      const formattedOptions = commissioners.map(commissioner => ({
+        value: commissioner.profile.id,
+        label: commissioner.profile.name,
+      }));
+
+      setCommissionerOptions(formattedOptions);
+    }
+
+    fetchCommissioners();
+  }, [companyId])
 
   const handleSubmit = async(data: IFormData) => {
     try {
       formRef.current?.setErrors({});
 
       const schema = Yup.object().shape({
-        commissioner_id: Yup.string()/*.uuid('Comissionário inválido')*/.required('Por favor selecione o comissionário.'),
+        commissioner_id: Yup.string().uuid('Comissionário inválido').required('Por favor selecione o comissionário.'),
       });
 
       await schema.validate(data, {
@@ -68,6 +88,8 @@ const SetSaleReferral: React.FC<ISetSaleReferralProps> = ({
         id: data.commissioner_id,
         referredServices,
       });
+
+      onClose({} as React.MouseEvent | React.KeyboardEvent);
     }catch(exception){
       addToast({ title: 'Ocorreu um erro!', type: 'error' });
     }
@@ -118,11 +140,11 @@ const SetSaleReferral: React.FC<ISetSaleReferralProps> = ({
                       width: '100%'
                     }}
                   >
-                    {/* {sellersOptions.map(option => ( */}
-                      <option /*key={option.id}*/ value={'option.id'}>
-                        option.name
+                    {commissionerOptions.map(option => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
                       </option>
-                    {/* ))} */}
+                    ))}
                   </Select>
                 </Flex>
               </Flex>

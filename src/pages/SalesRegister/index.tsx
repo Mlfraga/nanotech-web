@@ -145,6 +145,8 @@ const SalesRegister = () => {
   );
 
   const handleSubmitByReferral = useCallback(async (commissionerData: IReferralData) => {
+    setLoadingButton(true);
+
     try {
       const formattedServices = selectedServices.map(service => service.value);
 
@@ -260,6 +262,7 @@ const SalesRegister = () => {
         if (refferedSale){
           setSalePayload(createSaleData);
           setSaleReferralModalOpened(true);
+          setLoadingButton(false);
 
           return;
         }
@@ -269,6 +272,7 @@ const SalesRegister = () => {
         const createServiceSaleData = {
           saleId: responseCreatedSale.data.id,
           serviceIds: formattedServices,
+          isReferred: false
         };
 
         await api.post('service-sales', createServiceSaleData);
@@ -577,6 +581,7 @@ const SalesRegister = () => {
           onClose={() => setSaleReferralModalOpened(false)}
           selectedServices={selectedServices}
           handleSubmitByReferral={handleSubmitByReferral}
+          companyId={user.profile.company_id}
         />
       </Container>
     </>

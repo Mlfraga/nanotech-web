@@ -24,7 +24,7 @@ import {
   Row
 } from './styles';
 
-interface IFetchedUser {
+export interface IFetchedUser {
   id: string;
   email: string;
   enabled: boolean;

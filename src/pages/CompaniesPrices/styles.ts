@@ -14,9 +14,10 @@ export const Container = styled(ChakraBox)`
 export const Content = styled(ChakraBox)`
   .boxTitle {
     display: grid;
-    grid-template-columns: 30% 20% 20% 10% 10%;
+    grid-template-columns: 17% 17% 17% 17% 10% 10%;
     align-items: center;
-    justify-content: center;
+    padding-left: 12px;
+    padding-right: 12px;
 
     margin-top: 25px;
     background: #282828;
@@ -77,9 +78,10 @@ export const List = styled(ChakraBox)`
 
 export const Box = styled.div`
   display: grid;
-  grid-template-columns: 30% 20% 20% 10% 10%;
+  grid-template-columns: 17% 17% 17% 17% 10% 10%;
   align-items: center;
-  justify-content: center;
+  padding-left: 12px;
+  padding-right: 12px;
 
   background: #303030;
   height: 60px;

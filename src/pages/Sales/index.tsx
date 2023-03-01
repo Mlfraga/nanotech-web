@@ -883,10 +883,18 @@ const Sales = () => {
                           {sale.hasAlreadyBeenDirected &&
                             (user.role === 'ADMIN' ||
                               user.role === 'NANOTECH_REPRESENTATIVE') && (
-                              <FiNavigation
-                                style={{ marginRight: '6px' }}
-                                color="#355a9d"
-                              />
+                                <Tooltip
+                                  label="Venda já direcionada para profissionais"
+                                  aria-label="Venda já direcionada para profissionais"
+                                  placement='top'
+                                >
+                                  <span>
+                                    <FiNavigation
+                                      style={{ marginRight: '6px' }}
+                                      color="#355a9d"
+                                    />
+                                  </span>
+                                </Tooltip>
                             )}
                           {sale.client_id}
                         </span>
