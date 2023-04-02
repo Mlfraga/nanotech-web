@@ -3,15 +3,13 @@ import React, {
   useCallback,
   useContext,
   useEffect,
-  useState,
+  useState
 } from 'react';
 import { AiOutlineTool } from 'react-icons/ai';
 import {
-  FiList,
+  FiDollarSign, FiFileText, FiList,
   FiTag,
-  FiUsers,
-  FiFileText,
-  FiDollarSign,
+  FiUsers
 } from 'react-icons/fi';
 import { MdBusiness } from 'react-icons/md';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -478,6 +476,17 @@ export const AuthProvider: React.FC = ({ children }) => {
           buttons = [
             {
               name: 'Vendas atribuídas a mim',
+              enable: false,
+              route: '/sales-by-provider',
+              icon: <FiList color="#fff" />,
+            },
+          ];
+        }
+
+        if (userData.role === 'COMMISSIONER') {
+          buttons = [
+            {
+              name: 'Recompensas',
               enable: false,
               route: '/sales-by-provider',
               icon: <FiList color="#fff" />,
