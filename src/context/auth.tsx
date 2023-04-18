@@ -77,6 +77,19 @@ export const AuthProvider: React.FC = ({ children }) => {
 
         let buttons: IButton[] = [];
 
+        // TO-DO: Criar pagina da listagem de venda dos comissionarios
+
+        if(userData.role === 'COMMISSIONER') {
+          buttons = [
+            {
+              name: 'Rewards',
+              enable: false,
+              route: '/rewards',
+              icon: <FiList color="#fff" />,
+            },
+          ]
+        }
+
         if (userData.role === 'MANAGER') {
           buttons = [
             {
@@ -203,6 +216,17 @@ export const AuthProvider: React.FC = ({ children }) => {
     const { user } = response.data;
     const { access_token, refresh_token } = response.data;
     let buttons: IButton[] = [];
+
+    if(user.role === 'COMMISSIONER') {
+      buttons = [
+        {
+          name: 'Rewards',
+          enable: false,
+          route: '/rewards',
+          icon: <FiList color="#fff" />,
+        },
+      ]
+    }
 
     if (user.role === 'MANAGER') {
       buttons = [
@@ -370,6 +394,17 @@ export const AuthProvider: React.FC = ({ children }) => {
 
         let buttons;
 
+        if(userData.role === 'COMMISSIONER') {
+          buttons = [
+            {
+              name: 'Rewards',
+              enable: false,
+              route: '/rewards',
+              icon: <FiList color="#fff" />,
+            },
+          ]
+        }
+
         if (userData.role === 'MANAGER') {
           buttons = [
             {
@@ -486,9 +521,9 @@ export const AuthProvider: React.FC = ({ children }) => {
         if (userData.role === 'COMMISSIONER') {
           buttons = [
             {
-              name: 'Recompensas',
+              name: 'Rewards',
               enable: false,
-              route: '/sales-by-provider',
+              route: '/rewards',
               icon: <FiList color="#fff" />,
             },
           ];

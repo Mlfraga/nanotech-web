@@ -10,6 +10,63 @@ export const Container = styled.div`
     padding-left: 80px;
     padding-top: 25px;
   }
+
+  .boxTitle {
+    min-width: 1000px;
+    display: grid;
+    grid-template-columns:  20% 20% 20% 20% 20%;
+    align-items: center;
+    justify-content: center;
+    padding-left: 10px;
+    padding-right: 10px;
+
+    margin-top: 12px;
+    background: #282828;
+    height: 60px;
+    border-radius: 15px;
+
+    span {
+      font: 16px 'Ubuntu', sans-serif;
+      font-weight: bold;
+    }
+  }
+
+  .serviceName{
+    gap: 10px
+  }
+
+  .boxSales {
+    min-width: 1000px;
+    display: grid;
+    grid-template-columns: 20% 20% 20% 20% 20%;
+    align-items: center;
+    justify-content: center;
+
+
+    /* /* margin-top: 12px;
+    background: #282828;
+    height: 60px;
+    border-radius: 15px; */
+
+    span {
+      font: 16px 'Ubuntu', sans-serif;
+      font-weight: bold;
+    }
+  }
+
+
+  div.updateSaleContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+
+    span {
+      margin-bottom: 12px;
+      font-weight: bold;
+      font-size: 18px;
+    }
+  }
 `;
 
 export const Separator = styled.div`

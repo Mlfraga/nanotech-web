@@ -17,12 +17,19 @@ import SetCompanyFirstPrices from '../pages/SetCompanyFirstPrices';
 import UpdateCompanyPrices from '../pages/UpdateCompanyPrices';
 import Users from '../pages/Users';
 import Route from './Route';
+import Rewards from '../pages/Rewards';
 
 const Routes: React.FC = () => (
   <Switch>
     <Route path="/" exact component={Login} />
     <Route path="/home" exact component={Login} />
     <Route path="/first-login" component={FirstLogin} isPrivate />
+    <Route
+      path="/rewards"
+      component={Rewards}
+      isPrivate
+      permissions={['COMMISSIONER','MANAGER','ADMIN']}
+    />
     <Route
       path="/services"
       component={Services}
@@ -58,7 +65,7 @@ const Routes: React.FC = () => (
       path="/sales"
       component={Sales}
       isPrivate
-      permissions={['MANAGER', 'SELLER', 'ADMIN', 'NANOTECH_REPRESENTATIVE']}
+      permissions={['MANAGER', 'SELLER', 'ADMIN', 'NANOTECH_REPRESENTATIVE', 'COMMISSIONER']}
     />
     <Route
       path="/sales-by-provider"

@@ -21,6 +21,7 @@ import SalesCommentsModal from '../../components/Modals/SalesComments';
 import api from '../../services/api';
 import SaleStatus from './components/SaleStatus';
 import { Container } from './styles';
+import getSaleStatusTranslated from '../../utils/getSaleStatusTranslated';
 
 interface ISales {
   availability_date: Date;
@@ -33,21 +34,45 @@ interface ISales {
   techinical_comments: string;
   sellerName: string;
   client_identifier: string;
-  car: {
-    name: string;
-    color: string;
-    plate: string;
-  };
   unit: {
     name: string;
     company: {
       name: string;
     };
   };
-  services: { name: string; id: string }[];
+  services_sales: {
+    id: string
+  company_value: string
+  cost_value: string
+  sale_id: string
+  service_id: string
+  commissioner_id: string
+  created_at: string
+  updated_at: string
+  service: {
+    id: string
+    name: string
+    price: string
+    enabled: boolean
+    company_price: string
+    commission_amount: string
+    company_id: string
+    created_at: string
+    updated_at: string
+  }
+  commissioner: {
+    id: string
+    name: string
+    company_id: string
+    unit_id: any
+    user_id: string
+    created_at: string
+    updated_at: string
+  }
+   }[];
 }
 
-const ProviderSales = () => {
+const Rewards = () => {
   const [loading, setLoading] = useState(false);
   const [commentsModalIsOpen, setCommentsModalIsOpen] = useState(false);
   const [sales, setSales] = useState<ISales[]>([]);
@@ -57,11 +82,11 @@ const ProviderSales = () => {
     techinicalComments: '',
   });
 
-  const fetchSalesByProvider = useCallback(async () => {
+  const fetchRewards = useCallback(async () => {
     setLoading(true);
 
     api
-      .get<ISales[]>('/service-sale-providers/sales/provider', {
+      .get<ISales[]>('sales/rewards', {
         params: {
           listFrom,
         },
@@ -73,8 +98,10 @@ const ProviderSales = () => {
   }, [listFrom]);
 
   useEffect(() => {
-    fetchSalesByProvider();
-  }, [fetchSalesByProvider]);
+    fetchRewards();
+  }, [fetchRewards]);
+
+  // console.log(sales)
 
   return (
     <Container>
@@ -98,7 +125,7 @@ const ProviderSales = () => {
         }}
         paddingX={8}
       >
-        <Breadcrumb text="Meus serviços" />
+        <Breadcrumb text="Comissões" />
 
         <Flex
           width="100%"
@@ -108,19 +135,15 @@ const ProviderSales = () => {
           flexDirection="column"
           mt={8}
         >
-          <Select
-            placeholder="Selecione o dia"
-            backgroundColor="#282828"
-            borderColor="#282828"
-            size="md"
-            name="listFrom"
-            value={listFrom}
-            onChange={e => setListFrom(e.target.value)}
-          >
-            <option value="yesterday">Ontem</option>
-            <option value="today">Hoje</option>
-            <option value="tomorrow">Amanhã</option>
-          </Select>
+          <Flex direction="column"  overflowX="auto">
+            <div className="boxTitle">
+              <span>N°</span>
+              <span>Comissão</span>
+              <span>Serviço</span>
+              <span>Entrega</span>
+              <span>Status</span>
+            </div>
+          </Flex>
 
           <Flex direction="column" marginY={4}>
             {loading ? (
@@ -156,17 +179,15 @@ const ProviderSales = () => {
               </Stack>
             ) : (
               sales.map(sale => (
-                <Flex
+                <Box
                   key={sale.id}
                   borderRadius={8}
-                  border="1px solid #282828"
                   paddingX={6}
                   paddingY={3}
-                  flexDirection="column"
-                  backgroundColor="#353535"
+                  backgroundColor="#303030"
                   mb={6}
+                  className="boxSales"
                 >
-                  <Flex alignItems="center">
                     <Text
                       display="flex"
                       fontSize={14}
@@ -183,125 +204,68 @@ const ProviderSales = () => {
                       color="#6e737c"
                       marginX={1}
                     >
-                      -
+                      {sale.services_sales.map((service) => {
+                        const price = Number(service.company_value) - Number(service.cost_value)
+                          return (
+                            <span className='serviceName'>{Number(price).toLocaleString(
+                              'pt-br',
+                              {
+                                style: 'currency',
+                                currency: 'BRL',
+                              },
+                            )}</span>
+                          )
+                        })}
                     </Text>
-
+                    <Text
+                      display="flex"
+                      fontSize={14}
+                      fontFamily="inter"
+                      color="#6e737c"
+                      marginX={1}
+                    >
+                      <Flex >
+                        {sale.services_sales.map((service) => {
+                          return (
+                            <span className='serviceName'>{service.service.name}</span>
+                          )
+                        })}
+                      </Flex>
+                    </Text>
+                    <Text
+                      display="flex"
+                      fontSize={14}
+                      fontFamily="inter"
+                      color="#6e737c"
+                      marginX={1}
+                    >
+                      {format(
+                            new Date(sale.delivery_date),
+                            "dd'/'MM'/'yyyy '-' HH:mm'h'",
+                            { locale: ptBR },
+                          )}
+                    </Text>
                     <Text
                       fontSize={14}
                       fontFamily="inter"
                       fontWeight="bold"
                       color="#ededed"
                     >
-                      {`${sale.car.name.toUpperCase()} ${sale.car.color.toUpperCase()} - ${
-                        sale.car.plate
-                      }`}
+                      <div className="status">
+                        <span>
+                          <div className={sale.status} />
+                          {getSaleStatusTranslated(sale.status)}
+                        </span>
+                      </div>
                     </Text>
-
-                    <SaleStatus
-                      sale_id={sale.id}
-                      status={sale.production_status}
-                      onUpdateStatus={fetchSalesByProvider}
-                      enableUpdateStatus
-                    />
-
-                    <Flex flex={1} w="100%" justifyContent="flex-end">
-                      <Tooltip label="Observações" aria-label="Observações">
-                        <Button
-                          bg="transparent"
-                          _hover={{
-                            background: 'transparent',
-                            color: '#6e737c',
-                          }}
-                          color="#fff"
-                          onClick={() => {
-                            setCommentsModalIsOpen(true);
-                            setSelectedSaleComments({
-                              comments: sale.comments,
-                              techinicalComments: sale.techinical_comments,
-                            });
-                          }}
-                        >
-                          <FiInfo size={20} />
-                        </Button>
-                      </Tooltip>
-                    </Flex>
-                  </Flex>
-
-                  <Flex mt={4}>
-                    <Flex>
-                      <BiBuildings color="#b6b6b6" />
-
-                      <Text ml={2} color="#b6b6b6" fontWeight="bold">
-                        {`${sale.unit.company.name.toUpperCase()} ${sale.unit.name.toUpperCase()}`}
-                      </Text>
-                    </Flex>
-
-                    <Flex ml={4}>
-                      <FiUser color="#b6b6b6" />
-
-                      <Text ml={2} color="#b6b6b6" fontWeight="bold">
-                        {sale.sellerName.toUpperCase()}
-                      </Text>
-                    </Flex>
-
-                    <Flex ml={4}>
-                      <FiCalendar color="#b6b6b6" />
-
-                      <Text ml={2} color="#b6b6b6" fontWeight="bold">
-                        {format(
-                          new Date(sale.delivery_date),
-                          "dd'/'MM'/'yyyy '-' HH:mm'h'",
-                          { locale: ptBR },
-                        )}
-                      </Text>
-                    </Flex>
-                  </Flex>
-
-                  <Flex
-                    mt={6}
-                    borderTop="1px solid #4b4b4b"
-                    style={{ gap: '6px' }}
-                    width="100%"
-                    wrap="wrap"
-                    position="relative"
-                  >
-                    <Text
-                      position="absolute"
-                      top="-10px"
-                      left="0"
-                      paddingRight="8px"
-                      background="#353535"
-                      fontWeight="bold"
-                    >
-                      SERVIÇOS:
-                    </Text>
-                    {sale.services.map(service => (
-                      <Box
-                        key={service.id}
-                        borderRadius={8}
-                        mt={4}
-                        border="1px solid #282828"
-                        paddingX={2}
-                        paddingY={1}
-                      >
-                        {service.name}
-                      </Box>
-                    ))}
-                  </Flex>
-                </Flex>
+                </Box>
               ))
             )}
           </Flex>
         </Flex>
       </Flex>
-      <SalesCommentsModal
-        isOpen={commentsModalIsOpen}
-        onClose={() => setCommentsModalIsOpen(false)}
-        comments={selectedSaleComments.comments}
-        techinicalComments={selectedSaleComments.techinicalComments}
-      />
     </Container>
   );
 };
 
-export default ProviderSales;
+export default Rewards;
