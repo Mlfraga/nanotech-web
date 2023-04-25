@@ -14,7 +14,7 @@ export const Container = styled.div`
   .boxTitle {
     min-width: 1000px;
     display: grid;
-    grid-template-columns:  20% 20% 20% 20% 20%;
+    grid-template-columns:  16.66% 16.66% 16.66% 16.66% 16.66% 16.66%;
     align-items: center;
     justify-content: center;
     padding-left: 10px;
@@ -38,7 +38,7 @@ export const Container = styled.div`
   .boxSales {
     min-width: 1000px;
     display: grid;
-    grid-template-columns: 20% 20% 20% 20% 20%;
+    grid-template-columns: 16.66% 16.66% 16.66% 16.66% 16.66% 16.66%;
     align-items: center;
     justify-content: center;
 
@@ -50,7 +50,7 @@ export const Container = styled.div`
 
     span {
       font: 16px 'Ubuntu', sans-serif;
-      font-weight: bold;
+      /* font-weight: bold; */
     }
   }
 
@@ -62,9 +62,10 @@ export const Container = styled.div`
     width: 100%;
 
     span {
+      margin-top: 12px;
       margin-bottom: 12px;
-      font-weight: bold;
-      font-size: 18px;
+      /* font-weight: bold;
+      font-size: 18px; */
     }
   }
 `;

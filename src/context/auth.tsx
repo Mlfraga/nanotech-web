@@ -82,7 +82,7 @@ export const AuthProvider: React.FC = ({ children }) => {
         if(userData.role === 'COMMISSIONER') {
           buttons = [
             {
-              name: 'Rewards',
+              name: 'Comissões',
               enable: false,
               route: '/rewards',
               icon: <FiList color="#fff" />,
@@ -220,7 +220,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     if(user.role === 'COMMISSIONER') {
       buttons = [
         {
-          name: 'Rewards',
+          name: 'Comissões',
           enable: false,
           route: '/rewards',
           icon: <FiList color="#fff" />,
@@ -397,12 +397,14 @@ export const AuthProvider: React.FC = ({ children }) => {
         if(userData.role === 'COMMISSIONER') {
           buttons = [
             {
-              name: 'Rewards',
-              enable: false,
+              name: 'Comissões',
+              enable: true,
               route: '/rewards',
               icon: <FiList color="#fff" />,
             },
           ]
+
+          history.replace('/rewards');
         }
 
         if (userData.role === 'MANAGER') {
@@ -481,6 +483,12 @@ export const AuthProvider: React.FC = ({ children }) => {
               route: '/reports',
               icon: <FiFileText color="#fff" />,
             },
+            {
+              name: 'Comissões',
+              enable: true,
+              route: '/rewards',
+              icon: <FiList color="#fff" />,
+            },
           ];
         }
 
@@ -518,11 +526,11 @@ export const AuthProvider: React.FC = ({ children }) => {
           ];
         }
 
-        if (userData.role === 'COMMISSIONER') {
+        if (userData.role === 'COMMISSIONER' ) {
           buttons = [
             {
-              name: 'Rewards',
-              enable: false,
+              name: 'Comissões',
+              enable: true,
               route: '/rewards',
               icon: <FiList color="#fff" />,
             },
