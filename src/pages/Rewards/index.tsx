@@ -325,6 +325,23 @@ const Rewards = () => {
                        {formatMoney(Number(sale.services_sales.reduce((accumulator,value) => accumulator + Number(value.cost_value),0)))}
                       </Text>
                     </Flex>
+
+
+
+                   <Flex>
+                   <Text ml={2} color="#b6b6b6" fontWeight="bold">
+
+                   {user.role === 'ADMIN' && (
+                          <>
+                            {`
+                              PIX: ${sale.services_sales[0].commissioner.user.pix_key || 'Não cadastrado'}
+                              - Tipo da chave: ${sale.services_sales[0].commissioner.user.pix_key_type || 'Não cadastrado'}
+                            `}
+                          </>
+                        )}
+                        </Text>
+                   </Flex>
+
                   </Flex>
 
                   <Flex
@@ -356,14 +373,6 @@ const Rewards = () => {
                       >
                         {service.service.name.toUpperCase()}
                         {` - ${formatMoney(Number(service.service.commission_amount))}`}
-                        {user.role === 'ADMIN' && (
-                          <>
-                            {`
-                              - PIX: ${service.commissioner.user.pix_key || 'Não cadastrado'}
-                              - Tipo da chave: ${service.commissioner.user.pix_key_type || 'Não cadastrado'}
-                            `}
-                          </>
-                        )}
                       </Flex>
                     ))}
                   </Flex>
