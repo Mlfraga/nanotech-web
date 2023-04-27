@@ -28,8 +28,8 @@ import { useAuth } from '../../context/auth';
 
 interface ISales {
   seller: {
-    name: string
-  }
+    name: string;
+  };
   availability_date: Date;
   date_to_be_done: Date;
   delivery_date: Date;
@@ -40,11 +40,11 @@ interface ISales {
   techinical_comments: string;
   sellerName: string;
   client_identifier: string;
-  car:{
+  car: {
     brand: string;
     color: string;
     plate: string;
-  }
+  };
   unit: {
     name: string;
     company: {
@@ -52,39 +52,39 @@ interface ISales {
     };
   };
   services_sales: {
-    id: string
-    company_value: string
-    cost_value: string
-    sale_id: string
-    service_id: string
-    commissioner_id: string
-    created_at: string
-    updated_at: string
+    id: string;
+    company_value: string;
+    cost_value: string;
+    sale_id: string;
+    service_id: string;
+    commissioner_id: string;
+    created_at: string;
+    updated_at: string;
     service: {
-      id: string
-      name: string
-      price: string
-      enabled: boolean
-      company_price: string
-      commission_amount: string
-      company_id: string
-      created_at: string
-      updated_at: string
-    }
+      id: string;
+      name: string;
+      price: string;
+      enabled: boolean;
+      company_price: string;
+      commission_amount: string;
+      company_id: string;
+      created_at: string;
+      updated_at: string;
+    };
     commissioner: {
-      id: string
-      name: string
-      company_id: string
-      unit_id: any
-      user_id: string
-      created_at: string
-      updated_at: string
+      id: string;
+      name: string;
+      company_id: string;
+      unit_id: any;
+      user_id: string;
+      created_at: string;
+      updated_at: string;
       user: {
-        pix_key_type: null | string,
-        pix_key: null | string,
-      }
-    }
-   }[];
+        pix_key_type: null | string;
+        pix_key: null | string;
+      };
+    };
+  }[];
 }
 
 const Rewards = () => {
@@ -96,9 +96,8 @@ const Rewards = () => {
     comments: '',
     techinicalComments: '',
   });
-  const [companyName, setCompanyName] = useState('')
+  const [companyName, setCompanyName] = useState('');
   const { user } = useAuth();
-
 
   const fetchRewards = useCallback(async () => {
     setLoading(true);
@@ -112,31 +111,31 @@ const Rewards = () => {
       .then(response => {
         setSales(response.data);
 
-        const companyId = response.data.map((sale) => {
-          return sale.services_sales[0].service.company_id
-        })
+        const companyId = response.data.map(sale => {
+          return sale.services_sales[0].service.company_id;
+        });
 
         api.get('/companies/find/' + companyId[0]).then(response => {
-          setCompanyName(response.data.name)
-        })
-
-
+          setCompanyName(response.data.name);
+        });
       })
       .finally(() => setLoading(false));
   }, [listFrom]);
-
 
   useEffect(() => {
     fetchRewards();
   }, [fetchRewards]);
 
-  const allCommissionCost = sales.map(sale => {
-    return [...sale.services_sales.map(service => {
-      return Number(service.cost_value)
-    })]
-  })
-    .map((n) => n.reduce((a, b) => a + b, 0))
-    .reduce((accumulator,value) => accumulator + value,0);
+  const allCommissionCost = sales
+    .map(sale => {
+      return [
+        ...sale.services_sales.map(service => {
+          return Number(service.cost_value);
+        }),
+      ];
+    })
+    .map(n => n.reduce((a, b) => a + b, 0))
+    .reduce((accumulator, value) => accumulator + value, 0);
 
   return (
     <Container>
@@ -170,8 +169,6 @@ const Rewards = () => {
           flexDirection="column"
           mt={8}
         >
-
-
           <Flex direction="column" marginY={4}>
             {loading ? (
               <Stack>
@@ -247,8 +244,13 @@ const Rewards = () => {
                       }`}
                     </Text>
 
-                    <Flex  >
-                      <Tooltip label="Status de produção" aria-label="Status de produção" placement='top' hasArrow>
+                    <Flex>
+                      <Tooltip
+                        label="Status de produção"
+                        aria-label="Status de produção"
+                        placement="top"
+                        hasArrow
+                      >
                         <div>
                           <SaleStatus
                             sale_id={sale.id}
@@ -258,7 +260,6 @@ const Rewards = () => {
                         </div>
                       </Tooltip>
                     </Flex>
-
 
                     <SaleStatus
                       sale_id={sale.id}
@@ -322,26 +323,51 @@ const Rewards = () => {
                       <MdOutlineAttachMoney color="#b6b6b6" />
 
                       <Text ml={2} color="#b6b6b6" fontWeight="bold">
-                       {formatMoney(Number(sale.services_sales.reduce((accumulator,value) => accumulator + Number(value.cost_value),0)))}
+                        {formatMoney(
+                          Number(
+                            sale.services_sales.reduce(
+                              (accumulator, value) =>
+                                accumulator + Number(value.cost_value),
+                              0,
+                            ),
+                          ),
+                        )}
                       </Text>
                     </Flex>
 
-
-
-                   <Flex>
-                   <Text ml={2} color="#b6b6b6" fontWeight="bold">
-
-                   {user.role === 'ADMIN' && (
+                    <Flex>
+                      <Text ml={2} color="#b6b6b6" fontWeight="bold">
+                        {user.role === 'ADMIN' && (
                           <>
-                            {`
-                              PIX: ${sale.services_sales[0].commissioner.user.pix_key || 'Não cadastrado'}
-                              - Tipo da chave: ${sale.services_sales[0].commissioner.user.pix_key_type || 'Não cadastrado'}
-                            `}
+                            {sale.services_sales.filter(service => {
+                              return service.commissioner.user.pix_key_type;
+                            })[0] ? (
+                              <>
+                                {`
+                            PIX: ${
+                              sale.services_sales.filter(service => {
+                                return service.commissioner.user.pix_key_type;
+                              })[0].commissioner.user.pix_key
+                            }
+                            Tipo da chave: ${
+                              sale.services_sales.filter(service => {
+                                return service.commissioner.user.pix_key_type;
+                              })[0].commissioner.user.pix_key_type
+                            }
+                          `}
+                              </>
+                            ) : (
+                              <>
+                                {`
+                            PIX: Não cadastrado
+                            Tipo da chave: Não cadastrado
+                          `}
+                              </>
+                            )}
                           </>
                         )}
-                        </Text>
-                   </Flex>
-
+                      </Text>
+                    </Flex>
                   </Flex>
 
                   <Flex
@@ -372,7 +398,9 @@ const Rewards = () => {
                         paddingY={1}
                       >
                         {service.service.name.toUpperCase()}
-                        {` - ${formatMoney(Number(service.service.commission_amount))}`}
+                        {` - ${formatMoney(
+                          Number(service.service.commission_amount),
+                        )}`}
                       </Flex>
                     ))}
                   </Flex>
