@@ -27,6 +27,8 @@ import formatMoney from '../../utils/formatMoney';
 import { useAuth } from '../../context/auth';
 
 interface ISales {
+  pixKey: string | null | undefined;
+  pixType: string | null | undefined
   seller: {
     name: string;
   };
@@ -82,7 +84,7 @@ interface ISales {
       user: {
         pix_key_type: null | string;
         pix_key: null | string;
-      };
+      } | undefined;
     };
   }[];
 }
@@ -109,7 +111,15 @@ const Rewards = () => {
         },
       })
       .then(response => {
-        setSales(response.data);
+        const formattedSales = response.data.map(sale => {
+          return {
+            ...sale,
+            pixKey: sale.services_sales.find((service) => !!service.commissioner?.user?.pix_key)?.commissioner?.user?.pix_key,
+            pixType: sale.services_sales.find((service) => !!service.commissioner?.user?.pix_key_type)?.commissioner?.user?.pix_key_type,
+          }
+         });
+
+        setSales(formattedSales);
 
         const companyId = response.data.map(sale => {
           return sale.services_sales[0].service.company_id;
@@ -126,16 +136,6 @@ const Rewards = () => {
     fetchRewards();
   }, [fetchRewards]);
 
-  const allCommissionCost = sales
-    .map(sale => {
-      return [
-        ...sale.services_sales.map(service => {
-          return Number(service.cost_value);
-        }),
-      ];
-    })
-    .map(n => n.reduce((a, b) => a + b, 0))
-    .reduce((accumulator, value) => accumulator + value, 0);
 
   return (
     <Container>
@@ -339,32 +339,12 @@ const Rewards = () => {
                       <Text ml={2} color="#b6b6b6" fontWeight="bold">
                         {user.role === 'ADMIN' && (
                           <>
-                            {sale.services_sales.filter(service => {
-                              return service.commissioner.user.pix_key_type;
-                            })[0] ? (
-                              <>
-                                {`
-                            PIX: ${
-                              sale.services_sales.filter(service => {
-                                return service.commissioner.user.pix_key_type;
-                              })[0].commissioner.user.pix_key
-                            }
-                            Tipo da chave: ${
-                              sale.services_sales.filter(service => {
-                                return service.commissioner.user.pix_key_type;
-                              })[0].commissioner.user.pix_key_type
-                            }
-                          `}
-                              </>
-                            ) : (
-                              <>
-                                {`
-                            PIX: Não cadastrado
-                            Tipo da chave: Não cadastrado
-                          `}
-                              </>
-                            )}
+                            {`
+                              PIX: ${sale.pixKey ? sale.pixKey : 'Não cadastrado'}
+                              Tipo da chave: ${sale.pixType ? sale.pixType : 'Não cadastrado'}
+                            `}
                           </>
+
                         )}
                       </Text>
                     </Flex>
