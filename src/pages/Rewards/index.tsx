@@ -1,30 +1,23 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { BiBuildings } from 'react-icons/bi';
-import { FiCalendar, FiUser, FiInfo } from 'react-icons/fi';
+import { FiCalendar, FiDollarSign, FiUser } from 'react-icons/fi';
 
 import {
-  Box,
-  Flex,
-  Select,
-  Skeleton,
+  Flex, Skeleton,
   Stack,
   Text,
-  Tooltip,
-  Button,
+  Tooltip
 } from '@chakra-ui/core';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 import Breadcrumb from '../../components/Breadcrumb';
 import Menu from '../../components/Menu';
-import SalesCommentsModal from '../../components/Modals/SalesComments';
+import { useAuth } from '../../context/auth';
 import api from '../../services/api';
+import formatMoney from '../../utils/formatMoney';
 import SaleStatus from './components/SaleStatus';
 import { Container } from './styles';
-import getSaleStatusTranslated from '../../utils/getSaleStatusTranslated';
-import { MdOutlineAttachMoney } from 'react-icons/md';
-import formatMoney from '../../utils/formatMoney';
-import { useAuth } from '../../context/auth';
 
 interface ISales {
   pixKey: string | null | undefined;
@@ -320,32 +313,18 @@ const Rewards = () => {
                     </Flex>
 
                     <Flex ml={4}>
-                      <MdOutlineAttachMoney color="#b6b6b6" />
+                      <FiDollarSign color="#b6b6b6" />
 
                       <Text ml={2} color="#b6b6b6" fontWeight="bold">
-                        {formatMoney(
+                        {`${formatMoney(
                           Number(
-                            sale.services_sales.reduce(
+                            sale.services_sales.filter(service => !!service.commissioner_id).reduce(
                               (accumulator, value) =>
-                                accumulator + Number(value.cost_value),
+                                accumulator + Number(value.service.commission_amount),
                               0,
                             ),
                           ),
-                        )}
-                      </Text>
-                    </Flex>
-
-                    <Flex>
-                      <Text ml={2} color="#b6b6b6" fontWeight="bold">
-                        {user.role === 'ADMIN' && (
-                          <>
-                            {`
-                              PIX: ${sale.pixKey ? sale.pixKey : 'Não cadastrado'}
-                              Tipo da chave: ${sale.pixType ? sale.pixType : 'Não cadastrado'}
-                            `}
-                          </>
-
-                        )}
+                        )}${user.role === 'ADMIN' ? ` - PIX: ${sale.pixKey}  - ${sale.pixType}` : ''}`}
                       </Text>
                     </Flex>
                   </Flex>
@@ -378,9 +357,9 @@ const Rewards = () => {
                         paddingY={1}
                       >
                         {service.service.name.toUpperCase()}
-                        {` - ${formatMoney(
+                        {!!service.commissioner_id ? ` - ${formatMoney(
                           Number(service.service.commission_amount),
-                        )}`}
+                        )}` : ''}
                       </Flex>
                     ))}
                   </Flex>
