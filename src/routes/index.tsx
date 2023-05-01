@@ -7,6 +7,7 @@ import FirstLogin from '../pages/FirstLogin';
 import Login from '../pages/Login';
 import ProviderSales from '../pages/ProviderSales';
 import Reports from '../pages/Reports';
+import Rewards from '../pages/Rewards';
 import Sales from '../pages/Sales';
 import SalesRegister from '../pages/SalesRegister';
 import Sellers from '../pages/Sellers';
@@ -24,10 +25,16 @@ const Routes: React.FC = () => (
     <Route path="/home" exact component={Login} />
     <Route path="/first-login" component={FirstLogin} isPrivate />
     <Route
+      path="/rewards"
+      component={Rewards}
+      isPrivate
+      permissions={['COMMISSIONER','MANAGER','ADMIN']}
+    />
+    <Route
       path="/services"
       component={Services}
       isPrivate
-      permissions={['MANAGER', 'SELLER', 'ADMIN', 'NANOTECH_REPRESENTATIVE']}
+      permissions={['MANAGER', 'SELLER', 'ADMIN', 'NANOTECH_REPRESENTATIVE', 'COMMISSIONER']}
     />
     <Route path="/service/vitrificacao" component={Service} isPrivate />
     <Route
@@ -58,7 +65,7 @@ const Routes: React.FC = () => (
       path="/sales"
       component={Sales}
       isPrivate
-      permissions={['MANAGER', 'SELLER', 'ADMIN', 'NANOTECH_REPRESENTATIVE']}
+      permissions={['MANAGER', 'SELLER', 'ADMIN', 'NANOTECH_REPRESENTATIVE', 'COMMISSIONER']}
     />
     <Route
       path="/sales-by-provider"

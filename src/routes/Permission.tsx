@@ -20,6 +20,7 @@ const Permission: React.FC<IRouteProps> = ({
     'ADMIN',
     'NANOTECH_REPRESENTATIVE',
     'SERVICE_PROVIDER',
+    'COMMISSIONER'
   ],
   component: Component,
   ...rest
