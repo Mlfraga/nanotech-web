@@ -28,6 +28,7 @@ interface ISales {
   availability_date: Date;
   date_to_be_done: Date;
   delivery_date: Date;
+  finished_at: Date;
   id: string;
   status: 'TO_DO' | 'IN_PROGRESS' | 'DONE' | 'PENDING';
   production_status: 'TO_DO' | 'IN_PROGRESS' | 'DONE' | 'PENDING';
@@ -227,96 +228,130 @@ const Rewards = () => {
                       }`}
                     </Text>
 
-                    <Flex>
-                      <Tooltip
-                        label="Status de produção"
-                        aria-label="Status de produção"
-                        placement="top"
-                        hasArrow
-                      >
-                        <div>
-                          <SaleStatus
-                            sale_id={sale.id}
-                            status={sale.production_status}
-                            enableUpdateStatus={false}
-                          />
-                        </div>
-                      </Tooltip>
-                    </Flex>
+                    <Tooltip
+                      label="Status de produção"
+                      aria-label="Status de produção"
+                      placement="top"
+                      hasArrow
+                    >
+                      <Flex>
+                        <SaleStatus
+                          sale_id={sale.id}
+                          status={sale.production_status}
+                          enableUpdateStatus={false}
+                        />
+                      </Flex>
+                    </Tooltip>
 
-                    <SaleStatus
-                      sale_id={sale.id}
-                      status={sale.status}
-                      enableUpdateStatus={false}
-                    />
-
-                    {/* <Flex flex={1} w="100%" justifyContent="flex-end">
-                      <Tooltip label="Observações" aria-label="Observações">
-                        <Button
-                          bg="transparent"
-                          _hover={{
-                            background: 'transparent',
-                            color: '#6e737c',
-                          }}
-                          color="#fff"
-                          onClick={() => {
-                            setCommentsModalIsOpen(true);
-                            setSelectedSaleComments({
-                              comments: sale.comments,
-                              techinicalComments: sale.techinical_comments,
-                            });
-                          }}
-                        >
-                          <FiInfo size={20} />
-                        </Button>
-                      </Tooltip>
-                    </Flex> */}
+                    <Tooltip
+                      label="Status da venda"
+                      aria-label="Status da venda"
+                      placement="top"
+                      hasArrow
+                    >
+                      <Flex>
+                        <SaleStatus
+                          sale_id={sale.id}
+                          status={sale.status}
+                          enableUpdateStatus={false}
+                        />
+                      </Flex>
+                    </Tooltip>
                   </Flex>
 
                   <Flex mt={4}>
-                    <Flex>
-                      <BiBuildings color="#b6b6b6" />
+                    <Tooltip
+                      label="Concessionária"
+                      aria-label="Concessionária"
+                      placement="top"
+                      hasArrow
+                    >
+                      <Flex>
+                        <BiBuildings color="#b6b6b6" />
 
-                      <Text ml={2} color="#b6b6b6" fontWeight="bold">
-                        {companyName.toLocaleUpperCase()}
-                      </Text>
-                    </Flex>
+                        <Text ml={2} color="#b6b6b6" fontWeight="bold">
+                          {companyName.toLocaleUpperCase()}
+                        </Text>
+                      </Flex>
+                    </Tooltip>
 
-                    <Flex ml={4}>
-                      <FiUser color="#b6b6b6" />
+                    <Tooltip
+                      label="Vendedor(a)"
+                      aria-label="Vendedor(a)"
+                      placement="top"
+                      hasArrow
+                    >
+                      <Flex ml={4}>
+                        <FiUser color="#b6b6b6" />
 
-                      <Text ml={2} color="#b6b6b6" fontWeight="bold">
-                        {sale.seller.name.toLocaleUpperCase()}
-                      </Text>
-                    </Flex>
+                        <Text ml={2} color="#b6b6b6" fontWeight="bold">
+                          {sale.seller.name.toLocaleUpperCase()}
+                        </Text>
+                      </Flex>
+                    </Tooltip>
 
-                    <Flex ml={4}>
-                      <FiCalendar color="#b6b6b6" />
+                    {user.role === 'ADMIN' && (
+                      <Tooltip
+                        label="Comissionário(a)"
+                        aria-label="Comissionário(a)"
+                        placement="top"
+                        hasArrow
+                      >
+                        <Flex ml={4}>
+                          <FiUser color="#b6b6b6" />
 
-                      <Text ml={2} color="#b6b6b6" fontWeight="bold">
-                        {format(
-                          new Date(sale.delivery_date),
-                          "dd'/'MM'/'yyyy '-' HH:mm'h'",
-                          { locale: ptBR },
-                        )}
-                      </Text>
-                    </Flex>
+                          <Text ml={2} color="#b6b6b6" fontWeight="bold">
+                            {sale.services_sales.find(service => !!service.commissioner_id)?.commissioner.name}
+                          </Text>
+                        </Flex>
+                      </Tooltip>
+                    )}
 
-                    <Flex ml={4}>
-                      <FiDollarSign color="#b6b6b6" />
+                    <Tooltip
+                      label={sale.finished_at ? "Data de finalizaçāo" : "Data estimada de entrega"}
+                      aria-label={sale.finished_at ? "Data de finalizaçāo" : "Data estimada de entrega"}
+                      placement="top"
+                      hasArrow
+                    >
+                      <Flex ml={4}>
+                        <FiCalendar color="#b6b6b6" />
 
-                      <Text ml={2} color="#b6b6b6" fontWeight="bold">
-                        {`${formatMoney(
-                          Number(
-                            sale.services_sales.filter(service => !!service.commissioner_id).reduce(
-                              (accumulator, value) =>
-                                accumulator + Number(value.service.commission_amount),
-                              0,
+                        <Text ml={2} color="#b6b6b6" fontWeight="bold">
+                          {sale.finished_at ? format(
+                            new Date(sale.finished_at),
+                            "dd'/'MM'/'yyyy '-' HH:mm'h'",
+                            { locale: ptBR },
+                          ) :  format(
+                            new Date(sale.delivery_date),
+                            "dd'/'MM'/'yyyy '-' HH:mm'h'",
+                            { locale: ptBR },
+                          )}
+                        </Text>
+                      </Flex>
+                    </Tooltip>
+
+                    <Tooltip
+                      label="Recompensa da indicaçāo"
+                      aria-label="Recompensa da indicaçāo"
+                      placement="top"
+                      hasArrow
+                    >
+                      <Flex ml={4}>
+                        <FiDollarSign color="#b6b6b6" />
+
+                        <Text ml={2} color="#b6b6b6" fontWeight="bold">
+                          {`${formatMoney(
+                            Number(
+                              sale.services_sales.filter(service => !!service.commissioner_id).reduce(
+                                (accumulator, value) =>
+                                  accumulator + Number(value.service.commission_amount),
+                                0,
+                              ),
                             ),
-                          ),
-                        )}${user.role === 'ADMIN' ? ` - PIX: ${sale.pixKey}  - ${sale.pixType}` : ''}`}
-                      </Text>
-                    </Flex>
+                          )}${user.role === 'ADMIN' ? ` - PIX: ${sale.pixKey}  - ${sale.pixType}` : ''}`}
+                        </Text>
+                      </Flex>
+                    </Tooltip>
                   </Flex>
 
                   <Flex

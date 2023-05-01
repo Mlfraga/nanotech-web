@@ -13,7 +13,7 @@ import {
 import UpdateStatusPopoverContent from '../UpdateStatusPopoverContent';
 
 interface ISaleStatusProps {
-  status: 'TO_DO' | 'IN_PROGRESS' | 'DONE' | 'PENDING';
+  status: 'TO_DO' | 'IN_PROGRESS' | 'DONE' | 'PENDING' | 'CONFIRMED' | 'CANCELED' | 'FINISHED';
   sale_id: string;
   onUpdateStatus?: () => Promise<void>;
   enableUpdateStatus?: boolean;
@@ -39,6 +39,12 @@ const SaleStatus: React.FC<ISaleStatusProps> = ({
         return 'Concluído';
       case 'PENDING':
         return 'Pendente';
+      case 'CONFIRMED':
+        return 'Confirmado';
+      case 'CANCELED':
+        return 'Cancelado';
+      case 'FINISHED':
+        return 'Finalizado';
       default:
         return 'Status não encontrado';
     }
@@ -54,6 +60,12 @@ const SaleStatus: React.FC<ISaleStatusProps> = ({
         return <FiCheck color="#94ec94" />;
       case 'PENDING':
         return <BiBlock color="#ff6f60" />;
+      case 'CONFIRMED':
+        return <FiCheck color="#8d83ff" />;
+      case 'CANCELED':
+        return <BiBlock color="#da5c4e" />;
+      case 'FINISHED':
+        return <FiCheck color="#6be562" />;
       default:
         return '';
     }
