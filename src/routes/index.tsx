@@ -7,6 +7,7 @@ import FirstLogin from '../pages/FirstLogin';
 import Login from '../pages/Login';
 import ProviderSales from '../pages/ProviderSales';
 import Reports from '../pages/Reports';
+import Rewards from '../pages/Rewards';
 import Sales from '../pages/Sales';
 import SalesRegister from '../pages/SalesRegister';
 import Sellers from '../pages/Sellers';
@@ -17,7 +18,6 @@ import SetCompanyFirstPrices from '../pages/SetCompanyFirstPrices';
 import UpdateCompanyPrices from '../pages/UpdateCompanyPrices';
 import Users from '../pages/Users';
 import Route from './Route';
-import Rewards from '../pages/Rewards';
 
 const Routes: React.FC = () => (
   <Switch>
@@ -34,7 +34,7 @@ const Routes: React.FC = () => (
       path="/services"
       component={Services}
       isPrivate
-      permissions={['MANAGER', 'SELLER', 'ADMIN', 'NANOTECH_REPRESENTATIVE']}
+      permissions={['MANAGER', 'SELLER', 'ADMIN', 'NANOTECH_REPRESENTATIVE', 'COMMISSIONER']}
     />
     <Route path="/service/vitrificacao" component={Service} isPrivate />
     <Route

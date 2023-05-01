@@ -84,13 +84,7 @@ interface ISales {
 
 const Rewards = () => {
   const [loading, setLoading] = useState(false);
-  const [commentsModalIsOpen, setCommentsModalIsOpen] = useState(false);
   const [sales, setSales] = useState<ISales[]>([]);
-  const [listFrom, setListFrom] = useState('today');
-  const [selectedSaleComments, setSelectedSaleComments] = useState({
-    comments: '',
-    techinicalComments: '',
-  });
   const [companyName, setCompanyName] = useState('');
   const { user } = useAuth();
 
@@ -98,11 +92,7 @@ const Rewards = () => {
     setLoading(true);
 
     api
-      .get<ISales[]>('sales/rewards', {
-        params: {
-          listFrom,
-        },
-      })
+      .get<ISales[]>('sales/rewards', {})
       .then(response => {
         const formattedSales = response.data.map(sale => {
           return {
@@ -123,7 +113,7 @@ const Rewards = () => {
         });
       })
       .finally(() => setLoading(false));
-  }, [listFrom]);
+  }, []);
 
   useEffect(() => {
     fetchRewards();
