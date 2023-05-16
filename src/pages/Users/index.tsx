@@ -249,36 +249,36 @@ const Users = () => {
       >
         <Breadcrumb text="Usuários" filterButton={
           <Flex>
-          <Tooltip label="Filtros" aria-label="Filtros">
-            <ChakraButton
-              onClick={() => {
-                setFilterDrawerOpened(true);
-              }}
-              mr={2}
-              background="#2f5b9c"
-              _hover={{
-                bg: "#3d65a0"
-              }}
-            >
-              <FiFilter size={20} />
-            </ChakraButton>
-          </Tooltip>
+            <Tooltip label="Filtros" aria-label="Filtros">
+              <ChakraButton
+                onClick={() => {
+                  setFilterDrawerOpened(true);
+                }}
+                mr={2}
+                background="#2f5b9c"
+                _hover={{
+                  bg: "#3d65a0"
+                }}
+              >
+                <FiFilter size={20} />
+              </ChakraButton>
+            </Tooltip>
 
-          <Tooltip label="Criar Novo Contato" aria-label="Criar Novo Contato">
-            <ChakraButton
-              onClick={() => {
-                setOpenCreateUserModal(true);
-              }}
-              background="#2f5b9c"
-              _hover={{
-                bg: "#3d65a0"
-              }}
-            >
-              Novo Usuário
-            </ChakraButton>
-          </Tooltip>
-        </Flex>
-        } />
+            <Tooltip label="Criar Novo Contato" aria-label="Criar Novo Contato">
+              <ChakraButton
+                onClick={() => {
+                  setOpenCreateUserModal(true);
+                }}
+                background="#2f5b9c"
+                _hover={{
+                  bg: "#3d65a0"
+                }}
+              >
+                Novo Usuário
+              </ChakraButton>
+            </Tooltip>
+          </Flex>
+        }/>
 
         <Content
           marginLeft="auto"

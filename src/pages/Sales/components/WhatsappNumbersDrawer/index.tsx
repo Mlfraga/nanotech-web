@@ -1,30 +1,29 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { FiSave, FiTrash, FiXSquare } from 'react-icons/fi';
-import { FiPlus } from 'react-icons/fi';
+import { FiPlus, FiSave, FiTrash, FiXSquare } from 'react-icons/fi';
 import { NumberFormatValues } from 'react-number-format';
 
 import {
-  DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
-  IDrawer,
-  DrawerHeader,
-  DrawerBody,
-  Drawer,
-  Flex,
-  Text,
-  Checkbox,
-  Grid,
-  Select,
-  PseudoBox,
   Button,
+  Checkbox,
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerHeader,
+  DrawerOverlay,
+  Flex,
+  Grid,
+  IDrawer,
+  PseudoBox,
+  Select,
+  Text,
 } from '@chakra-ui/core';
 
 import { ISelectOption } from '../../../../components/Select';
 import { useToast } from '../../../../context/toast';
 import { ICompany } from '../../../../interfaces/companies';
 import api from '../../../../services/api';
-import { TelephoneField, StyledStack } from './styles';
+import { StyledStack, TelephoneField } from './styles';
 
 interface INumber {
   id: string;

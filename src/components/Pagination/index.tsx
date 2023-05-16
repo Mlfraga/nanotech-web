@@ -9,7 +9,7 @@ import { Container } from './styles';
 interface IPaginationProps extends BoxProps {
   total_pages: number;
   page: number;
-  setPage: React.Dispatch<React.SetStateAction<number>>;
+  setPage: (page: number) => void | React.Dispatch<React.SetStateAction<number>>
 }
 
 const IPagination: React.FC<IPaginationProps> = ({
