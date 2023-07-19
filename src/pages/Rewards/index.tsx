@@ -46,6 +46,7 @@ interface ISales {
   car: {
     brand: string;
     color: string;
+    model: string;
     plate: string;
   };
   unit: {
@@ -317,7 +318,7 @@ const Rewards = () => {
                       fontWeight="bold"
                       color="#ededed"
                     >
-                      {`${sale.car.brand.toLocaleUpperCase()} ${sale.car.color.toLocaleUpperCase()} - ${
+                      {`${sale.car.brand.toLocaleUpperCase()} ${sale.car.model.toLocaleUpperCase()} - ${
                         sale.car.plate
                       }`}
                     </Text>
