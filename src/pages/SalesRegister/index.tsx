@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { Box, Checkbox, Flex, Spinner, Tooltip } from '@chakra-ui/core';
+import { Box, Spinner, Tooltip } from '@chakra-ui/core';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
@@ -557,7 +557,7 @@ const SalesRegister = () => {
             </Services>
 
             <div className="buttons_container">
-              <Flex w="100%" justifyContent="end" alignItems="center">
+              {/* <Flex w="100%" justifyContent="end" alignItems="center">
                 <Checkbox
                   name="refferedSale"
                   isChecked={refferedSale}
@@ -567,7 +567,7 @@ const SalesRegister = () => {
                 >
                   Essa venda possui indicaçāo
                 </Checkbox>
-              </Flex>
+              </Flex> */}
 
               <Button isDisabled={!!loadingButton} type="submit" mt={0}>
                 {loadingButton ? <Spinner color="#282828" /> : 'Salvar'}

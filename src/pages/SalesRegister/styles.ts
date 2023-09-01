@@ -90,7 +90,10 @@ export const Content = styled(ChakraBox)`
 
   .buttons_container {
     display: flex;
+    flex: 1;
     justify-content: flex-end;
+    align-items: flex-end;
+    margin-top: 12px;
 
     button {
       width: 250px;
