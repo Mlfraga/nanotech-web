@@ -83,7 +83,7 @@ const SalesRegister = () => {
   const [loadingButton, setLoadingButton] = useState(false);
   const [saleCommissionerModalOpened, setSaleReferralModalOpened] = useState(false);
   const [salePayload, setSalePayload] = useState<ISalePayload>({} as ISalePayload);
-  const [refferedSale, setRefferedSale] = useState(false);
+  const [refferedSale,] = useState(false);
 
   const [companyServices, setCompanyServices] = useState<ICompanyServices[]>(
     [],
