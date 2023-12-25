@@ -3,14 +3,16 @@ import React, {
   useCallback,
   useContext,
   useEffect,
-  useState
+  useState,
 } from 'react';
 import { AiOutlineTool } from 'react-icons/ai';
 import {
   FiAward,
-  FiDollarSign, FiFileText, FiList,
+  FiDollarSign,
+  FiFileText,
+  FiList,
   FiTag,
-  FiUsers
+  FiUsers,
 } from 'react-icons/fi';
 import { MdBusiness } from 'react-icons/md';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -80,7 +82,7 @@ export const AuthProvider: React.FC = ({ children }) => {
 
         // TO-DO: Criar pagina da listagem de venda dos comissionarios
 
-        if(userData.role === 'COMMISSIONER') {
+        if (userData.role === 'COMMISSIONER') {
           buttons = [
             {
               name: 'Comissões',
@@ -88,7 +90,7 @@ export const AuthProvider: React.FC = ({ children }) => {
               route: '/rewards',
               icon: <FiAward color="#fff" />,
             },
-          ]
+          ];
         }
 
         if (userData.role === 'MANAGER') {
@@ -218,7 +220,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     const { access_token, refresh_token } = response.data;
     let buttons: IButton[] = [];
 
-    if(user.role === 'COMMISSIONER') {
+    if (user.role === 'COMMISSIONER') {
       buttons = [
         {
           name: 'Comissões',
@@ -226,7 +228,7 @@ export const AuthProvider: React.FC = ({ children }) => {
           route: '/rewards',
           icon: <FiAward color="#fff" />,
         },
-      ]
+      ];
     }
 
     if (user.role === 'MANAGER') {
@@ -354,22 +356,17 @@ export const AuthProvider: React.FC = ({ children }) => {
   }, []);
 
   const signOut = useCallback(() => {
-    console.log('signOut');
-
     localStorage.removeItem('@TotalClean:access-token');
     localStorage.removeItem('@TotalClean:refresh-token');
     localStorage.removeItem('@TotalClean:user');
 
     setData({} as IAuthState);
-    console.log('signOut FIM');
-  }, [])
+  }, []);
 
   useEffect(() => {
     const access_token = localStorage.getItem('@TotalClean:access-token');
     const refresh_token = localStorage.getItem('@TotalClean:refresh-token');
     const user = localStorage.getItem('@TotalClean:user');
-
-    console.log('useEffect: ', { access_token, refresh_token, user });
 
     if (!access_token || !refresh_token || !user) {
       if (location.pathname !== '/') {
@@ -519,7 +516,7 @@ export const AuthProvider: React.FC = ({ children }) => {
           ];
         }
 
-        if (userData.role === 'COMMISSIONER' ) {
+        if (userData.role === 'COMMISSIONER') {
           buttons = [
             {
               name: 'Comissões',

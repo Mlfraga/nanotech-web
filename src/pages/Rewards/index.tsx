@@ -4,7 +4,8 @@ import { FiCalendar, FiDollarSign, FiFilter, FiUser } from 'react-icons/fi';
 
 import {
   Button as ChakraButton,
-  Flex, Skeleton,
+  Flex,
+  Skeleton,
   Stack,
   Text,
   Tooltip,
@@ -25,7 +26,7 @@ import { Container } from './styles';
 
 interface ISales {
   pixKey: string | null | undefined;
-  pixType: string | null | undefined
+  pixType: string | null | undefined;
   seller: {
     name: string;
     company: {
@@ -83,10 +84,12 @@ interface ISales {
       user_id: string;
       created_at: string;
       updated_at: string;
-      user: {
-        pix_key_type: null | string;
-        pix_key: null | string;
-      } | undefined;
+      user:
+        | {
+            pix_key_type: null | string;
+            pix_key: null | string;
+          }
+        | undefined;
     };
   }[];
 }
@@ -110,22 +113,26 @@ const Rewards = () => {
   const [totalPages, setTotalPages] = useState<number>(0);
   const [filterValues, setFilterValues] = useState<IRewardFilters>({});
 
-  const fetchRewards = useCallback(async ({ page }: {page: number}) => {
+  const fetchRewards = useCallback(async ({ page }: { page: number }) => {
     setLoading(true);
 
     api
       .get<IFetchSalesResponse>('sales/rewards', {
         params: {
-          page
-        }
+          page,
+        },
       })
       .then(response => {
         const formattedSales = response.data.items.map(sale => {
           return {
             ...sale,
-            pixKey: sale.services_sales.find((service) => !!service.commissioner?.user?.pix_key)?.commissioner?.user?.pix_key,
-            pixType: sale.services_sales.find((service) => !!service.commissioner?.user?.pix_key_type)?.commissioner?.user?.pix_key_type,
-          }
+            pixKey: sale.services_sales.find(
+              service => !!service.commissioner?.user?.pix_key,
+            )?.commissioner?.user?.pix_key,
+            pixType: sale.services_sales.find(
+              service => !!service.commissioner?.user?.pix_key_type,
+            )?.commissioner?.user?.pix_key_type,
+          };
         });
 
         setTotalPages(response.data.total_pages);
@@ -138,61 +145,85 @@ const Rewards = () => {
     fetchRewards({ page: 0 });
   }, [fetchRewards]);
 
-  const handleUpdatePagination = useCallback((page: number) => {
-    setCurrentPage(page);
+  const handleUpdatePagination = useCallback(
+    (page: number) => {
+      setCurrentPage(page);
 
-    fetchRewards({page});
-  }, [fetchRewards])
+      fetchRewards({ page });
+    },
+    [fetchRewards],
+  );
 
-  const handleApplyFilters = useCallback((values: IRewardFilters) => {
-    setFilterValues(values);
+  const handleApplyFilters = useCallback(
+    (values: IRewardFilters) => {
+      setFilterValues(values);
 
-    if (
-      !values.start_delivery_date &&
-      !values.end_delivery_date &&
-      !values.status &&
-      !values.production_status &&
-      !values.seller_id &&
-      !values.company_id
-    ) {
-      addToast({
-        title: 'Por favor preencha algum campo para realizar a pesquisa.',
-        type: 'error',
-      });
-
-      return;
-    }
-
-    setLoading(true);
-
-    console.log('values: ', values);
-
-    api
-      .get<IFetchSalesResponse>('sales/rewards', {
-        params: {
-          page: 0,
-          ...(values.start_delivery_date && String(values.start_delivery_date).length > 0 && {start_delivery_date: values.start_delivery_date}),
-          ...(values.end_delivery_date && String(values.end_delivery_date).length > 0 && {end_delivery_date: values.end_delivery_date}),
-          ...(values.status && String(values.status).length > 0 && {status: values.status}),
-          ...(values.production_status && String(values.production_status).length > 0 && {production_status: values.production_status}),
-          ...(values.seller_id && String(values.seller_id).length > 0 && {seller_id: values.seller_id}),
-          ...(values.company_id && String(values.company_id).length > 0 && {company_id: values.company_id}),
-        }
-      })
-      .then(response => {
-        const formattedSales = response.data.items.map(sale => {
-          return {
-            ...sale,
-            pixKey: sale.services_sales.find((service) => !!service.commissioner?.user?.pix_key)?.commissioner?.user?.pix_key,
-            pixType: sale.services_sales.find((service) => !!service.commissioner?.user?.pix_key_type)?.commissioner?.user?.pix_key_type,
-          }
+      if (
+        !values.start_delivery_date &&
+        !values.end_delivery_date &&
+        !values.status &&
+        !values.production_status &&
+        !values.seller_id &&
+        !values.company_id
+      ) {
+        addToast({
+          title: 'Por favor preencha algum campo para realizar a pesquisa.',
+          type: 'error',
         });
 
-        setTotalPages(response.data.total_pages);
-        setSales(formattedSales);
-      })
-      .finally(() => setLoading(false));
-  }, [addToast]);
+        return;
+      }
+
+      setLoading(true);
+
+      api
+        .get<IFetchSalesResponse>('sales/rewards', {
+          params: {
+            page: 0,
+            ...(values.start_delivery_date &&
+              String(values.start_delivery_date).length > 0 && {
+                start_delivery_date: values.start_delivery_date,
+              }),
+            ...(values.end_delivery_date &&
+              String(values.end_delivery_date).length > 0 && {
+                end_delivery_date: values.end_delivery_date,
+              }),
+            ...(values.status &&
+              String(values.status).length > 0 && { status: values.status }),
+            ...(values.production_status &&
+              String(values.production_status).length > 0 && {
+                production_status: values.production_status,
+              }),
+            ...(values.seller_id &&
+              String(values.seller_id).length > 0 && {
+                seller_id: values.seller_id,
+              }),
+            ...(values.company_id &&
+              String(values.company_id).length > 0 && {
+                company_id: values.company_id,
+              }),
+          },
+        })
+        .then(response => {
+          const formattedSales = response.data.items.map(sale => {
+            return {
+              ...sale,
+              pixKey: sale.services_sales.find(
+                service => !!service.commissioner?.user?.pix_key,
+              )?.commissioner?.user?.pix_key,
+              pixType: sale.services_sales.find(
+                service => !!service.commissioner?.user?.pix_key_type,
+              )?.commissioner?.user?.pix_key_type,
+            };
+          });
+
+          setTotalPages(response.data.total_pages);
+          setSales(formattedSales);
+        })
+        .finally(() => setLoading(false));
+    },
+    [addToast],
+  );
 
   return (
     <Container>
@@ -229,7 +260,7 @@ const Rewards = () => {
                     mr={2}
                     background="#2f5b9c"
                     _hover={{
-                      bg: "#3d65a0"
+                      bg: '#3d65a0',
                     }}
                   >
                     <FiFilter size={20} />
@@ -238,16 +269,16 @@ const Rewards = () => {
               )}
             </Flex>
           }
-          />
+        />
 
-          <Flex
-            width="100%"
-            maxWidth="90vw"
-            marginLeft="auto"
-            marginRight="auto"
-            flexDirection="column"
-            mt={4}
-          >
+        <Flex
+          width="100%"
+          maxWidth="90vw"
+          marginLeft="auto"
+          marginRight="auto"
+          flexDirection="column"
+          mt={4}
+        >
           <Flex direction="column" marginY={4}>
             {loading ? (
               <Stack>
@@ -396,15 +427,27 @@ const Rewards = () => {
                           <FiUser color="#b6b6b6" />
 
                           <Text ml={2} color="#b6b6b6" fontWeight="bold">
-                            {sale.services_sales.find(service => !!service.commissioner_id)?.commissioner.name}
+                            {
+                              sale.services_sales.find(
+                                service => !!service.commissioner_id,
+                              )?.commissioner.name
+                            }
                           </Text>
                         </Flex>
                       </Tooltip>
                     )}
 
                     <Tooltip
-                      label={sale.finished_at ? "Data de finalizaçāo" : "Data estimada de entrega"}
-                      aria-label={sale.finished_at ? "Data de finalizaçāo" : "Data estimada de entrega"}
+                      label={
+                        sale.finished_at
+                          ? 'Data de finalizaçāo'
+                          : 'Data estimada de entrega'
+                      }
+                      aria-label={
+                        sale.finished_at
+                          ? 'Data de finalizaçāo'
+                          : 'Data estimada de entrega'
+                      }
                       placement="top"
                       hasArrow
                     >
@@ -412,15 +455,17 @@ const Rewards = () => {
                         <FiCalendar color="#b6b6b6" />
 
                         <Text ml={2} color="#b6b6b6" fontWeight="bold">
-                          {sale.finished_at ? format(
-                            new Date(sale.finished_at),
-                            "dd'/'MM'/'yyyy '-' HH:mm'h'",
-                            { locale: ptBR },
-                          ) :  format(
-                            new Date(sale.delivery_date),
-                            "dd'/'MM'/'yyyy '-' HH:mm'h'",
-                            { locale: ptBR },
-                          )}
+                          {sale.finished_at
+                            ? format(
+                                new Date(sale.finished_at),
+                                "dd'/'MM'/'yyyy '-' HH:mm'h'",
+                                { locale: ptBR },
+                              )
+                            : format(
+                                new Date(sale.delivery_date),
+                                "dd'/'MM'/'yyyy '-' HH:mm'h'",
+                                { locale: ptBR },
+                              )}
                         </Text>
                       </Flex>
                     </Tooltip>
@@ -437,13 +482,20 @@ const Rewards = () => {
                         <Text ml={2} color="#b6b6b6" fontWeight="bold">
                           {`${formatMoney(
                             Number(
-                              sale.services_sales.filter(service => !!service.commissioner_id).reduce(
-                                (accumulator, value) =>
-                                  accumulator + Number(value.service.commission_amount),
-                                0,
-                              ),
+                              sale.services_sales
+                                .filter(service => !!service.commissioner_id)
+                                .reduce(
+                                  (accumulator, value) =>
+                                    accumulator +
+                                    Number(value.service.commission_amount),
+                                  0,
+                                ),
                             ),
-                          )}${user.role === 'ADMIN' ? ` - PIX: ${sale.pixKey}  - ${sale.pixType}` : ''}`}
+                          )}${
+                            user.role === 'ADMIN'
+                              ? ` - PIX: ${sale.pixKey}  - ${sale.pixType}`
+                              : ''
+                          }`}
                         </Text>
                       </Flex>
                     </Tooltip>
@@ -477,9 +529,11 @@ const Rewards = () => {
                         paddingY={1}
                       >
                         {service.service.name.toUpperCase()}
-                        {!!service.commissioner_id ? ` - ${formatMoney(
-                          Number(service.service.commission_amount),
-                        )}` : ''}
+                        {!!service.commissioner_id
+                          ? ` - ${formatMoney(
+                              Number(service.service.commission_amount),
+                            )}`
+                          : ''}
                       </Flex>
                     ))}
                   </Flex>
@@ -497,8 +551,6 @@ const Rewards = () => {
         </Flex>
       </Flex>
 
-      {console.log(filterValues)}
-
       <FilterRewardsModal
         isOpen={filterDrawerOpened}
         onClose={() => setFilterDrawerOpened(false)}
@@ -506,7 +558,7 @@ const Rewards = () => {
         initialValues={filterValues}
         applyFilter={handleApplyFilters}
         cleanFilter={() => {
-          fetchRewards({page: 0})
+          fetchRewards({ page: 0 });
 
           setFilterValues({});
         }}
