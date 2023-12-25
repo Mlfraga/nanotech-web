@@ -8,7 +8,6 @@ import {
   DrawerCloseButton,
   DrawerHeader,
   DrawerBody,
-  Box,
   Stack,
   Button,
   Drawer,
@@ -21,7 +20,12 @@ import Select from '../../../../components/Select';
 import { useAuth } from '../../../../context/auth';
 import { ISelectOptions } from '../../../../interfaces/select';
 import { IFilterSalesParams } from '../../index';
-import { RowWithTwoFieldsContainer, DescriptionLabel } from './styles';
+import {
+  RowWithTwoFieldsContainer,
+  DescriptionLabel,
+  InputStyled,
+  Row,
+} from './styles';
 
 interface IFilterDrawerProps extends Omit<IDrawer, 'children'> {
   initialValues: IFilterSalesParams;
@@ -138,7 +142,7 @@ const FilterDrawer: React.FC<IFilterDrawerProps> = ({
                 />
               </RowWithTwoFieldsContainer>
 
-              <Box>
+              <Row>
                 <Select
                   placeholder="Status"
                   height={8}
@@ -159,9 +163,9 @@ const FilterDrawer: React.FC<IFilterDrawerProps> = ({
                   <option value="CANCELED">Cancelado</option>
                   <option value="FINISHED">Finalizado</option>
                 </Select>
-              </Box>
+              </Row>
 
-              <Box>
+              <Row>
                 {user.role !== 'SELLER' && (
                   <Select
                     placeholder="Vendedor"
@@ -184,10 +188,10 @@ const FilterDrawer: React.FC<IFilterDrawerProps> = ({
                     ))}
                   </Select>
                 )}
-              </Box>
+              </Row>
 
               {user.role !== 'SELLER' && user.role !== 'MANAGER' && (
-                <Box>
+                <Row>
                   <Select
                     placeholder="Concessionária"
                     height={8}
@@ -208,8 +212,27 @@ const FilterDrawer: React.FC<IFilterDrawerProps> = ({
                       </option>
                     ))}
                   </Select>
-                </Box>
+                </Row>
               )}
+
+              <Row>
+                <InputStyled
+                  className="plateInput"
+                  id="plate"
+                  type="plate"
+                  maxLength={7}
+                  name="plate"
+                  placeholder="Placa/Chassi"
+                  defaultValue={initialValues.plate}
+                  containerProps={{
+                    maxHeight: '40px',
+                    border: '2px solid',
+                    borderColor: '#585858',
+                    color: '#fff',
+                    backgroundColor: '#424242',
+                  }}
+                />
+              </Row>
             </Stack>
           </DrawerBody>
 

@@ -3,7 +3,7 @@ import React, {
   useEffect,
   useMemo,
   useRef,
-  useState
+  useState,
 } from 'react';
 import { FaArrowAltCircleDown, FaArrowAltCircleUp } from 'react-icons/fa';
 import {
@@ -13,7 +13,7 @@ import {
   FiSave,
   FiSettings,
   FiTrash,
-  FiUsers
+  FiUsers,
 } from 'react-icons/fi';
 
 import {
@@ -24,7 +24,7 @@ import {
   Skeleton,
   Stack,
   Text,
-  Tooltip
+  Tooltip,
 } from '@chakra-ui/core';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
@@ -57,7 +57,7 @@ import {
   Container,
   Content,
   List,
-  Separator
+  Separator,
 } from './styles';
 
 interface ISaleRequestResponseData {
@@ -116,6 +116,7 @@ export interface IFilterSalesParams {
   status?: string;
   sellerId?: string;
   companyId?: string;
+  plate?: string;
 }
 
 const Sales = () => {
@@ -202,6 +203,7 @@ const Sales = () => {
         ...(filters?.status && { status: filters?.status }),
         ...(filters?.sellerId && { sellerId: filters?.sellerId }),
         ...(filters?.companyId && { companyId: filters?.companyId }),
+        ...(filters?.plate && { plate: filters?.plate }),
       },
     });
 
@@ -239,6 +241,7 @@ const Sales = () => {
           }),
           ...(filters?.status && { status: filters?.status }),
           ...(filters?.sellerId && { sellerId: filters?.sellerId }),
+          ...(filters?.plate && { plate: filters?.plate }),
           ...(filters?.companyId && { companyId: filters?.companyId }),
         },
       })
@@ -458,7 +461,8 @@ const Sales = () => {
         !params.startFinishedDate &&
         !params.endFinishedDate &&
         !params.sellerId &&
-        !params.companyId
+        !params.companyId &&
+        !params.plate
       ) {
         addToast({
           title: 'Por favor preencha algum campo para realizar a pesquisa.',
@@ -483,6 +487,9 @@ const Sales = () => {
         }),
         ...(params.startFinishedDate && {
           startFinishedDate: params.startFinishedDate,
+        }),
+        ...(params.plate && {
+          plate: params.plate,
         }),
         ...(params.endFinishedDate && {
           endFinishedDate: params.endFinishedDate,
@@ -883,18 +890,18 @@ const Sales = () => {
                           {sale.hasAlreadyBeenDirected &&
                             (user.role === 'ADMIN' ||
                               user.role === 'NANOTECH_REPRESENTATIVE') && (
-                                <Tooltip
-                                  label="Venda já direcionada para profissionais"
-                                  aria-label="Venda já direcionada para profissionais"
-                                  placement='top'
-                                >
-                                  <span>
-                                    <FiNavigation
-                                      style={{ marginRight: '6px' }}
-                                      color="#355a9d"
-                                    />
-                                  </span>
-                                </Tooltip>
+                              <Tooltip
+                                label="Venda já direcionada para profissionais"
+                                aria-label="Venda já direcionada para profissionais"
+                                placement="top"
+                              >
+                                <span>
+                                  <FiNavigation
+                                    style={{ marginRight: '6px' }}
+                                    color="#355a9d"
+                                  />
+                                </span>
+                              </Tooltip>
                             )}
                           {sale.client_id}
                         </span>
