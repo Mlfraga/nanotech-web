@@ -78,8 +78,6 @@ const ProviderSales = () => {
 
   return (
     <Container>
-      <Menu />
-
       <Flex
         direction="column"
         w={{
@@ -100,14 +98,7 @@ const ProviderSales = () => {
       >
         <Breadcrumb text="Meus serviços" />
 
-        <Flex
-          width="100%"
-          maxWidth="90vw"
-          marginLeft="auto"
-          marginRight="auto"
-          flexDirection="column"
-          mt={8}
-        >
+        <Flex width="100%" maxWidth="90vw" flexDirection="column" mt={8}>
           <Select
             placeholder="Selecione o dia"
             backgroundColor="#282828"

@@ -26,10 +26,8 @@ export const Container = styled(Box)<IContainerProps>`
     props.isErrored &&
     css`
       #date-times {
-        margin-top: 10px;
         width: 100%;
 
-        height: 30px;
         border-radius: 6px;
         background: #f3f;
         border: 2.5px solid #e53e3e;
@@ -51,10 +49,8 @@ export const Container = styled(Box)<IContainerProps>`
   }
 
   #date-times {
-    margin-top: 10px;
     width: 100%;
 
-    height: 30px;
     border-radius: 6px;
     background: #424242;
     border: 2.5px solid #585858;
@@ -67,7 +63,6 @@ export const Container = styled(Box)<IContainerProps>`
       margin-top: 10px;
       width: 100%;
 
-      height: 30px;
       border-radius: 6px;
       background: #424242;
       border: 2.5px solid #E53E3E;

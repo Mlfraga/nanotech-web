@@ -227,8 +227,6 @@ const Rewards = () => {
 
   return (
     <Container>
-      <Menu />
-
       <Flex
         direction="column"
         w={{
@@ -271,14 +269,7 @@ const Rewards = () => {
           }
         />
 
-        <Flex
-          width="100%"
-          maxWidth="90vw"
-          marginLeft="auto"
-          marginRight="auto"
-          flexDirection="column"
-          mt={4}
-        >
+        <Flex width="100%" maxWidth="90vw" flexDirection="column" mt={4}>
           <Flex direction="column" marginY={4}>
             {loading ? (
               <Stack>

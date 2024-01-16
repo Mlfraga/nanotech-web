@@ -181,14 +181,11 @@ const Reports: React.FC = () => {
 
   return (
     <Container>
-      <Menu />
       <Breadcrumb text="Relatórios" />
       <Flex
         direction="column"
         width="100%"
         maxWidth="90vw"
-        marginLeft="auto"
-        marginRight="auto"
         padding="0px 0px 26px 8px"
       >
         <Form ref={formRef} onSubmit={handleGetPdfReport}>

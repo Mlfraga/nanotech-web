@@ -36,62 +36,38 @@ const Header: React.FC<IHeaderProp> = ({ disableButtons = false }) => {
   return (
     <Container>
       <Image width={40} src={Logo}></Image>
-      <MediaQuery minDeviceWidth={1224}>
-        <Buttons direction="row-reverse">
-          <Link to="/" onClick={signOut}>
-            <CgLogOut size={20} />
-            Sair
-          </Link>
+
+      <Buttons direction="row-reverse">
+        <Button
+          aria-controls="simple-menu"
+          aria-haspopup="true"
+          onClick={handleClick}
+        >
+          <FiMenu size={25} color="#fff" />
+        </Button>
+        <Menu
+          id="simple-menu"
+          anchorEl={anchorEl}
+          keepMounted
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
+        >
           {buttons?.map(button => (
             <Link
               key={button.route}
-              className={
-                selected === button.route
-                  ? 'header-button-selected'
-                  : 'header-button'
-              }
               to={disableButtons ? '#' : `${button.route}`}
               onClick={() => setSelected(button.route)}
             >
-              {button.name}
+              <MenuItem onClick={() => setSelected(button.route)}>
+                {button.name}
+              </MenuItem>
             </Link>
           ))}
-        </Buttons>
-      </MediaQuery>
-
-      <MediaQuery maxDeviceWidth={1224}>
-        <Buttons direction="row-reverse">
-          <Button
-            aria-controls="simple-menu"
-            aria-haspopup="true"
-            onClick={handleClick}
-          >
-            <FiMenu size={25} color="#fff" />
-          </Button>
-          <Menu
-            id="simple-menu"
-            anchorEl={anchorEl}
-            keepMounted
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
-          >
-            {buttons?.map(button => (
-              <Link
-                key={button.route}
-                to={disableButtons ? '#' : `${button.route}`}
-                onClick={() => setSelected(button.route)}
-              >
-                <MenuItem onClick={() => setSelected(button.route)}>
-                  {button.name}
-                </MenuItem>
-              </Link>
-            ))}
-            <Link to="/" onClick={signOut}>
-              <MenuItem onClick={signOut}>Sair</MenuItem>
-            </Link>
-          </Menu>
-        </Buttons>
-      </MediaQuery>
+          <Link to="/" onClick={signOut}>
+            <MenuItem onClick={signOut}>Sair</MenuItem>
+          </Link>
+        </Menu>
+      </Buttons>
     </Container>
   );
 };

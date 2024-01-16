@@ -3,7 +3,6 @@ import { useHistory } from 'react-router-dom';
 
 import { Box, Spinner, Tooltip } from '@chakra-ui/core';
 import { FormHandles } from '@unform/core';
-import { Form } from '@unform/web';
 import * as Yup from 'yup';
 
 import Breadcrumb from '../../components/Breadcrumb';
@@ -11,7 +10,9 @@ import Button from '../../components/Button';
 import Datetime from '../../components/Datetime';
 import Input from '../../components/Input';
 import Menu from '../../components/Menu';
-import SetSaleReferral, { IReferralData } from '../../components/Modals/SetSaleReferral';
+import SetSaleReferral, {
+  IReferralData,
+} from '../../components/Modals/SetSaleReferral';
 import Select from '../../components/Select';
 import Textarea from '../../components/Textarea';
 import { useAuth } from '../../context/auth';
@@ -20,9 +21,19 @@ import api from '../../services/api';
 import getValidationsErrors from '../../utils/getValidationError';
 import { documentMask } from '../../utils/masks';
 import {
+  CompanyInfosContainer,
   Container,
-  Content, InputContainer, Inputs,
-  Separator, ServiceBox, Services
+  Content,
+  CustomerInfosContainer,
+  DateTimeContainer,
+  StyledForm,
+  FormSectionTitle,
+  InputContainer,
+  InputsContainer,
+  Label,
+  SelectContainer,
+  ServiceBox,
+  Services,
 } from './styles';
 
 export interface IUnit {
@@ -81,14 +92,20 @@ const SalesRegister = () => {
 
   const [document, setDocument] = useState('');
   const [loadingButton, setLoadingButton] = useState(false);
-  const [saleCommissionerModalOpened, setSaleReferralModalOpened] = useState(false);
-  const [salePayload, setSalePayload] = useState<ISalePayload>({} as ISalePayload);
-  const [refferedSale,] = useState(false);
+  const [saleCommissionerModalOpened, setSaleReferralModalOpened] = useState(
+    false,
+  );
+  const [salePayload, setSalePayload] = useState<ISalePayload>(
+    {} as ISalePayload,
+  );
+  const [refferedSale] = useState(false);
 
   const [companyServices, setCompanyServices] = useState<ICompanyServices[]>(
     [],
   );
-  const [selectedServices, setSelectedServices] = useState<{value: string; label: string}[]>([]);
+  const [selectedServices, setSelectedServices] = useState<
+    { value: string; label: string }[]
+  >([]);
 
   const selectOptions: Array<{ value: string; label: string }> = [
     { value: 'NEW', label: '0 KM' },
@@ -131,57 +148,69 @@ const SalesRegister = () => {
 
   const handleSelectService = useCallback(
     (companyService: ICompanyServices) => {
-      const alreadySelected = selectedServices.findIndex(item => item.value === companyService.id);
+      const alreadySelected = selectedServices.findIndex(
+        item => item.value === companyService.id,
+      );
 
       if (alreadySelected >= 0) {
-        const filteredItems = selectedServices.filter(item => item.value !== companyService.id);
+        const filteredItems = selectedServices.filter(
+          item => item.value !== companyService.id,
+        );
 
         setSelectedServices(filteredItems);
       } else {
-        setSelectedServices([...selectedServices, {value: companyService.id, label: companyService.name}]);
+        setSelectedServices([
+          ...selectedServices,
+          { value: companyService.id, label: companyService.name },
+        ]);
       }
     },
     [selectedServices],
   );
 
-  const handleSubmitByReferral = useCallback(async (commissionerData: IReferralData) => {
-    setLoadingButton(true);
+  const handleSubmitByReferral = useCallback(
+    async (commissionerData: IReferralData) => {
+      setLoadingButton(true);
 
-    try {
-      const formattedServices = selectedServices.map(service => service.value);
+      try {
+        const formattedServices = selectedServices.map(
+          service => service.value,
+        );
 
-      const responseCreatedSale = await api.post('sales', salePayload);
+        const responseCreatedSale = await api.post('sales', salePayload);
 
-      const createServiceSaleData = {
-        saleId: responseCreatedSale.data.id,
-        serviceIds: formattedServices,
-        isReferred: true,
-        referral_data: commissionerData,
-      };
+        const createServiceSaleData = {
+          saleId: responseCreatedSale.data.id,
+          serviceIds: formattedServices,
+          isReferred: true,
+          referral_data: commissionerData,
+        };
 
-      await api.post('service-sales', createServiceSaleData);
+        await api.post('service-sales', createServiceSaleData);
 
-      addToast({
-        title: 'Sucesso',
-        type: 'success',
-        description: 'Pedido registrado com sucesso.',
-      });
-      setLoadingButton(false);
-      setSelectedServices([]);
+        addToast({
+          title: 'Sucesso',
+          type: 'success',
+          description: 'Pedido registrado com sucesso.',
+        });
+        setLoadingButton(false);
+        setSelectedServices([]);
 
-      formRef.current?.reset();
-      setDocument('');
-    } catch (err) {
-      addToast({
-        title: 'Erro',
-        description:
-          'Não foi possível registrar essa venda, tente novamente.',
-        type: 'error',
-      });
+        formRef.current?.reset();
+        setDocument('');
+      } catch (err) {
+        addToast({
+          title: 'Erro',
+          description:
+            'Não foi possível registrar essa venda, tente novamente.',
+          type: 'error',
+        });
 
-      setLoadingButton(false);
-    }
-  }, [addToast, salePayload, selectedServices])
+        setLoadingButton(false);
+      }
+    },
+    [addToast, salePayload, selectedServices],
+  );
 
   const handleSubmit = useCallback(
     async (data: IFormData, { reset }) => {
@@ -259,7 +288,7 @@ const SalesRegister = () => {
           carColor: data.carColor,
         };
 
-        if (refferedSale){
+        if (refferedSale) {
           setSalePayload(createSaleData);
           setSaleReferralModalOpened(true);
           setLoadingButton(false);
@@ -272,7 +301,7 @@ const SalesRegister = () => {
         const createServiceSaleData = {
           saleId: responseCreatedSale.data.id,
           serviceIds: formattedServices,
-          isReferred: false
+          isReferred: false,
         };
 
         await api.post('service-sales', createServiceSaleData);
@@ -313,58 +342,16 @@ const SalesRegister = () => {
   );
 
   return (
-    <>
-      <Container>
-        <Menu />
-        <Breadcrumb text="Registro de vendas" />
-        <Content
-          marginLeft="auto"
-          marginRight="auto"
-          width="100%"
-          marginTop="16px"
-          maxWidth={{
-            xs: '90vw',
-            sm: '90vw',
-            md: '80vw',
-            lg: '78vw',
-            xl: '90vw',
-          }}
-        >
-          <Form ref={formRef} onSubmit={handleSubmit}>
-            <Select
-              height="34px"
-              backgroundColor="#424242"
-              color="White"
-              name="unitId"
-              placeholder="Selecione a unidade"
-              containerProps={{
-                marginTop: '16px',
-                marginRight: 8,
-                width: '100%',
-                height: '37px',
-                border: '2px solid',
-                borderColor: '#585858',
-                backgroundColor: '#424242',
-              }}
-            >
-              {unitSelectOptions.map(opt => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </Select>
+    <Container>
+      <Breadcrumb text="Registro de vendas" />
+      <Content width="100%" marginTop="16px">
+        <StyledForm ref={formRef} onSubmit={handleSubmit}>
+          <CustomerInfosContainer>
+            <FormSectionTitle>Dados do cliente</FormSectionTitle>
 
-            <Separator>
-              <span>Dados do cliente</span>
-              <div />
-            </Separator>
-
-            <Inputs marginTop="16px">
+            <InputsContainer>
               <InputContainer>
-                <div className="labels">
-                  <span>Nome:</span>
-                  <span>*</span>
-                </div>
+                <Label>Nome:</Label>
                 <Input
                   className="input"
                   id="name"
@@ -373,12 +360,8 @@ const SalesRegister = () => {
                   style={{ width: '30px' }}
                 />
               </InputContainer>
-
               <InputContainer>
-                <div className="labels">
-                  <span>Cpf:</span>
-                  <span>*</span>
-                </div>
+                <Label>Cpf:</Label>
                 <Input
                   className="input"
                   id="cpf"
@@ -389,12 +372,8 @@ const SalesRegister = () => {
                   value={documentMask(document)}
                 />
               </InputContainer>
-
               <InputContainer>
-                <div className="labels">
-                  <span>Marca do Carro:</span>
-                  <span>*</span>
-                </div>
+                <Label>Marca do Carro:</Label>
                 <Input
                   className="input"
                   id="car"
@@ -403,12 +382,8 @@ const SalesRegister = () => {
                   style={{ width: '30px' }}
                 />
               </InputContainer>
-
               <InputContainer>
-                <div className="labels">
-                  <span>Modelo do Carro:</span>
-                  <span>*</span>
-                </div>
+                <Label>Modelo do Carro:</Label>
                 <Input
                   className="input"
                   id="carModel"
@@ -417,14 +392,9 @@ const SalesRegister = () => {
                   style={{ width: '30px' }}
                 />
               </InputContainer>
-            </Inputs>
-
-            <Inputs style={{ marginTop: '16px' }}>
               <InputContainer>
-                <div className="labels">
-                  <span>Chassi:</span>
-                  <span>*</span>
-                </div>
+                <Label>Chassi:</Label>
+
                 <Input
                   maxLength={7}
                   className="input"
@@ -434,12 +404,9 @@ const SalesRegister = () => {
                   style={{ width: '30px' }}
                 />
               </InputContainer>
-
               <InputContainer>
-                <div className="labels">
-                  <span>Cor do carro:</span>
-                  <span>*</span>
-                </div>
+                <Label>Cor do carro:</Label>
+
                 <Input
                   className="input"
                   id="carColor"
@@ -448,12 +415,15 @@ const SalesRegister = () => {
                   style={{ width: '30px' }}
                 />
               </InputContainer>
+            </InputsContainer>
+          </CustomerInfosContainer>
 
-              <div className="SelectContainer">
-                <div className="labels">
-                  <span>Origem do carro:</span>
-                  <span>*</span>
-                </div>
+          <CompanyInfosContainer>
+            <FormSectionTitle>Informaçōes da OS</FormSectionTitle>
+
+            <InputsContainer>
+              <SelectContainer>
+                <Label>Origem do carro:</Label>
                 <Select
                   height="34px"
                   backgroundColor="#424242"
@@ -461,7 +431,6 @@ const SalesRegister = () => {
                   name="sourceCar"
                   placeholder="Origem do carro"
                   containerProps={{
-                    marginTop: '20px',
                     marginRight: 8,
                     width: '100%',
                     height: '37px',
@@ -476,41 +445,61 @@ const SalesRegister = () => {
                     </option>
                   ))}
                 </Select>
-              </div>
+              </SelectContainer>
 
-              <Box flex={1} fontSize="18px" marginRight="18px">
-                <span style={{ marginBottom: '6px' }}>Observações:</span>
-                <Textarea name="comments" style={{ marginTop: '16px' }} />
-              </Box>
-            </Inputs>
+              <SelectContainer>
+                <Label htmlFor="unitId">Unidade</Label>
 
-            <Separator>
-              <span>Datas </span>
-              <div />
-            </Separator>
+                <Select
+                  height="34px"
+                  backgroundColor="#424242"
+                  color="White"
+                  name="unitId"
+                  id="unitId"
+                  placeholder="Selecione a unidade"
+                  containerProps={{
+                    marginRight: 8,
+                    width: '100%',
+                    height: '37px',
+                    border: '2px solid',
+                    borderColor: '#585858',
+                    backgroundColor: '#424242',
+                  }}
+                >
+                  {unitSelectOptions.map(opt => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </Select>
+              </SelectContainer>
 
-            <div className="DateTimesContainer">
-              <div className="DateTimeContainer">
-                <div className="labels">
-                  <span>Data e hora de disponibilidade:</span>
-                  <span>*</span>
-                </div>
+              <InputContainer>
+                <Label htmlFor="osNumber">Código da OS:</Label>
+
+                <Input
+                  className="input"
+                  id="osNumber"
+                  type="osNumber"
+                  name="osNumber"
+                />
+              </InputContainer>
+
+              <DateTimeContainer>
+                <Label>Data e hora de disponibilidade:</Label>
                 <Datetime name="availabilityDate" />
-              </div>
+              </DateTimeContainer>
 
-              <div className="DateTimeContainer">
-                <div className="labels">
-                  <span>Data e hora de entrega:</span>
-                  <span>*</span>
-                </div>
+              <DateTimeContainer>
+                <Label>Data e hora de entrega:</Label>
                 <Datetime name="deliveryDate" />
-              </div>
-            </div>
+              </DateTimeContainer>
+            </InputsContainer>
+          </CompanyInfosContainer>
 
-            <Separator>
-              <span>Serviços </span>
-              <div />
-            </Separator>
+          <CompanyInfosContainer>
+            <FormSectionTitle>Serviços</FormSectionTitle>
+
             <Services
               templateColumns={{
                 xs: '29% 29% 29%',
@@ -545,7 +534,9 @@ const SalesRegister = () => {
                   <ServiceBox
                     onClick={() => handleSelectService(companyService)}
                     className={
-                      selectedServices.map(s => s.value).includes(companyService.id)
+                      selectedServices
+                        .map(s => s.value)
+                        .includes(companyService.id)
                         ? 'selected'
                         : ''
                     }
@@ -555,36 +546,27 @@ const SalesRegister = () => {
                 </Tooltip>
               ))}
             </Services>
+          </CompanyInfosContainer>
 
-            <div className="buttons_container">
-              {/* <Flex w="100%" justifyContent="end" alignItems="center">
-                <Checkbox
-                  name="refferedSale"
-                  isChecked={refferedSale}
-                  onChange={() => {
-                    setRefferedSale(oldValue => !oldValue)
-                  }}
-                >
-                  Essa venda possui indicaçāo
-                </Checkbox>
-              </Flex> */}
-
-              <Button isDisabled={!!loadingButton} type="submit" mt={0}>
-                {loadingButton ? <Spinner color="#282828" /> : 'Salvar'}
-              </Button>
-            </div>
-          </Form>
-        </Content>
-
-        <SetSaleReferral
-          isOpen={!!saleCommissionerModalOpened}
-          onClose={() => setSaleReferralModalOpened(false)}
-          selectedServices={selectedServices}
-          handleSubmitByReferral={handleSubmitByReferral}
-          companyId={user.profile.company_id}
-        />
-      </Container>
-    </>
+          <Box flex={1} fontSize="18px" marginRight="18px">
+            <span style={{ marginBottom: '6px' }}>Observações:</span>
+            <Textarea name="comments" style={{ marginTop: '16px' }} />
+          </Box>
+          <div className="buttons_container">
+            <Button isDisabled={!!loadingButton} type="submit" mt={0}>
+              {loadingButton ? <Spinner color="#282828" /> : 'Salvar'}
+            </Button>
+          </div>
+        </StyledForm>
+      </Content>
+      <SetSaleReferral
+        isOpen={!!saleCommissionerModalOpened}
+        onClose={() => setSaleReferralModalOpened(false)}
+        selectedServices={selectedServices}
+        handleSubmitByReferral={handleSubmitByReferral}
+        companyId={user.profile.company_id}
+      />
+    </Container>
   );
 };
 

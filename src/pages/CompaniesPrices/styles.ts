@@ -2,13 +2,9 @@ import { Box as ChakraBox } from '@chakra-ui/core';
 import styled from 'styled-components';
 
 export const Container = styled(ChakraBox)`
-  height: 100%;
-  max-height: 100vh;
-
-  @media (min-width: 1224px) {
-    padding-left: 80px;
-    padding-top: 25px;
-  }
+  display: flex;
+  flex: 1;
+  flex-direction: column;
 `;
 
 export const Content = styled(ChakraBox)`

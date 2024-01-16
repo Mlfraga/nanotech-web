@@ -11,6 +11,11 @@ export const Container = styled(Box)`
   height: 80px;
   background: #282828;
   width: 100%;
+  display: none;
+
+  @media (max-width: 900px){
+    display: flex;
+  }
 `;
 
 export const Buttons = styled(Flex)`

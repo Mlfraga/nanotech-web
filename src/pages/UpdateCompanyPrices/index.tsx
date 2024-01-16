@@ -126,14 +126,8 @@ const UpdateCompanyPrices = () => {
 
   return (
     <Container>
-      <Menu />
       <Breadcrumb text="Preços dos serviços" />
-      <Content
-        marginLeft="auto"
-        marginRight="auto"
-        width="100%"
-        maxWidth="90vw"
-      >
+      <Content width="100%" maxWidth="90vw">
         <div className="boxTitle">
           <span>Serviço</span>
           <span>Valor da Nanotech</span>

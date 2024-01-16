@@ -12,8 +12,6 @@ const Breadcrumb: React.FC<IBreaadCrumbProps> = ({ text, filterButton }) => (
     width="100%"
     maxWidth="90vw"
     display="flex"
-    marginLeft="auto"
-    marginRight="auto"
     padding="0px 0px 26px 8px"
     borderRadius="md"
     flexDirection="row"

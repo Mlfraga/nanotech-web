@@ -2,8 +2,12 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FiEdit2, FiFilter } from 'react-icons/fi';
 
 import {
-  Button as ChakraButton, Flex,
-  Skeleton, Stack, Switch, Tooltip
+  Button as ChakraButton,
+  Flex,
+  Skeleton,
+  Stack,
+  Switch,
+  Tooltip,
 } from '@chakra-ui/core';
 import AlertDialog from '../../components/Dialogs/Alert';
 
@@ -17,12 +21,7 @@ import { IUser } from '../../interfaces/users';
 import api from '../../services/api';
 import getUserRoleTranslated from '../../utils/getUserRoleTranslated';
 import FilterUserModal, { IUserFilters } from './components/FilterDrawer';
-import {
-  Container,
-  Content,
-  List,
-  Row
-} from './styles';
+import { Container, Content, List, Row } from './styles';
 
 export interface IFetchedUser {
   id: string;
@@ -60,7 +59,9 @@ const Users = () => {
 
   const [users, setUsers] = useState<IFetchedUser[]>([]);
   const [filterDrawerOpened, setFilterDrawerOpened] = useState<boolean>(false);
-  const [filterValues, setFilterValues] = useState<IUserFilters>({} as IUserFilters);
+  const [filterValues, setFilterValues] = useState<IUserFilters>(
+    {} as IUserFilters,
+  );
   const [loading, setLoading] = useState<boolean>(false);
   const [disableUserAlertOpened, setDisableUserAlertOpened] = useState<boolean>(
     false,
@@ -83,20 +84,25 @@ const Users = () => {
   const fetchUsers = useCallback((filters: IUserFilters) => {
     setLoading(true);
 
-    api.get('users', {
-      params: {
-        ...(filters?.name && { name: filters.name }),
-        ...(filters?.role && { role: filters.role }),
-        ...(filters?.telephone && { telephone: filters.telephone }),
-        ...(filters?.company_id && { company_id: filters.company_id }),
-        ...(filters?.enabled !== undefined && filters.enabled.length > 0 && { enabled: filters.enabled === 'true' ? true : false }),
-      }
-    }).then(response => {
-      const fetchedProfiles: IFetchedUser[] = response.data;
+    api
+      .get('users', {
+        params: {
+          ...(filters?.name && { name: filters.name }),
+          ...(filters?.role && { role: filters.role }),
+          ...(filters?.telephone && { telephone: filters.telephone }),
+          ...(filters?.company_id && { company_id: filters.company_id }),
+          ...(filters?.enabled !== undefined &&
+            filters.enabled.length > 0 && {
+              enabled: filters.enabled === 'true' ? true : false,
+            }),
+        },
+      })
+      .then(response => {
+        const fetchedProfiles: IFetchedUser[] = response.data;
 
-      setUsers(fetchedProfiles);
-      setLoading(false);
-    });
+        setUsers(fetchedProfiles);
+        setLoading(false);
+      });
   }, []);
 
   useEffect(() => {
@@ -219,16 +225,17 @@ const Users = () => {
     setDisableUserAlertOpened(false);
   }, [disableUser, addToast, fetchUsers]);
 
-  const handleApplyFilters = useCallback((filters: IUserFilters) => {
-    setFilterValues(filters);
+  const handleApplyFilters = useCallback(
+    (filters: IUserFilters) => {
+      setFilterValues(filters);
 
-    fetchUsers(filters);
-  }, [fetchUsers]);
+      fetchUsers(filters);
+    },
+    [fetchUsers],
+  );
 
   return (
     <Container>
-      <Menu />
-
       <Flex
         direction="column"
         w={{
@@ -247,47 +254,46 @@ const Users = () => {
         }}
         paddingX={8}
       >
-        <Breadcrumb text="Usuários" filterButton={
-          <Flex>
-            <Tooltip label="Filtros" aria-label="Filtros">
-              <ChakraButton
-                onClick={() => {
-                  setFilterDrawerOpened(true);
-                }}
-                mr={2}
-                background="#2f5b9c"
-                _hover={{
-                  bg: "#3d65a0"
-                }}
-              >
-                <FiFilter size={20} />
-              </ChakraButton>
-            </Tooltip>
+        <Breadcrumb
+          text="Usuários"
+          filterButton={
+            <Flex>
+              <Tooltip label="Filtros" aria-label="Filtros">
+                <ChakraButton
+                  onClick={() => {
+                    setFilterDrawerOpened(true);
+                  }}
+                  mr={2}
+                  background="#2f5b9c"
+                  _hover={{
+                    bg: '#3d65a0',
+                  }}
+                >
+                  <FiFilter size={20} />
+                </ChakraButton>
+              </Tooltip>
 
-            <Tooltip label="Criar Novo Contato" aria-label="Criar Novo Contato">
-              <ChakraButton
-                onClick={() => {
-                  setOpenCreateUserModal(true);
-                }}
-                background="#2f5b9c"
-                _hover={{
-                  bg: "#3d65a0"
-                }}
+              <Tooltip
+                label="Criar Novo Contato"
+                aria-label="Criar Novo Contato"
               >
-                Novo Usuário
-              </ChakraButton>
-            </Tooltip>
-          </Flex>
-        }/>
+                <ChakraButton
+                  onClick={() => {
+                    setOpenCreateUserModal(true);
+                  }}
+                  background="#2f5b9c"
+                  _hover={{
+                    bg: '#3d65a0',
+                  }}
+                >
+                  Novo Usuário
+                </ChakraButton>
+              </Tooltip>
+            </Flex>
+          }
+        />
 
-        <Content
-          marginLeft="auto"
-          marginRight="auto"
-          width="100%"
-          marginTop={4}
-          maxWidth="90vw"
-          overflowX="auto"
-        >
+        <Content width="100%" marginTop={4} maxWidth="90vw" overflowX="auto">
           <div className="boxTitle">
             <span>Nome</span>
             <span>Login</span>

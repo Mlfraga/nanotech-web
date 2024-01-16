@@ -146,16 +146,9 @@ const RegsiterSellers = () => {
 
   return (
     <Container>
-      <Menu />
-
       <Breadcrumb text="Registro de vendedor" />
 
-      <Content
-        marginLeft="auto"
-        marginRight="auto"
-        width="100%"
-        maxWidth="90vw"
-      >
+      <Content width="100%" maxWidth="90vw">
         <Form ref={formRef} onSubmit={handleSubmit}>
           <Separator>
             <span>Dados do usuário</span>
