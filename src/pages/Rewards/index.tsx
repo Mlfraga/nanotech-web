@@ -14,7 +14,6 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 import Breadcrumb from '../../components/Breadcrumb';
-import Menu from '../../components/Menu';
 import Pagination from '../../components/Pagination';
 import { useAuth } from '../../context/auth';
 import { useToast } from '../../context/toast';

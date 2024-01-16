@@ -5,7 +5,6 @@ import { Skeleton, Stack, Flex } from '@chakra-ui/core';
 
 import Breadcrumb from '../../components/Breadcrumb';
 import Button from '../../components/Button';
-import Menu from '../../components/Menu';
 import api from '../../services/api';
 import { Container, Content, List } from './styles';
 

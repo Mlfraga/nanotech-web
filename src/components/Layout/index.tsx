@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { Button as ChakraButton, ButtonProps } from '@chakra-ui/core';
 import Menu from '../Menu';
 import { LayoutContainer, PageContainer } from './styles';
 

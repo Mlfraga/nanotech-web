@@ -13,7 +13,6 @@ import AlertDialog from '../../components/Dialogs/Alert';
 
 import { MdPassword } from 'react-icons/md';
 import Breadcrumb from '../../components/Breadcrumb';
-import Menu from '../../components/Menu';
 import CreateUserModal from '../../components/Modals/CreateUser';
 import UpdateUserModal from '../../components/Modals/UpdateUserData';
 import { useToast } from '../../context/toast';

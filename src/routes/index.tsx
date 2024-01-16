@@ -22,15 +22,7 @@ import Layout from '../components/Layout';
 
 const Routes: React.FC = () => (
   <Switch>
-    <Route
-      path="/"
-      exact
-      component={() => (
-        <Layout>
-          <Login />
-        </Layout>
-      )}
-    />
+    <Route path="/" exact component={() => <Login />} />
     <Route
       path="/home"
       exact

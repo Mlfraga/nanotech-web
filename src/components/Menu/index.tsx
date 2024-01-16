@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from 'react';
 import { FiPower } from 'react-icons/fi';
-import MediaQuery from 'react-responsive';
 import { useHistory } from 'react-router-dom';
 
 import { Button, Flex, Image, Tooltip } from '@chakra-ui/core';
@@ -43,6 +42,8 @@ const Sidebar: React.FC<ISidebarProps> = ({ disableButton = false }) => {
     signOut();
   }, [history, signOut]);
 
+  console.log('buttons: ', buttons);
+
   return (
     <>
       <Header disableButtons={disableButton} />
@@ -68,7 +69,7 @@ const Sidebar: React.FC<ISidebarProps> = ({ disableButton = false }) => {
           alignItems="center"
           height="83.4vh"
         >
-          {buttons.map(button => (
+          {buttons?.map(button => (
             <Tooltip
               key={button.name}
               label={button.name}

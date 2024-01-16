@@ -4,7 +4,6 @@ import { useHistory } from 'react-router-dom';
 import { Flex } from '@chakra-ui/core';
 
 import Breadcrumb from '../../components/Breadcrumb';
-import Menu from '../../components/Menu';
 import { useAuth } from '../../context/auth';
 import api from '../../services/api';
 import Carroussel from './components/Carroussel';

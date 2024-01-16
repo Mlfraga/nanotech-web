@@ -16,7 +16,6 @@ import {
 
 import Breadcrumb from '../../components/Breadcrumb';
 import Button from '../../components/Button';
-import Menu from '../../components/Menu';
 import CreateCompanyModal from '../../components/Modals/CreateCompany';
 import CreateUnitModal from '../../components/Modals/CreateUnit';
 import UpdateCompanyModal from '../../components/Modals/UpdateCompany';

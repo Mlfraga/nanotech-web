@@ -48,7 +48,13 @@ export const Container = styled.div`
   flex: 1;
 `;
 
-export const Content = styled(ChakraBox)`
+export const Content = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  margin-top: 2rem;
+  width: 100%;
+
   textarea::placeholder {
     color: #fff;
   }
@@ -69,8 +75,72 @@ export const Content = styled(ChakraBox)`
 
 export const StyledForm = styled(Form)`
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 8px;
+`;
+
+export const FormStepsContainer = styled.div`
+  display: flex;
+  gap: 1.4rem;
+  width: 100%;
+
+  @media(min-width: 768px) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+`;
+
+
+interface FormStepProps {
+  active?: boolean;
+}
+
+export const FormStep = styled.div<FormStepProps>`
+  background-color: #424242;
+  ${({ active }) => (active ? 'background: #355a9d;' : '')}
+  border-radius: 8px;
+  padding: 8px;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  position: relative;
+
+  @media (min-width: 768px) {
+    padding: 16px 8px;
+    width: auto;
+    height: auto;
+  }
+`;
+
+export const FormStepNumberTitle = styled.span`
+  font: 14px 'Ubuntu', sans-serif;
+  font-weight: bold;
+  color: #eee;
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+  }
+`;
+
+export const FormStepTitle = styled.span`
+  font: 8px 'Ubuntu', sans-serif;
+  font-weight: bold;
+  color: #eee;
+  position: absolute;
+  top: 110%;
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+    position: relative;
+    color: #d2d2d2;
+  }
 `;
 
 export const Separator = styled.div`
@@ -115,15 +185,6 @@ export const CompanyInfosContainer = styled.section`
   gap: 26px;
   flex-wrap: wrap;
   width: 100%;
-`;
-
-export const CustomerInfosContainer = styled.section`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  flex: 1;
-  gap: 26px;
-  flex-wrap: wrap;
 `;
 
 export const Label = styled.label`

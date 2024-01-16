@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import { CgLogOut } from 'react-icons/cg';
 import { FiMenu } from 'react-icons/fi';
-import MediaQuery from 'react-responsive';
 import { Link, useHistory } from 'react-router-dom';
 
 import { Image } from '@chakra-ui/core';
@@ -20,7 +18,7 @@ interface IHeaderProp {
 const Header: React.FC<IHeaderProp> = ({ disableButtons = false }) => {
   const history = useHistory();
   const initialSelectedButton = history.location.pathname;
-  const [selected, setSelected] = useState(initialSelectedButton);
+  const [, setSelected] = useState(initialSelectedButton);
   const { buttons, signOut } = useAuth();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);

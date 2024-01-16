@@ -16,7 +16,6 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 import Breadcrumb from '../../components/Breadcrumb';
-import Menu from '../../components/Menu';
 import SalesCommentsModal from '../../components/Modals/SalesComments';
 import api from '../../services/api';
 import SaleStatus from './components/SaleStatus';

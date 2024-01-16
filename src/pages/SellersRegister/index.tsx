@@ -9,7 +9,6 @@ import Breadcrumb from '../../components/Breadcrumb';
 import Button from '../../components/Button';
 import FormattedInput from '../../components/FormattedInput';
 import Input from '../../components/Input';
-import Menu from '../../components/Menu';
 import Select from '../../components/Select';
 import { useAuth } from '../../context/auth';
 import { useToast } from '../../context/toast';

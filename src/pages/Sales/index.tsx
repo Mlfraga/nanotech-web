@@ -34,7 +34,6 @@ import { ptBR } from 'date-fns/locale';
 
 import Breadcrumb from '../../components/Breadcrumb';
 import AlertDialog from '../../components/Dialogs/Alert';
-import Menu from '../../components/Menu';
 import IndicateServiceProvider from '../../components/Modals/IndicateServiceProvider';
 import UpdateSalesModal from '../../components/Modals/UpdateSales';
 import Pagination from '../../components/Pagination';
@@ -54,7 +53,6 @@ import WhatsappNumbersDrawer from './components/WhatsappNumbersDrawer';
 import {
   ActionButttonsContainer,
   Box,
-  Container,
   Content,
   List,
   Separator,

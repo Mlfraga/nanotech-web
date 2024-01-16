@@ -14,7 +14,6 @@ import { Form } from '@unform/web';
 
 import Breadcrumb from '../../components/Breadcrumb';
 import DatePicker from '../../components/DatePicker';
-import Menu from '../../components/Menu';
 import Select from '../../components/Select';
 import { useAuth } from '../../context/auth';
 import { useToast } from '../../context/toast';

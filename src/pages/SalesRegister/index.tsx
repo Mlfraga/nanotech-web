@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { Box, Spinner, Tooltip } from '@chakra-ui/core';
@@ -9,7 +15,6 @@ import Breadcrumb from '../../components/Breadcrumb';
 import Button from '../../components/Button';
 import Datetime from '../../components/Datetime';
 import Input from '../../components/Input';
-import Menu from '../../components/Menu';
 import SetSaleReferral, {
   IReferralData,
 } from '../../components/Modals/SetSaleReferral';
@@ -24,7 +29,6 @@ import {
   CompanyInfosContainer,
   Container,
   Content,
-  CustomerInfosContainer,
   DateTimeContainer,
   StyledForm,
   FormSectionTitle,
@@ -34,7 +38,12 @@ import {
   SelectContainer,
   ServiceBox,
   Services,
+  FormStepsContainer,
+  FormStep,
+  FormStepTitle,
+  FormStepNumberTitle,
 } from './styles';
+import CustomerInfoStepForm from './components/CustomerInfoStepForm/index';
 
 export interface IUnit {
   id: string;
@@ -83,6 +92,17 @@ interface IFormData {
   comments?: string;
 }
 
+type Step = 'customer_data' | 'service_info' | 'services' | 'confirmation';
+
+const StepComponents: {
+  [K in Step]: React.ComponentType<any>;
+} = {
+  customer_data: CustomerInfoStepForm,
+  service_info: CompanyInfosContainer,
+  services: CompanyInfosContainer,
+  confirmation: CompanyInfosContainer,
+};
+
 const SalesRegister = () => {
   const history = useHistory();
   const { user } = useAuth();
@@ -91,6 +111,7 @@ const SalesRegister = () => {
   const formRef = useRef<FormHandles>(null);
 
   const [document, setDocument] = useState('');
+  const [currentStep, setCurrentStep] = useState<Step>('customer_data');
   const [loadingButton, setLoadingButton] = useState(false);
   const [saleCommissionerModalOpened, setSaleReferralModalOpened] = useState(
     false,
@@ -112,6 +133,7 @@ const SalesRegister = () => {
     { value: 'USED', label: 'Semi-novo' },
     { value: 'WORKSHOP', label: 'Oficina' },
   ];
+
   const [unitSelectOptions, setUnitSelectOptions] = useState<
     Array<{ value: string; label: string }>
   >([]);
@@ -341,84 +363,41 @@ const SalesRegister = () => {
     [addToast, selectedServices, refferedSale],
   );
 
+  const checkIsSameStep = useCallback(
+    (step: Step) => {
+      return step === currentStep;
+    },
+    [currentStep],
+  );
+
+  const StepComponent = StepComponents[currentStep];
+
   return (
     <Container>
       <Breadcrumb text="Registro de vendas" />
-      <Content width="100%" marginTop="16px">
+      <Content>
+        <FormStepsContainer>
+          <FormStep active={checkIsSameStep('customer_data')}>
+            <FormStepNumberTitle>1</FormStepNumberTitle>
+            <FormStepTitle>Dados do cliente</FormStepTitle>
+          </FormStep>
+          <FormStep active={checkIsSameStep('service_info')}>
+            <FormStepNumberTitle>2</FormStepNumberTitle>
+            <FormStepTitle>Dados da OS</FormStepTitle>
+          </FormStep>
+          <FormStep active={checkIsSameStep('services')}>
+            <FormStepNumberTitle>3</FormStepNumberTitle>
+            <FormStepTitle>Serviços</FormStepTitle>
+          </FormStep>
+          <FormStep active={checkIsSameStep('confirmation')}>
+            <FormStepNumberTitle>4</FormStepNumberTitle>
+            <FormStepTitle>Confirmaçāo</FormStepTitle>
+          </FormStep>
+        </FormStepsContainer>
+
         <StyledForm ref={formRef} onSubmit={handleSubmit}>
-          <CustomerInfosContainer>
-            <FormSectionTitle>Dados do cliente</FormSectionTitle>
-
-            <InputsContainer>
-              <InputContainer>
-                <Label>Nome:</Label>
-                <Input
-                  className="input"
-                  id="name"
-                  type="name"
-                  name="name"
-                  style={{ width: '30px' }}
-                />
-              </InputContainer>
-              <InputContainer>
-                <Label>Cpf:</Label>
-                <Input
-                  className="input"
-                  id="cpf"
-                  type="cpf"
-                  name="cpf"
-                  style={{ width: '30px' }}
-                  onChange={e => setDocument(e.target.value)}
-                  value={documentMask(document)}
-                />
-              </InputContainer>
-              <InputContainer>
-                <Label>Marca do Carro:</Label>
-                <Input
-                  className="input"
-                  id="car"
-                  type="car"
-                  name="car"
-                  style={{ width: '30px' }}
-                />
-              </InputContainer>
-              <InputContainer>
-                <Label>Modelo do Carro:</Label>
-                <Input
-                  className="input"
-                  id="carModel"
-                  type="carModel"
-                  name="carModel"
-                  style={{ width: '30px' }}
-                />
-              </InputContainer>
-              <InputContainer>
-                <Label>Chassi:</Label>
-
-                <Input
-                  maxLength={7}
-                  className="input"
-                  id="carPlate"
-                  type="carPlate"
-                  name="carPlate"
-                  style={{ width: '30px' }}
-                />
-              </InputContainer>
-              <InputContainer>
-                <Label>Cor do carro:</Label>
-
-                <Input
-                  className="input"
-                  id="carColor"
-                  type="carColor"
-                  name="carColor"
-                  style={{ width: '30px' }}
-                />
-              </InputContainer>
-            </InputsContainer>
-          </CustomerInfosContainer>
-
-          <CompanyInfosContainer>
+          <StepComponent />
+          {/* <CompanyInfosContainer>
             <FormSectionTitle>Informaçōes da OS</FormSectionTitle>
 
             <InputsContainer>
@@ -552,13 +531,15 @@ const SalesRegister = () => {
             <span style={{ marginBottom: '6px' }}>Observações:</span>
             <Textarea name="comments" style={{ marginTop: '16px' }} />
           </Box>
+
           <div className="buttons_container">
             <Button isDisabled={!!loadingButton} type="submit" mt={0}>
               {loadingButton ? <Spinner color="#282828" /> : 'Salvar'}
             </Button>
-          </div>
+          </div> */}
         </StyledForm>
       </Content>
+
       <SetSaleReferral
         isOpen={!!saleCommissionerModalOpened}
         onClose={() => setSaleReferralModalOpened(false)}

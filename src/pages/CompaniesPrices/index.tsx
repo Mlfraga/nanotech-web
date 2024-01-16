@@ -13,7 +13,6 @@ import {
 import Breadcrumb from '../../components/Breadcrumb';
 import Button from '../../components/Button';
 import AlertDialog from '../../components/Dialogs/Alert';
-import Menu from '../../components/Menu';
 import CreateService from '../../components/Modals/CreateService';
 import UpdateService from '../../components/Modals/UpdateService';
 import { useToast } from '../../context/toast';
