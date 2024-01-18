@@ -85,7 +85,6 @@ export const Container = styled(Box)<IContainerProps>`
 
   .MuiFormControl-root.MuiTextField-root.date-times {
     width: 100%;
-    max-width: 355px;
     .MuiInput-underline:after {
       border-bottom: 2px solid #355a9d;
     }

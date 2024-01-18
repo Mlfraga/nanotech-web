@@ -100,7 +100,7 @@ interface FormStepProps {
 export const FormStep = styled.div<FormStepProps>`
   background-color: #424242;
   ${({ active }) => (active ? 'background: #355a9d;' : '')}
-  border-radius: 8px;
+  border-radius: 16px;
   padding: 8px;
   width: 2rem;
   height: 2rem;
@@ -113,7 +113,8 @@ export const FormStep = styled.div<FormStepProps>`
   position: relative;
 
   @media (min-width: 768px) {
-    padding: 16px 8px;
+    padding: 8px;
+    border-radius: 16px;
     width: auto;
     height: auto;
   }

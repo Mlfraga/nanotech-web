@@ -44,17 +44,20 @@ import {
   FormStepNumberTitle,
 } from './styles';
 import CustomerInfoStepForm from './components/CustomerInfoStepForm/index';
+import ServiceOrderInfoForm from './components/ServiceOrderInfoForm';
+import ServicesStepForm from './components/ServicesStepForm';
 
 export interface IUnit {
   id: string;
   name: string;
 }
 
-interface ICompanyServices {
+export interface ICompanyServices {
   id: string;
   price: number;
   company_price: number;
   name: string;
+  description: string;
   service: {
     id: string;
     price: number;
@@ -98,8 +101,8 @@ const StepComponents: {
   [K in Step]: React.ComponentType<any>;
 } = {
   customer_data: CustomerInfoStepForm,
-  service_info: CompanyInfosContainer,
-  services: CompanyInfosContainer,
+  service_info: ServiceOrderInfoForm,
+  services: ServicesStepForm,
   confirmation: CompanyInfosContainer,
 };
 
@@ -111,7 +114,7 @@ const SalesRegister = () => {
   const formRef = useRef<FormHandles>(null);
 
   const [document, setDocument] = useState('');
-  const [currentStep, setCurrentStep] = useState<Step>('customer_data');
+  const [currentStep, setCurrentStep] = useState<Step>('service_info');
   const [loadingButton, setLoadingButton] = useState(false);
   const [saleCommissionerModalOpened, setSaleReferralModalOpened] = useState(
     false,
@@ -128,7 +131,7 @@ const SalesRegister = () => {
     { value: string; label: string }[]
   >([]);
 
-  const selectOptions: Array<{ value: string; label: string }> = [
+  const sourceCarSelectOption: Array<{ value: string; label: string }> = [
     { value: 'NEW', label: '0 KM' },
     { value: 'USED', label: 'Semi-novo' },
     { value: 'WORKSHOP', label: 'Oficina' },
@@ -167,28 +170,6 @@ const SalesRegister = () => {
         history.push('/services');
       });
   }, [history, user]);
-
-  const handleSelectService = useCallback(
-    (companyService: ICompanyServices) => {
-      const alreadySelected = selectedServices.findIndex(
-        item => item.value === companyService.id,
-      );
-
-      if (alreadySelected >= 0) {
-        const filteredItems = selectedServices.filter(
-          item => item.value !== companyService.id,
-        );
-
-        setSelectedServices(filteredItems);
-      } else {
-        setSelectedServices([
-          ...selectedServices,
-          { value: companyService.id, label: companyService.name },
-        ]);
-      }
-    },
-    [selectedServices],
-  );
 
   const handleSubmitByReferral = useCallback(
     async (commissionerData: IReferralData) => {
@@ -396,7 +377,15 @@ const SalesRegister = () => {
         </FormStepsContainer>
 
         <StyledForm ref={formRef} onSubmit={handleSubmit}>
-          <StepComponent />
+          <StepComponent
+            document={document}
+            setDocument={setDocument}
+            unitSelectOptions={unitSelectOptions}
+            sourceCarSelectOption={sourceCarSelectOption}
+            selectedServices={selectedServices}
+            setSelectedServices={setSelectedServices}
+            companyServices={companyServices}
+          />
           {/* <CompanyInfosContainer>
             <FormSectionTitle>Informaçōes da OS</FormSectionTitle>
 
