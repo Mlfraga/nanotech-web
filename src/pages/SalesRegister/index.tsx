@@ -353,31 +353,57 @@ const SalesRegister = () => {
 
   const StepComponent = StepComponents[currentStep];
 
+  console.log('formRef: ', formRef.current?.getData());
+
   return (
     <Container>
       <Breadcrumb text="Registro de vendas" />
       <Content>
         <FormStepsContainer>
-          <FormStep active={checkIsSameStep('customer_data')}>
+          <FormStep
+            active={checkIsSameStep('customer_data')}
+            onClick={() => {
+              console.log('customer_data');
+              setCurrentStep('customer_data');
+            }}
+          >
             <FormStepNumberTitle>1</FormStepNumberTitle>
             <FormStepTitle>Dados do cliente</FormStepTitle>
           </FormStep>
-          <FormStep active={checkIsSameStep('service_info')}>
+          <FormStep
+            active={checkIsSameStep('service_info')}
+            onClick={() => {
+              console.log('service_info');
+              setCurrentStep('service_info');
+            }}
+          >
             <FormStepNumberTitle>2</FormStepNumberTitle>
             <FormStepTitle>Dados da OS</FormStepTitle>
           </FormStep>
-          <FormStep active={checkIsSameStep('services')}>
+          <FormStep
+            active={checkIsSameStep('services')}
+            onClick={() => {
+              console.log('services');
+              setCurrentStep('services');
+            }}
+          >
             <FormStepNumberTitle>3</FormStepNumberTitle>
             <FormStepTitle>Serviços</FormStepTitle>
           </FormStep>
-          <FormStep active={checkIsSameStep('confirmation')}>
+          <FormStep
+            active={checkIsSameStep('confirmation')}
+            onClick={() => {
+              console.log('confirmation');
+              setCurrentStep('confirmation');
+            }}
+          >
             <FormStepNumberTitle>4</FormStepNumberTitle>
             <FormStepTitle>Confirmaçāo</FormStepTitle>
           </FormStep>
         </FormStepsContainer>
 
         <StyledForm ref={formRef} onSubmit={handleSubmit}>
-          <StepComponent
+          {/* <StepComponent
             document={document}
             setDocument={setDocument}
             unitSelectOptions={unitSelectOptions}
@@ -385,147 +411,35 @@ const SalesRegister = () => {
             selectedServices={selectedServices}
             setSelectedServices={setSelectedServices}
             companyServices={companyServices}
+            defaultValues={formRef.current?.getData()}
+          /> */}
+
+          <CustomerInfoStepForm
+            document={document}
+            setDocument={setDocument}
+            hide={!checkIsSameStep('customer_data')}
           />
-          {/* <CompanyInfosContainer>
-            <FormSectionTitle>Informaçōes da OS</FormSectionTitle>
 
-            <InputsContainer>
-              <SelectContainer>
-                <Label>Origem do carro:</Label>
-                <Select
-                  height="34px"
-                  backgroundColor="#424242"
-                  color="White"
-                  name="sourceCar"
-                  placeholder="Origem do carro"
-                  containerProps={{
-                    marginRight: 8,
-                    width: '100%',
-                    height: '37px',
-                    border: '2px solid',
-                    borderColor: '#585858',
-                    backgroundColor: '#424242',
-                  }}
-                >
-                  {selectOptions.map(opt => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </Select>
-              </SelectContainer>
+          <ServiceOrderInfoForm
+            sourceCarSelectOption={sourceCarSelectOption}
+            unitSelectOptions={unitSelectOptions}
+            hide={!checkIsSameStep('service_info')}
+          />
 
-              <SelectContainer>
-                <Label htmlFor="unitId">Unidade</Label>
+          <ServicesStepForm
+            selectedServices={selectedServices}
+            setSelectedServices={setSelectedServices}
+            companyServices={companyServices}
+            hide={!checkIsSameStep('services')}
+          />
 
-                <Select
-                  height="34px"
-                  backgroundColor="#424242"
-                  color="White"
-                  name="unitId"
-                  id="unitId"
-                  placeholder="Selecione a unidade"
-                  containerProps={{
-                    marginRight: 8,
-                    width: '100%',
-                    height: '37px',
-                    border: '2px solid',
-                    borderColor: '#585858',
-                    backgroundColor: '#424242',
-                  }}
-                >
-                  {unitSelectOptions.map(opt => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </Select>
-              </SelectContainer>
-
-              <InputContainer>
-                <Label htmlFor="osNumber">Código da OS:</Label>
-
-                <Input
-                  className="input"
-                  id="osNumber"
-                  type="osNumber"
-                  name="osNumber"
-                />
-              </InputContainer>
-
-              <DateTimeContainer>
-                <Label>Data e hora de disponibilidade:</Label>
-                <Datetime name="availabilityDate" />
-              </DateTimeContainer>
-
-              <DateTimeContainer>
-                <Label>Data e hora de entrega:</Label>
-                <Datetime name="deliveryDate" />
-              </DateTimeContainer>
-            </InputsContainer>
-          </CompanyInfosContainer>
-
-          <CompanyInfosContainer>
-            <FormSectionTitle>Serviços</FormSectionTitle>
-
-            <Services
-              templateColumns={{
-                xs: '29% 29% 29%',
-                sm: '23% 23% 23% 23%',
-                md: '17% 17% 17% 17% 17%',
-                lg: '18% 18% 18% 18% 18%',
-                xl: '15.6% 15.6% 15.6% 15.6% 15.6% 15.6%',
-              }}
-            >
-              {companyServices.map(companyService => (
-                <Tooltip
-                  key={companyService.id}
-                  label={String(
-                    Number(companyService.company_price).toLocaleString(
-                      'pt-br',
-                      {
-                        style: 'currency',
-                        currency: 'BRL',
-                      },
-                    ),
-                  )}
-                  aria-label={String(
-                    Number(companyService.company_price).toLocaleString(
-                      'pt-br',
-                      {
-                        style: 'currency',
-                        currency: 'BRL',
-                      },
-                    ),
-                  )}
-                >
-                  <ServiceBox
-                    onClick={() => handleSelectService(companyService)}
-                    className={
-                      selectedServices
-                        .map(s => s.value)
-                        .includes(companyService.id)
-                        ? 'selected'
-                        : ''
-                    }
-                  >
-                    <span>{companyService.name}</span>
-                  </ServiceBox>
-                </Tooltip>
-              ))}
-            </Services>
-          </CompanyInfosContainer>
-
-          <Box flex={1} fontSize="18px" marginRight="18px">
-            <span style={{ marginBottom: '6px' }}>Observações:</span>
-            <Textarea name="comments" style={{ marginTop: '16px' }} />
-          </Box>
-
-          <div className="buttons_container">
-            <Button isDisabled={!!loadingButton} type="submit" mt={0}>
-              {loadingButton ? <Spinner color="#282828" /> : 'Salvar'}
-            </Button>
-          </div> */}
+          {/*
+              <div className="buttons_container">
+                <Button isDisabled={!!loadingButton} type="submit" mt={0}>
+                  {loadingButton ? <Spinner color="#282828" /> : 'Salvar'}
+                </Button>
+              </div>
+            */}
         </StyledForm>
       </Content>
 

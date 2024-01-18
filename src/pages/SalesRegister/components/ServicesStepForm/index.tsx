@@ -24,12 +24,14 @@ interface IServicesStepFormProps {
   companyServices: ICompanyServices[];
   selectedServices: { value: string; label: string }[];
   setSelectedServices: React.Dispatch<{ value: string; label: string }[]>;
+  hide: boolean;
 }
 
 const ServicesStepForm: React.FC<IServicesStepFormProps> = ({
   companyServices,
   selectedServices,
   setSelectedServices,
+  hide,
 }) => {
   const [searchName, setSearchName] = useState('');
 
@@ -130,7 +132,7 @@ const ServicesStepForm: React.FC<IServicesStepFormProps> = ({
   ];
 
   return (
-    <ServicesContainer>
+    <ServicesContainer style={{ display: hide ? 'none' : 'flex' }}>
       <ServicesHeading>
         <TitleContainer>
           <SelectServicesTitle>Selecione os serviços</SelectServicesTitle>

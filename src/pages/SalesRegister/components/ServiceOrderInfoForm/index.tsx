@@ -15,11 +15,11 @@ import Datetime from '../../../../components/Datetime';
 
 const ServiceOrderInfoForm: React.FC<{
   sourceCarSelectOption: { value: string; label: string }[];
+  hide: boolean;
   unitSelectOptions: { value: string; label: string }[];
-  setDocument: React.Dispatch<React.SetStateAction<string>>;
-}> = ({ sourceCarSelectOption, unitSelectOptions }) => {
+}> = ({ sourceCarSelectOption, unitSelectOptions, hide }) => {
   return (
-    <ServiceOrderInfosContainer>
+    <ServiceOrderInfosContainer style={{ display: hide ? 'none' : 'flex' }}>
       <InputsContainer>
         <SelectContainer>
           <Label>Origem do carro:</Label>

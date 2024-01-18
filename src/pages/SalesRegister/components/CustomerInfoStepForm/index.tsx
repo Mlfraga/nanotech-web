@@ -12,10 +12,11 @@ import Button from '../../../../components/Button';
 
 const CustomerInfoStepForm: React.FC<{
   document: string;
+  hide: boolean;
   setDocument: React.Dispatch<React.SetStateAction<string>>;
-}> = ({ document, setDocument }) => {
+}> = ({ document, setDocument, hide }) => {
   return (
-    <CustomerInfosContainer>
+    <CustomerInfosContainer style={{ display: hide ? 'none' : 'flex' }}>
       <InputsContainer>
         <InputContainer>
           <Label>Nome:</Label>

@@ -97,7 +97,7 @@ interface FormStepProps {
   active?: boolean;
 }
 
-export const FormStep = styled.div<FormStepProps>`
+export const FormStep = styled.button<FormStepProps>`
   background-color: #424242;
   ${({ active }) => (active ? 'background: #355a9d;' : '')}
   border-radius: 16px;
