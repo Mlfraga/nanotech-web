@@ -58,6 +58,14 @@ export const InputContainer = styled.div`
   }
 `;
 
+export const TextareaContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+  min-width: 200px;
+`;
+
 export const Label = styled.label`
   font: 14px 'Ubuntu', sans-serif;
   font-weight: 500;

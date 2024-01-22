@@ -7,17 +7,30 @@ import {
   InputsContainer,
   Label,
   SelectContainer,
+  TextareaContainer,
 } from './styles';
 import Input from '../../../../components/Input';
 import Button from '../../../../components/Button';
 import Select from '../../../../components/Select';
 import Datetime from '../../../../components/Datetime';
+import Textarea from '../../../../components/Textarea';
+import { Step } from '../..';
 
 const ServiceOrderInfoForm: React.FC<{
   sourceCarSelectOption: { value: string; label: string }[];
   hide: boolean;
   unitSelectOptions: { value: string; label: string }[];
-}> = ({ sourceCarSelectOption, unitSelectOptions, hide }) => {
+  setCurrentStep: React.Dispatch<React.SetStateAction<Step>>;
+  setValidatedForms: React.Dispatch<
+    React.SetStateAction<{ [K in Step]: boolean }>
+  >;
+}> = ({
+  sourceCarSelectOption,
+  unitSelectOptions,
+  hide,
+  setCurrentStep,
+  setValidatedForms,
+}) => {
   return (
     <ServiceOrderInfosContainer style={{ display: hide ? 'none' : 'flex' }}>
       <InputsContainer>
@@ -93,6 +106,12 @@ const ServiceOrderInfoForm: React.FC<{
           <Label>Data e hora de entrega:</Label>
           <Datetime name="deliveryDate" />
         </DateTimeContainer>
+
+        <TextareaContainer>
+          <Label htmlFor="comments">Observações:</Label>
+
+          <Textarea name="comments" style={{ width: '100%' }} />
+        </TextareaContainer>
       </InputsContainer>
 
       <ButtonsContainer>

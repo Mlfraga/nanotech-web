@@ -54,7 +54,7 @@ export const Separator = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
-  margin-top: 14px;
+  margin-top: 6px;
 
   span {
     font: 20px 'Ubuntu', sans-serif;

@@ -17,7 +17,7 @@ import {
 } from './styles';
 import Button from '../../../../components/Button';
 import { Tooltip } from '@chakra-ui/core';
-import { ICompanyServices } from '../..';
+import { ICompanyServices, Step } from '../..';
 import Input from '../../../../components/Input';
 
 interface IServicesStepFormProps {
@@ -25,6 +25,10 @@ interface IServicesStepFormProps {
   selectedServices: { value: string; label: string }[];
   setSelectedServices: React.Dispatch<{ value: string; label: string }[]>;
   hide: boolean;
+  setCurrentStep: React.Dispatch<React.SetStateAction<Step>>;
+  setValidatedForms: React.Dispatch<
+    React.SetStateAction<{ [K in Step]: boolean }>
+  >;
 }
 
 const ServicesStepForm: React.FC<IServicesStepFormProps> = ({
@@ -32,6 +36,8 @@ const ServicesStepForm: React.FC<IServicesStepFormProps> = ({
   selectedServices,
   setSelectedServices,
   hide,
+  setCurrentStep,
+  setValidatedForms,
 }) => {
   const [searchName, setSearchName] = useState('');
 
@@ -71,65 +77,6 @@ const ServicesStepForm: React.FC<IServicesStepFormProps> = ({
         .includes(searchName.toLowerCase());
     });
   }, [companyServices, searchName]);
-
-  const services = [
-    {
-      id: '1',
-      name: 'Ceramic Coating',
-      description:
-        'Aplicação de revestimento cerâmico que protege a pintura do seu carro.',
-      company_price: 100,
-    },
-    {
-      id: '2',
-      name: 'Polimento',
-      description:
-        'Polimento completo do veículo para remover arranhões e imperfeições.',
-      company_price: 200,
-    },
-    {
-      id: '3',
-      name: 'Lavagem a Seco',
-      description:
-        'Lavagem ecológica que limpa seu carro sem a necessidade de água.',
-      company_price: 300,
-    },
-    {
-      id: '4',
-      name: 'Higienização Interna',
-      description:
-        'Limpeza profunda do interior do veículo, incluindo bancos, carpetes e painel.',
-      company_price: 400,
-    },
-    {
-      id: '5',
-      name: 'Vitrificação de Pintura',
-      description:
-        'Proteção de longa duração para a pintura do seu carro, proporcionando brilho e resistência.',
-      company_price: 500,
-    },
-    {
-      id: '6',
-      name: 'Revitalização de Faróis',
-      description:
-        'Restauração dos faróis do seu carro, melhorando a visibilidade e a aparência.',
-      company_price: 600,
-    },
-    {
-      id: '7',
-      name: 'Remoção de Riscos',
-      description:
-        'Serviço especializado na remoção de riscos e marcas na pintura do seu carro.',
-      company_price: 700,
-    },
-    {
-      id: '8',
-      name: 'Proteção de Pneus',
-      description:
-        'Aplicação de produtos que protegem e dão brilho aos pneus do seu carro.',
-      company_price: 800,
-    },
-  ];
 
   return (
     <ServicesContainer style={{ display: hide ? 'none' : 'flex' }}>

@@ -7,37 +7,20 @@ import React, {
 } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { Box, Spinner, Tooltip } from '@chakra-ui/core';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
-
-import Breadcrumb from '../../components/Breadcrumb';
-import Button from '../../components/Button';
-import Datetime from '../../components/Datetime';
-import Input from '../../components/Input';
 import SetSaleReferral, {
   IReferralData,
 } from '../../components/Modals/SetSaleReferral';
-import Select from '../../components/Select';
-import Textarea from '../../components/Textarea';
 import { useAuth } from '../../context/auth';
 import { useToast } from '../../context/toast';
 import api from '../../services/api';
 import getValidationsErrors from '../../utils/getValidationError';
-import { documentMask } from '../../utils/masks';
 import {
   CompanyInfosContainer,
   Container,
   Content,
-  DateTimeContainer,
   StyledForm,
-  FormSectionTitle,
-  InputContainer,
-  InputsContainer,
-  Label,
-  SelectContainer,
-  ServiceBox,
-  Services,
   FormStepsContainer,
   FormStep,
   FormStepTitle,
@@ -46,6 +29,7 @@ import {
 import CustomerInfoStepForm from './components/CustomerInfoStepForm/index';
 import ServiceOrderInfoForm from './components/ServiceOrderInfoForm';
 import ServicesStepForm from './components/ServicesStepForm';
+import OrderSummary from './components/OrderSummary';
 
 export interface IUnit {
   id: string;
@@ -95,7 +79,11 @@ interface IFormData {
   comments?: string;
 }
 
-type Step = 'customer_data' | 'service_info' | 'services' | 'confirmation';
+export type Step =
+  | 'customer_data'
+  | 'service_info'
+  | 'services'
+  | 'confirmation';
 
 const StepComponents: {
   [K in Step]: React.ComponentType<any>;
@@ -114,8 +102,16 @@ const SalesRegister = () => {
   const formRef = useRef<FormHandles>(null);
 
   const [document, setDocument] = useState('');
-  const [currentStep, setCurrentStep] = useState<Step>('service_info');
+  const [currentStep, setCurrentStep] = useState<Step>('customer_data');
   const [loadingButton, setLoadingButton] = useState(false);
+  const [validatedForms, setValidatedForms] = useState<
+    { [K in Step]: boolean }
+  >({
+    customer_data: false,
+    service_info: false,
+    services: false,
+    confirmation: false,
+  });
   const [saleCommissionerModalOpened, setSaleReferralModalOpened] = useState(
     false,
   );
@@ -353,17 +349,13 @@ const SalesRegister = () => {
 
   const StepComponent = StepComponents[currentStep];
 
-  console.log('formRef: ', formRef.current?.getData());
-
   return (
     <Container>
-      <Breadcrumb text="Registro de vendas" />
       <Content>
         <FormStepsContainer>
           <FormStep
             active={checkIsSameStep('customer_data')}
             onClick={() => {
-              console.log('customer_data');
               setCurrentStep('customer_data');
             }}
           >
@@ -373,9 +365,9 @@ const SalesRegister = () => {
           <FormStep
             active={checkIsSameStep('service_info')}
             onClick={() => {
-              console.log('service_info');
               setCurrentStep('service_info');
             }}
+            disabled={!validatedForms.customer_data}
           >
             <FormStepNumberTitle>2</FormStepNumberTitle>
             <FormStepTitle>Dados da OS</FormStepTitle>
@@ -383,9 +375,11 @@ const SalesRegister = () => {
           <FormStep
             active={checkIsSameStep('services')}
             onClick={() => {
-              console.log('services');
               setCurrentStep('services');
             }}
+            disabled={
+              !validatedForms.service_info || !validatedForms.customer_data
+            }
           >
             <FormStepNumberTitle>3</FormStepNumberTitle>
             <FormStepTitle>Serviços</FormStepTitle>
@@ -393,9 +387,13 @@ const SalesRegister = () => {
           <FormStep
             active={checkIsSameStep('confirmation')}
             onClick={() => {
-              console.log('confirmation');
               setCurrentStep('confirmation');
             }}
+            disabled={
+              !validatedForms.service_info ||
+              !validatedForms.customer_data ||
+              !validatedForms.services
+            }
           >
             <FormStepNumberTitle>4</FormStepNumberTitle>
             <FormStepTitle>Confirmaçāo</FormStepTitle>
@@ -415,7 +413,10 @@ const SalesRegister = () => {
           /> */}
 
           <CustomerInfoStepForm
+            formRef={formRef}
             document={document}
+            setCurrentStep={setCurrentStep}
+            setValidatedForms={setValidatedForms}
             setDocument={setDocument}
             hide={!checkIsSameStep('customer_data')}
           />
@@ -424,6 +425,8 @@ const SalesRegister = () => {
             sourceCarSelectOption={sourceCarSelectOption}
             unitSelectOptions={unitSelectOptions}
             hide={!checkIsSameStep('service_info')}
+            setCurrentStep={setCurrentStep}
+            setValidatedForms={setValidatedForms}
           />
 
           <ServicesStepForm
@@ -431,6 +434,19 @@ const SalesRegister = () => {
             setSelectedServices={setSelectedServices}
             companyServices={companyServices}
             hide={!checkIsSameStep('services')}
+            setCurrentStep={setCurrentStep}
+            setValidatedForms={setValidatedForms}
+          />
+
+          <OrderSummary
+            handleConfirm={() => {
+              return;
+            }}
+            hide={!checkIsSameStep('confirmation')}
+            formRef={formRef}
+            selectedServices={selectedServices}
+            setCurrentStep={setCurrentStep}
+            setValidatedForms={setValidatedForms}
           />
 
           {/*

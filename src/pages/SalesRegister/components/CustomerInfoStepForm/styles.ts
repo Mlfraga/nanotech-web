@@ -8,6 +8,8 @@ export const CustomerInfosContainer = styled.section`
   gap: 26px;
   flex-wrap: wrap;
   padding-top: 3rem;
+  overflow-y: auto;
+  overflow-x: hidden;
 `;
 
 export const InputsContainer = styled.div`

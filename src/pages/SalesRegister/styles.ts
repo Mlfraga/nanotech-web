@@ -52,7 +52,6 @@ export const Content = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  margin-top: 2rem;
   width: 100%;
 
   textarea::placeholder {
@@ -117,6 +116,11 @@ export const FormStep = styled.button<FormStepProps>`
     border-radius: 16px;
     width: auto;
     height: auto;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 `;
 
