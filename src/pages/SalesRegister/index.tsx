@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { FormHandles } from '@unform/core';
@@ -17,7 +11,6 @@ import { useToast } from '../../context/toast';
 import api from '../../services/api';
 import getValidationsErrors from '../../utils/getValidationError';
 import {
-  CompanyInfosContainer,
   Container,
   Content,
   StyledForm,
@@ -65,7 +58,7 @@ export interface ISalePayload {
   cpf: string;
 }
 
-interface IFormData {
+export interface IFormData {
   unitId: string;
   car: string;
   carColor: string;
@@ -85,15 +78,6 @@ export type Step =
   | 'services'
   | 'confirmation';
 
-const StepComponents: {
-  [K in Step]: React.ComponentType<any>;
-} = {
-  customer_data: CustomerInfoStepForm,
-  service_info: ServiceOrderInfoForm,
-  services: ServicesStepForm,
-  confirmation: CompanyInfosContainer,
-};
-
 const SalesRegister = () => {
   const history = useHistory();
   const { user } = useAuth();
@@ -103,7 +87,7 @@ const SalesRegister = () => {
 
   const [document, setDocument] = useState('');
   const [currentStep, setCurrentStep] = useState<Step>('customer_data');
-  const [loadingButton, setLoadingButton] = useState(false);
+  const [, setLoadingButton] = useState(false);
   const [validatedForms, setValidatedForms] = useState<
     { [K in Step]: boolean }
   >({
@@ -124,7 +108,12 @@ const SalesRegister = () => {
     [],
   );
   const [selectedServices, setSelectedServices] = useState<
-    { value: string; label: string }[]
+    {
+      value: string;
+      label: string;
+      companyPrice: number;
+      customerPrice: number;
+    }[]
   >([]);
 
   const sourceCarSelectOption: Array<{ value: string; label: string }> = [
@@ -313,6 +302,13 @@ const SalesRegister = () => {
         setLoadingButton(false);
         setSelectedServices([]);
 
+        setValidatedForms({
+          customer_data: false,
+          service_info: false,
+          services: false,
+          confirmation: false,
+        });
+        setCurrentStep('customer_data');
         reset();
         setDocument('');
       } catch (err) {
@@ -346,8 +342,6 @@ const SalesRegister = () => {
     },
     [currentStep],
   );
-
-  const StepComponent = StepComponents[currentStep];
 
   return (
     <Container>
@@ -401,17 +395,6 @@ const SalesRegister = () => {
         </FormStepsContainer>
 
         <StyledForm ref={formRef} onSubmit={handleSubmit}>
-          {/* <StepComponent
-            document={document}
-            setDocument={setDocument}
-            unitSelectOptions={unitSelectOptions}
-            sourceCarSelectOption={sourceCarSelectOption}
-            selectedServices={selectedServices}
-            setSelectedServices={setSelectedServices}
-            companyServices={companyServices}
-            defaultValues={formRef.current?.getData()}
-          /> */}
-
           <CustomerInfoStepForm
             formRef={formRef}
             document={document}
@@ -422,6 +405,7 @@ const SalesRegister = () => {
           />
 
           <ServiceOrderInfoForm
+            formRef={formRef}
             sourceCarSelectOption={sourceCarSelectOption}
             unitSelectOptions={unitSelectOptions}
             hide={!checkIsSameStep('service_info')}
@@ -439,23 +423,13 @@ const SalesRegister = () => {
           />
 
           <OrderSummary
-            handleConfirm={() => {
-              return;
-            }}
             hide={!checkIsSameStep('confirmation')}
+            sourceCarSelectOption={sourceCarSelectOption}
             formRef={formRef}
+            unitSelectOptions={unitSelectOptions}
             selectedServices={selectedServices}
             setCurrentStep={setCurrentStep}
-            setValidatedForms={setValidatedForms}
           />
-
-          {/*
-              <div className="buttons_container">
-                <Button isDisabled={!!loadingButton} type="submit" mt={0}>
-                  {loadingButton ? <Spinner color="#282828" /> : 'Salvar'}
-                </Button>
-              </div>
-            */}
         </StyledForm>
       </Content>
 

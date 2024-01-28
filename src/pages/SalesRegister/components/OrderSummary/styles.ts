@@ -1,7 +1,3 @@
-import {
-  Flex as ChakraFlex,
-} from '@chakra-ui/core';
-import { shade } from 'polished';
 import styled from 'styled-components';
 
 export const OrderSummaryContainer = styled.section`

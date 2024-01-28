@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import {
   ButtonsContainer,
   CustomerInfosContainer,
@@ -24,10 +24,10 @@ const CustomerInfoStepForm: React.FC<{
     React.SetStateAction<{ [K in Step]: boolean }>
   >;
 }> = ({
-  document,
-  setDocument,
   formRef,
+  document,
   hide,
+  setDocument,
   setCurrentStep,
   setValidatedForms,
 }) => {
@@ -132,12 +132,13 @@ const CustomerInfoStepForm: React.FC<{
           />
         </InputContainer>
         <InputContainer>
-          <Label>Cpf:</Label>
+          <Label>CPF:</Label>
           <Input
             className="input"
             id="cpf"
             type="cpf"
             name="cpf"
+            maxLength={14}
             onKeyUp={validateForm}
             style={{ width: '30px' }}
             onChange={e => setDocument(e.target.value)}

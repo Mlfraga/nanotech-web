@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ButtonsContainer,
   SearchContainer,
@@ -22,8 +22,20 @@ import Input from '../../../../components/Input';
 
 interface IServicesStepFormProps {
   companyServices: ICompanyServices[];
-  selectedServices: { value: string; label: string }[];
-  setSelectedServices: React.Dispatch<{ value: string; label: string }[]>;
+  selectedServices: {
+    value: string;
+    label: string;
+    companyPrice: number;
+    customerPrice: number;
+  }[];
+  setSelectedServices: React.Dispatch<
+    {
+      value: string;
+      label: string;
+      companyPrice: number;
+      customerPrice: number;
+    }[]
+  >;
   hide: boolean;
   setCurrentStep: React.Dispatch<React.SetStateAction<Step>>;
   setValidatedForms: React.Dispatch<
@@ -48,6 +60,20 @@ const ServicesStepForm: React.FC<IServicesStepFormProps> = ({
     [],
   );
 
+  useEffect(() => {
+    if (selectedServices.length > 0) {
+      setValidatedForms(prevState => ({
+        ...prevState,
+        services: true,
+      }));
+    } else {
+      setValidatedForms(prevState => ({
+        ...prevState,
+        services: false,
+      }));
+    }
+  }, [selectedServices, setValidatedForms]);
+
   const handleSelectService = useCallback(
     (companyService: ICompanyServices) => {
       const alreadySelected = selectedServices.findIndex(
@@ -63,11 +89,16 @@ const ServicesStepForm: React.FC<IServicesStepFormProps> = ({
       } else {
         setSelectedServices([
           ...selectedServices,
-          { value: companyService.id, label: companyService.name },
+          {
+            value: companyService.id,
+            label: companyService.name,
+            companyPrice: companyService.company_price,
+            customerPrice: companyService.price,
+          },
         ]);
       }
     },
-    [selectedServices],
+    [selectedServices, setSelectedServices],
   );
 
   const filteredServices = useMemo(() => {
@@ -77,6 +108,14 @@ const ServicesStepForm: React.FC<IServicesStepFormProps> = ({
         .includes(searchName.toLowerCase());
     });
   }, [companyServices, searchName]);
+
+  const handleNextStep = () => {
+    setCurrentStep('confirmation');
+  };
+
+  const handleBackStep = () => {
+    setCurrentStep('service_info');
+  };
 
   return (
     <ServicesContainer style={{ display: hide ? 'none' : 'flex' }}>
@@ -153,12 +192,17 @@ const ServicesStepForm: React.FC<IServicesStepFormProps> = ({
       </Services>
 
       <ButtonsContainer>
-        <Button isDisabled={false} skipButton>
+        <Button isDisabled={false} onClick={handleBackStep} skipButton>
           Voltar
           {/* {loadingButton ? <Spinner color="#282828" /> : 'Salvar'} */}
         </Button>
 
-        <Button padding={'0.6rem'} height={'auto'} isDisabled={false}>
+        <Button
+          onClick={handleNextStep}
+          padding={'0.6rem'}
+          height={'auto'}
+          isDisabled={selectedServices.length === 0}
+        >
           Próximo
           {/* {loadingButton ? <Spinner color="#282828" /> : 'Salvar'} */}
         </Button>

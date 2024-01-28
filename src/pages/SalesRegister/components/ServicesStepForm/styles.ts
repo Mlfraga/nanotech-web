@@ -1,7 +1,5 @@
 import {
-  Box as ChakraBox,
   Flex as ChakraFlex,
-  Grid as ChakraGrid
 } from '@chakra-ui/core';
 import { shade } from 'polished';
 import styled from 'styled-components';

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import {
   ButtonsContainer,
   OrderSummaryContainer,
@@ -27,27 +27,29 @@ import { FormHandles } from '@unform/core';
 import Logo from '../../../../assets/undraw_approve_qwp7.svg';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { Separator } from '../../../Sales/styles';
 import { Step } from '../..';
 
 interface IOrderSummaryProps {
-  handleConfirm: () => void;
+  sourceCarSelectOption: { value: string; label: string }[];
   hide: boolean;
   formRef: React.RefObject<FormHandles>;
-  selectedServices: { value: string; label: string }[];
+  selectedServices: {
+    value: string;
+    label: string;
+    companyPrice: number;
+    customerPrice: number;
+  }[];
+  unitSelectOptions: { value: string; label: string }[];
   setCurrentStep: React.Dispatch<React.SetStateAction<Step>>;
-  setValidatedForms: React.Dispatch<
-    React.SetStateAction<{ [K in Step]: boolean }>
-  >;
 }
 
 const OrderSummary: React.FC<IOrderSummaryProps> = ({
-  handleConfirm,
   hide,
   formRef,
   selectedServices,
+  sourceCarSelectOption,
   setCurrentStep,
-  setValidatedForms,
+  unitSelectOptions,
 }) => {
   const formData = formRef.current?.getData() as {
     car: string;
@@ -63,6 +65,20 @@ const OrderSummary: React.FC<IOrderSummaryProps> = ({
     sourceCar: string;
     unitId: string;
   };
+
+  const handleBackStep = () => {
+    setCurrentStep('services');
+  };
+
+  const saleTotalValue = useMemo(() => {
+    const serviceValues = selectedServices.map(service =>
+      Number(service.companyPrice),
+    );
+
+    return serviceValues.reduce((accumulator, serviceValue) => {
+      return accumulator + Number(serviceValue);
+    }, 0);
+  }, [selectedServices]);
 
   return (
     <OrderSummaryContainer style={{ display: hide ? 'none' : 'flex' }}>
@@ -81,42 +97,41 @@ const OrderSummary: React.FC<IOrderSummaryProps> = ({
             <OrderHeader>
               <HeaderInfo>
                 <HeaderKey> Cliente: </HeaderKey>
-                <HeaderInfoValue>
-                  Antonio Bandeiras
-                  {/* {`${formData?.car} ${formData?.carModel} ${formData?.carColor} - ${formData?.carPlate}`} */}
-                </HeaderInfoValue>
+                <HeaderInfoValue>{formData.name}</HeaderInfoValue>
               </HeaderInfo>
 
               <HeaderInfo>
                 <HeaderKey> Carro: </HeaderKey>
                 <HeaderInfoValue>
-                  Gol GL 1.8 Prata - ABC-1234
-                  {/* {`${formData?.car} ${formData?.carModel} ${formData?.carColor} - ${formData?.carPlate}`} */}
+                  {`${formData?.car} ${formData?.carModel} ${formData?.carColor} - ${formData?.carPlate}`}
                 </HeaderInfoValue>
               </HeaderInfo>
 
               <HeaderInfo>
                 <HeaderKey> Origem: </HeaderKey>
                 <HeaderInfoValue>
-                  0KM
-                  {/* {formData?.osNumber} */}
+                  {
+                    sourceCarSelectOption.find(
+                      x => x.value === formData.sourceCar,
+                    )?.label
+                  }
                 </HeaderInfoValue>
               </HeaderInfo>
 
               <HeaderInfo>
                 <HeaderKey> Unidade: </HeaderKey>
                 <HeaderInfoValue>
-                  Bandeirantes
-                  {/* {formData?.osNumber} */}
+                  {
+                    unitSelectOptions.find(
+                      unit => unit.value === formData?.unitId,
+                    )?.label
+                  }
                 </HeaderInfoValue>
               </HeaderInfo>
 
               <HeaderInfo>
                 <HeaderKey> Os: </HeaderKey>
-                <HeaderInfoValue>
-                  3123
-                  {/* {formData?.osNumber} */}
-                </HeaderInfoValue>
+                <HeaderInfoValue>{formData?.osNumber}</HeaderInfoValue>
               </HeaderInfo>
 
               <HeaderInfoRow>
@@ -153,7 +168,12 @@ const OrderSummary: React.FC<IOrderSummaryProps> = ({
                 {selectedServices.map(service => (
                   <ServiceItem key={service.value}>
                     <ServiceName>{service.label}</ServiceName>
-                    <ServicePrice>R$ 130,00</ServicePrice>
+                    <ServicePrice>
+                      {Number(service.companyPrice).toLocaleString('pt-br', {
+                        style: 'currency',
+                        currency: 'BRL',
+                      })}
+                    </ServicePrice>
                   </ServiceItem>
                 ))}
 
@@ -161,7 +181,7 @@ const OrderSummary: React.FC<IOrderSummaryProps> = ({
                   <ServiceTotalLabel>Total</ServiceTotalLabel>
                   <ServicePrice>
                     <b>
-                      {Number(495).toLocaleString('pt-br', {
+                      {Number(saleTotalValue).toLocaleString('pt-br', {
                         style: 'currency',
                         currency: 'BRL',
                       })}
@@ -177,11 +197,16 @@ const OrderSummary: React.FC<IOrderSummaryProps> = ({
       </Content>
 
       <ButtonsContainer>
-        <Button isDisabled={false} skipButton>
+        <Button isDisabled={false} onClick={handleBackStep} skipButton>
           Voltar
         </Button>
 
-        <Button padding={'0.6rem'} height={'auto'} isDisabled={false}>
+        <Button
+          padding={'0.6rem'}
+          height={'auto'}
+          isDisabled={false}
+          type="submit"
+        >
           Confirmar
         </Button>
       </ButtonsContainer>

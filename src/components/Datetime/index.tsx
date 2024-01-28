@@ -14,9 +14,15 @@ import { Container } from './styles';
 type IDateTimeProps = TextFieldProps & {
   name: string;
   defaultValue?: string;
+  onChange?: () => void;
 };
 
-const DateTime: React.FC<IDateTimeProps> = ({ name, defaultValue = '' }) => {
+const DateTime: React.FC<IDateTimeProps> = ({
+  name,
+  defaultValue = '',
+  onChange,
+  ...rest
+}) => {
   const dateTimeRef = useRef<HTMLDivElement>(null);
   const { fieldName, error, registerField } = useField(name);
   const [dateValue, setDateValue] = useState<{ value: string }>({
@@ -34,8 +40,13 @@ const DateTime: React.FC<IDateTimeProps> = ({ name, defaultValue = '' }) => {
   const handleAvailabilityChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       setDateValue({ value: event.target.value });
+      if (onChange) {
+        setTimeout(() => {
+          onChange();
+        }, 100);
+      }
     },
-    [setDateValue],
+    [setDateValue, onChange],
   );
 
   return (

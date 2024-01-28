@@ -1,5 +1,4 @@
 import {
-  Box as ChakraBox,
   Flex as ChakraFlex,
   Grid as ChakraGrid
 } from '@chakra-ui/core';
