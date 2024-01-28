@@ -5,7 +5,6 @@ import { Skeleton, Stack, Flex } from '@chakra-ui/core';
 
 import Breadcrumb from '../../components/Breadcrumb';
 import Button from '../../components/Button';
-import Menu from '../../components/Menu';
 import api from '../../services/api';
 import { Container, Content, List } from './styles';
 
@@ -45,16 +44,9 @@ const Sellers = () => {
 
   return (
     <Container>
-      <Menu />
-
       <Breadcrumb text="Vendedores" />
 
-      <Content
-        marginLeft="auto"
-        marginRight="auto"
-        width="100%"
-        maxWidth="90vw"
-      >
+      <Content width="100%" maxWidth="90vw">
         <div className="boxTitle">
           <h3>Nome</h3>
           <h3>Telefone</h3>

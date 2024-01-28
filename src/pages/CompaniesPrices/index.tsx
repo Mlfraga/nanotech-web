@@ -7,13 +7,12 @@ import {
   Skeleton,
   Stack,
   Switch,
-  Tooltip
+  Tooltip,
 } from '@chakra-ui/core';
 
 import Breadcrumb from '../../components/Breadcrumb';
 import Button from '../../components/Button';
 import AlertDialog from '../../components/Dialogs/Alert';
-import Menu from '../../components/Menu';
 import CreateService from '../../components/Modals/CreateService';
 import UpdateService from '../../components/Modals/UpdateService';
 import { useToast } from '../../context/toast';
@@ -31,7 +30,7 @@ export interface ICompanyPrices {
   company_price: number;
   enabled: boolean;
   company_id: string;
-  commission_amount: string
+  commission_amount: string;
   name: string;
   company: { name: string };
 }
@@ -133,15 +132,8 @@ const CompaniesPrices = () => {
 
   return (
     <Container>
-      <Menu />
       <Breadcrumb text={`Serviços Disponíveis para ${company?.name}`} />
-      <Content
-        marginLeft="auto"
-        marginRight="auto"
-        width="100%"
-        marginTop="26px"
-        maxWidth="90vw"
-      >
+      <Content width="100%" marginTop="26px" maxWidth="90vw">
         <div className="boxTitle">
           <h3>Nome</h3>
           <h3>Preço</h3>

@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://api.totalcleanbh.com',
-  // baseURL: 'http://localhost:33333',
+  // baseURL: 'https://api.totalcleanbh.com',
+  baseURL: 'http://localhost:3333',
 });
 
 api.interceptors.request.use(

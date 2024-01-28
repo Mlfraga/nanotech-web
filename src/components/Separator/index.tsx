@@ -7,15 +7,7 @@ interface IInterfaceProps {
 }
 
 const Separator: React.FC<IInterfaceProps> = ({ text }) => (
-  <Container
-    maxWidth={{
-      xs: '90vw',
-      sm: '90vw',
-      md: '90vw',
-      lg: '78vw',
-      xl: '90vw',
-    }}
-  >
+  <Container>
     <span>{text}</span>
     <div />
   </Container>

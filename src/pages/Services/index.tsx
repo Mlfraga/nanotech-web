@@ -4,7 +4,6 @@ import { useHistory } from 'react-router-dom';
 import { Flex } from '@chakra-ui/core';
 
 import Breadcrumb from '../../components/Breadcrumb';
-import Menu from '../../components/Menu';
 import { useAuth } from '../../context/auth';
 import api from '../../services/api';
 import Carroussel from './components/Carroussel';
@@ -36,8 +35,6 @@ const Services = () => {
 
   return (
     <Container>
-      <Menu />
-
       <Flex
         direction="column"
         w={{
@@ -60,14 +57,7 @@ const Services = () => {
       >
         <Breadcrumb text="Serviços" />
 
-        <Content
-          width="100%"
-          maxWidth="90vw"
-          marginLeft="auto"
-          marginRight="auto"
-          mt={8}
-          flex={1}
-        >
+        <Content width="100%" maxWidth="90vw" mt={8} flex={1}>
           <Carroussel />
         </Content>
       </Flex>

@@ -11,12 +11,11 @@ import {
   Flex,
   Skeleton,
   Stack,
-  Tooltip
+  Tooltip,
 } from '@chakra-ui/core';
 
 import Breadcrumb from '../../components/Breadcrumb';
 import Button from '../../components/Button';
-import Menu from '../../components/Menu';
 import CreateCompanyModal from '../../components/Modals/CreateCompany';
 import CreateUnitModal from '../../components/Modals/CreateUnit';
 import UpdateCompanyModal from '../../components/Modals/UpdateCompany';
@@ -31,7 +30,7 @@ import {
   Container,
   Content,
   List,
-  Separator
+  Separator,
 } from './styles';
 
 const Companies = () => {
@@ -228,8 +227,6 @@ const Companies = () => {
 
   return (
     <Container>
-      <Menu />
-
       <Flex
         direction="column"
         w={{
@@ -250,14 +247,7 @@ const Companies = () => {
       >
         <Breadcrumb text="Concessionárias cadastradas" />
 
-        <Content
-          marginLeft="auto"
-          marginRight="auto"
-          width="100%"
-          marginTop={4}
-          maxWidth="90vw"
-          overflowX="auto"
-        >
+        <Content width="100%" marginTop={4} maxWidth="90vw" overflowX="auto">
           <div className="boxTitle">
             <span>Nome</span>
             <span>Contato</span>

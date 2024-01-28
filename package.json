@@ -4,7 +4,7 @@
   "author": "Matheus Fraga <@Mlfraga>",
   "private": true,
   "scripts": {
-    "start": "react-scripts --openssl-legacy-provider start",
+    "start": "react-scripts start",
     "build": "react-scripts --openssl-legacy-provider build",
     "test": "react-scripts test",
     "lint:fix": "eslint --fix ./ --ext ts,tsx",

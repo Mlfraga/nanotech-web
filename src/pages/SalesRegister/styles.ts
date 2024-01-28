@@ -1,8 +1,8 @@
 import {
-  Box as ChakraBox,
   Flex as ChakraFlex,
   Grid as ChakraGrid
 } from '@chakra-ui/core';
+import { Form } from '@unform/web';
 import { shade } from 'polished';
 import styled from 'styled-components';
 
@@ -42,50 +42,19 @@ export const Container = styled.div`
   /* @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap');
   @import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap'); */
 
-  height: 100vh;
-  width: 100%;
-
-  @media (min-width: 1224px) {
-    padding-left: 80px;
-    padding-top: 25px;
-  }
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 `;
 
-export const Content = styled(ChakraBox)`
+export const Content = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  width: 100%;
+
   textarea::placeholder {
     color: #fff;
-  }
-
-  .DateTimesContainer {
-    width: 48%;
-    display: flex;
-    flex-direction: 'row';
-    align-items: center;
-
-    .DateTimeContainer {
-      width: 100%;
-      margin-right: 16px;
-      max-width: 330px;
-
-      div.labels {
-        background: transparent;
-        border: 0;
-        display: flex;
-        justify-content: space-between;
-        margin-top: 16px;
-
-        span {
-          font: 18px 'Ubuntu', sans-serif;
-          margin-left: 4px;
-          font-weight: 400;
-          color: #eee;
-
-          & + span {
-            color: #ff6f60;
-          }
-        }
-      }
-    }
   }
 
   .buttons_container {
@@ -99,6 +68,82 @@ export const Content = styled(ChakraBox)`
       width: 250px;
       margin-left: 16px;
     }
+  }
+`;
+
+export const StyledForm = styled(Form)`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+export const FormStepsContainer = styled.div`
+  display: flex;
+  gap: 1.4rem;
+  width: 100%;
+
+  @media(min-width: 768px) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+`;
+
+
+interface FormStepProps {
+  active?: boolean;
+}
+
+export const FormStep = styled.button<FormStepProps>`
+  background-color: #424242;
+  ${({ active }) => (active ? 'background: #355a9d;' : '')}
+  border-radius: 16px;
+  padding: 8px;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  position: relative;
+
+  @media (min-width: 768px) {
+    padding: 8px;
+    border-radius: 16px;
+    width: auto;
+    height: auto;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+export const FormStepNumberTitle = styled.span`
+  font: 14px 'Ubuntu', sans-serif;
+  font-weight: bold;
+  color: #eee;
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+  }
+`;
+
+export const FormStepTitle = styled.span`
+  font: 8px 'Ubuntu', sans-serif;
+  font-weight: bold;
+  color: #eee;
+  position: absolute;
+  top: 110%;
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+    position: relative;
+    color: #d2d2d2;
   }
 `;
 
@@ -124,61 +169,51 @@ export const Separator = styled.div`
   }
 `;
 
-export const Inputs = styled(ChakraFlex)`
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  align-items: stretch;
-
-  .SelectContainer {
-    margin-right: 16px;
-    max-width: 45.5%;
-
-    div.labels {
-      background: transparent;
-      border: 0;
-      display: flex;
-      justify-content: space-between;
-
-      span {
-        font: 18px 'Ubuntu', sans-serif;
-        margin-left: 4px;
-        font-weight: 400;
-        color: #eee;
-
-        & + span {
-          color: #ff6f60;
-        }
-      }
-    }
-  }
+export const FormSectionTitle = styled.h1`
+  font: 18px 'Ubuntu', sans-serif;
+  font-weight: bold;
+  color: #eee;
 `;
 
-export const InputContainer = styled(ChakraBox)`
+export const InputsContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 26px;
+`;
+
+export const CompanyInfosContainer = styled.section`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   flex: 1;
-  margin-right: 18px;
+  gap: 26px;
+  flex-wrap: wrap;
+  width: 100%;
+`;
 
-  div.labels {
-    background: transparent;
-    border: 0;
-    display: flex;
-    justify-content: space-between;
+export const Label = styled.label`
+  font: 14px 'Ubuntu', sans-serif;
+  font-weight: 500;
+  color: #eee;
+  margin-bottom: 8px;
+`;
 
-    span {
-      font: 18px 'Ubuntu', sans-serif;
-      margin-left: 4px;
-      font-weight: 400;
-      color: #eee;
+export const SelectContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 180px;
+  width: 100%;
+`;
 
-      & + span {
-        color: #ff6f60;
-      }
-    }
-  }
+export const InputContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 180px;
+  width: 100%;
 
   div {
-    margin-top: 6px;
     height: 30px;
     border-radius: 6px;
     background: #424242;
@@ -188,6 +223,24 @@ export const InputContainer = styled(ChakraBox)`
       border: 0;
       height: 26px;
     }
+  }
+`;
+
+export const DateTimeContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 160px;
+`;
+
+export const Services = styled(ChakraGrid)`
+  width: 100%;
+  margin-top: 10px;
+  gap: 18px;
+  grid-template-columns: 20% 20% 20% 20% 20%;
+
+  .selected {
+    border-color: #5580b9;
   }
 `;
 
@@ -212,16 +265,5 @@ export const ServiceBox = styled(ChakraFlex)`
     font-size: 16px;
     text-align: center;
     padding: 5px 5px;
-  }
-`;
-
-export const Services = styled(ChakraGrid)`
-  width: 100%;
-  margin-top: 10px;
-  gap: 18px;
-  grid-template-columns: 20% 20% 20% 20% 20%;
-
-  .selected {
-    border-color: #5580b9;
   }
 `;

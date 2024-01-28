@@ -3,12 +3,9 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
   /* @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap'); */
-  height: 100%;
-
-  @media (min-width: 1224px) {
-    padding-left: 80px;
-    padding-top: 25px;
-  }
+  display: flex;
+  flex: 1;
+  flex-direction: column;
 `;
 
 export const Content = styled(ChakraBox)`

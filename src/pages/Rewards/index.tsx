@@ -14,7 +14,6 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 import Breadcrumb from '../../components/Breadcrumb';
-import Menu from '../../components/Menu';
 import Pagination from '../../components/Pagination';
 import { useAuth } from '../../context/auth';
 import { useToast } from '../../context/toast';
@@ -227,8 +226,6 @@ const Rewards = () => {
 
   return (
     <Container>
-      <Menu />
-
       <Flex
         direction="column"
         w={{
@@ -271,14 +268,7 @@ const Rewards = () => {
           }
         />
 
-        <Flex
-          width="100%"
-          maxWidth="90vw"
-          marginLeft="auto"
-          marginRight="auto"
-          flexDirection="column"
-          mt={4}
-        >
+        <Flex width="100%" maxWidth="90vw" flexDirection="column" mt={4}>
           <Flex direction="column" marginY={4}>
             {loading ? (
               <Stack>

@@ -4,11 +4,9 @@ import styled from 'styled-components';
 export const Container = styled(ChakraBox)`
   /* @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap'); */
   height: 100%;
-
-  @media (min-width: 1224px) {
-    padding-left: 80px;
-    padding-top: 25px;
-  }
+  padding: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
 `;
 
 export const Content = styled(ChakraBox)`
@@ -56,7 +54,7 @@ export const Separator = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
-  margin-top: 14px;
+  margin-top: 6px;
 
   span {
     font: 20px 'Ubuntu', sans-serif;

@@ -18,89 +18,178 @@ import SetCompanyFirstPrices from '../pages/SetCompanyFirstPrices';
 import UpdateCompanyPrices from '../pages/UpdateCompanyPrices';
 import Users from '../pages/Users';
 import Route from './Route';
+import Layout from '../components/Layout';
 
 const Routes: React.FC = () => (
   <Switch>
-    <Route path="/" exact component={Login} />
-    <Route path="/home" exact component={Login} />
-    <Route path="/first-login" component={FirstLogin} isPrivate />
+    <Route path="/" exact component={() => <Login />} />
+    <Route
+      path="/home"
+      exact
+      component={() => (
+        <Layout>
+          <Login />
+        </Layout>
+      )}
+    />
+    <Route
+      path="/first-login"
+      component={() => (
+        <Layout>
+          <FirstLogin />
+        </Layout>
+      )}
+      isPrivate
+    />
     <Route
       path="/rewards"
-      component={Rewards}
+      component={() => (
+        <Layout>
+          <Rewards />
+        </Layout>
+      )}
       isPrivate
-      permissions={['COMMISSIONER','MANAGER','ADMIN']}
+      permissions={['COMMISSIONER', 'MANAGER', 'ADMIN']}
     />
     <Route
       path="/services"
-      component={Services}
+      component={() => (
+        <Layout>
+          <Services />
+        </Layout>
+      )}
       isPrivate
-      permissions={['MANAGER', 'SELLER', 'ADMIN', 'NANOTECH_REPRESENTATIVE', 'COMMISSIONER']}
+      permissions={[
+        'MANAGER',
+        'SELLER',
+        'ADMIN',
+        'NANOTECH_REPRESENTATIVE',
+        'COMMISSIONER',
+      ]}
     />
-    <Route path="/service/vitrificacao" component={Service} isPrivate />
+    <Route
+      path="/service/vitrificacao"
+      component={() => (
+        <Layout>
+          <Service />
+        </Layout>
+      )}
+      isPrivate
+    />
     <Route
       path="/set-prices"
-      component={SetCompanyFirstPrices}
+      component={() => (
+        <Layout>
+          <SetCompanyFirstPrices />
+        </Layout>
+      )}
       isPrivate
       permissions={['MANAGER']}
     />
     <Route
       path="/sales-register"
-      component={SalesRegister}
+      component={() => (
+        <Layout>
+          <SalesRegister />
+        </Layout>
+      )}
       isPrivate
       permissions={['MANAGER', 'SELLER']}
     />
     <Route
       path="/sellers"
-      component={Sellers}
+      component={() => (
+        <Layout>
+          <Sellers />
+        </Layout>
+      )}
       isPrivate
       permissions={['MANAGER']}
     />
     <Route
       path="/sellers-register"
-      component={SellersRegister}
+      component={() => (
+        <Layout>
+          <SellersRegister />
+        </Layout>
+      )}
       isPrivate
       permissions={['MANAGER']}
     />
     <Route
       path="/sales"
-      component={Sales}
+      component={() => (
+        <Layout>
+          <Sales />
+        </Layout>
+      )}
       isPrivate
-      permissions={['MANAGER', 'SELLER', 'ADMIN', 'NANOTECH_REPRESENTATIVE', 'COMMISSIONER']}
+      permissions={[
+        'MANAGER',
+        'SELLER',
+        'ADMIN',
+        'NANOTECH_REPRESENTATIVE',
+        'COMMISSIONER',
+      ]}
     />
     <Route
       path="/sales-by-provider"
-      component={ProviderSales}
+      component={() => (
+        <Layout>
+          <ProviderSales />
+        </Layout>
+      )}
       isPrivate
       permissions={['SERVICE_PROVIDER']}
     />
     <Route
       path="/prices"
-      component={UpdateCompanyPrices}
+      component={() => (
+        <Layout>
+          <UpdateCompanyPrices />
+        </Layout>
+      )}
       isPrivate
       permissions={['MANAGER']}
     />
     <Route
       path="/companies"
-      component={Companies}
+      component={() => (
+        <Layout>
+          <Companies />
+        </Layout>
+      )}
       isPrivate
       permissions={['ADMIN', 'NANOTECH_REPRESENTATIVE']}
     />
     <Route
       exact
       path="/company/prices/:id"
-      component={CompaniesPrices}
+      component={() => (
+        <Layout>
+          <CompaniesPrices />
+        </Layout>
+      )}
       isPrivate
       permissions={['ADMIN', 'NANOTECH_REPRESENTATIVE']}
     />
     <Route
       path="/users"
-      component={Users}
+      component={() => (
+        <Layout>
+          <Users />
+        </Layout>
+      )}
       isPrivate
       permissions={['ADMIN', 'NANOTECH_REPRESENTATIVE']}
     />
     <Route
       path="/reports"
-      component={Reports}
+      component={() => (
+        <Layout>
+          <Reports />
+        </Layout>
+      )}
       isPrivate
       permissions={['MANAGER', 'ADMIN', 'NANOTECH_REPRESENTATIVE']}
     />

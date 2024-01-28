@@ -107,13 +107,7 @@ const SetCompanyPrices = () => {
     <Container>
       <Menu disableButton />
       <Breadcrumb text="Configure o preço de cada serviço em seu estabelecimento." />
-      <Content
-        marginLeft="auto"
-        marginRight="auto"
-        width="100%"
-        marginTop="26px"
-        maxWidth="90vw"
-      >
+      <Content width="100%" marginTop="26px" maxWidth="90vw">
         <Form ref={formRef} style={{ width: '100%' }} onSubmit={handleSubmit}>
           <Grid
             width="100%"

@@ -6,10 +6,6 @@ export const Container = styled(ChakraBox)`
   height: 100%;
   max-height: 100vh;
 
-  @media (min-width: 1224px) {
-    padding-left: 80px;
-    padding-top: 25px;
-  }
 `;
 
 export const Content = styled(ChakraBox)`

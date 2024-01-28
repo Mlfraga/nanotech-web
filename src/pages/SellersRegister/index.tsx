@@ -9,7 +9,6 @@ import Breadcrumb from '../../components/Breadcrumb';
 import Button from '../../components/Button';
 import FormattedInput from '../../components/FormattedInput';
 import Input from '../../components/Input';
-import Menu from '../../components/Menu';
 import Select from '../../components/Select';
 import { useAuth } from '../../context/auth';
 import { useToast } from '../../context/toast';
@@ -146,16 +145,9 @@ const RegsiterSellers = () => {
 
   return (
     <Container>
-      <Menu />
-
       <Breadcrumb text="Registro de vendedor" />
 
-      <Content
-        marginLeft="auto"
-        marginRight="auto"
-        width="100%"
-        maxWidth="90vw"
-      >
+      <Content width="100%" maxWidth="90vw">
         <Form ref={formRef} onSubmit={handleSubmit}>
           <Separator>
             <span>Dados do usuário</span>
