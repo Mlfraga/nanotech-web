@@ -67,6 +67,7 @@ interface ISaleRequestResponseData {
   production_status: string;
   hasAlreadyBeenDirected: boolean;
   company_value: number;
+  partner_external_id: string;
   cost_value: number;
   comments: string;
   source: string;
@@ -337,6 +338,7 @@ const Sales = () => {
           client_id: `${sale.seller.company.client_identifier}${sale.unit.client_identifier}${sale.client_identifier}`,
           seller: formattedSellerName,
           customer: sale.person.name,
+          partner_external_id: sale.partner_external_id,
           comments: sale.comments,
           car:
             formattedCar.length > 2
@@ -863,7 +865,10 @@ const Sales = () => {
                               </span>
                             </Tooltip>
                           )}
-                        {sale.client_id}
+                        {user.role === 'ADMIN' ||
+                        user?.role === 'NANOTECH_REPRESENTATIVE'
+                          ? sale.client_id
+                          : sale.partner_external_id}
                       </span>
                       <span>{sale.seller}</span>
                       <span>{`${sale.car} - ${sale.carPlate}`}</span>

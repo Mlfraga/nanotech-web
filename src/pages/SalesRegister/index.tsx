@@ -64,6 +64,7 @@ export interface IFormData {
   carColor: string;
   carModel: string;
   carPlate: string;
+  osNumber: string;
   cpf: string;
   sourceCar: string;
   availabilityDate: string;
@@ -234,6 +235,7 @@ const SalesRegister = () => {
           carPlate: Yup.string()
             .required('Chassi do carro obrigatório')
             .length(7, 'O Chassi deve ter 7 dígitos'),
+          osNumber: Yup.string().required('Código da OS obrigatório'),
           cpf: Yup.string()
             .required('Cpf obrigatório')
             .matches(
@@ -263,6 +265,7 @@ const SalesRegister = () => {
           deliveryDate: new Date(data.deliveryDate).toISOString(),
           availabilityDate: new Date(data.availabilityDate).toISOString(),
           companyPrice,
+          partner_external_id: data.osNumber,
           costPrice,
           source: data.sourceCar,
           name: data.name,
