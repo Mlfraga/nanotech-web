@@ -41,6 +41,7 @@ interface IOrderSummaryProps {
   }[];
   unitSelectOptions: { value: string; label: string }[];
   setCurrentStep: React.Dispatch<React.SetStateAction<Step>>;
+  loadingButton: boolean;
 }
 
 const OrderSummary: React.FC<IOrderSummaryProps> = ({
@@ -50,6 +51,7 @@ const OrderSummary: React.FC<IOrderSummaryProps> = ({
   sourceCarSelectOption,
   setCurrentStep,
   unitSelectOptions,
+  loadingButton,
 }) => {
   const formData = formRef.current?.getData() as {
     car: string;
@@ -204,7 +206,7 @@ const OrderSummary: React.FC<IOrderSummaryProps> = ({
         <Button
           padding={'0.6rem'}
           height={'auto'}
-          isDisabled={false}
+          isDisabled={loadingButton}
           type="submit"
         >
           Confirmar

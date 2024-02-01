@@ -88,7 +88,7 @@ const SalesRegister = () => {
 
   const [document, setDocument] = useState('');
   const [currentStep, setCurrentStep] = useState<Step>('customer_data');
-  const [, setLoadingButton] = useState(false);
+  const [loadingButton, setLoadingButton] = useState(false);
   const [validatedForms, setValidatedForms] = useState<
     { [K in Step]: boolean }
   >({
@@ -432,6 +432,7 @@ const SalesRegister = () => {
             unitSelectOptions={unitSelectOptions}
             selectedServices={selectedServices}
             setCurrentStep={setCurrentStep}
+            loadingButton={loadingButton}
           />
         </StyledForm>
       </Content>
