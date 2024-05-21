@@ -51,8 +51,6 @@ const Services = () => {
           lg: '80px',
           xl: '0px',
         }}
-        paddingX={8}
-        paddingBottom={8}
         flex={1}
       >
         <Breadcrumb text="Serviços" />
