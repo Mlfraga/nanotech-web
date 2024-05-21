@@ -45,7 +45,8 @@ const Routes: React.FC = () => (
       path="/rewards"
       component={() => (
         <Layout>
-          <Rewards />
+          deprecated route
+          {/* <Rewards /> */}
         </Layout>
       )}
       isPrivate

@@ -5,7 +5,7 @@ export const Container = styled(ChakraBox)`
   /* @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap'); */
   height: 100%;
   max-height: 100vh;
-
+  width: 100%;
 `;
 
 export const Content = styled(ChakraBox)`

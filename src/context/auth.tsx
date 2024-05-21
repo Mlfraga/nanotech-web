@@ -222,12 +222,12 @@ export const AuthProvider: React.FC = ({ children }) => {
 
     if (user.role === 'COMMISSIONER') {
       buttons = [
-        {
-          name: 'Comissões',
-          enable: false,
-          route: '/rewards',
-          icon: <FiAward color="#fff" />,
-        },
+        // {
+        //   name: 'Comissões',
+        //   enable: false,
+        //   route: '/rewards',
+        //   icon: <FiAward color="#fff" />,
+        // },
       ];
     }
 
@@ -473,12 +473,12 @@ export const AuthProvider: React.FC = ({ children }) => {
               route: '/reports',
               icon: <FiFileText color="#fff" />,
             },
-            {
-              name: 'Comissões',
-              enable: true,
-              route: '/rewards',
-              icon: <FiAward color="#fff" />,
-            },
+            // {
+            //   name: 'Comissões',
+            //   enable: true,
+            //   route: '/rewards',
+            //   icon: <FiAward color="#fff" />,
+            // },
           ];
         }
 
@@ -518,12 +518,12 @@ export const AuthProvider: React.FC = ({ children }) => {
 
         if (userData.role === 'COMMISSIONER') {
           buttons = [
-            {
-              name: 'Comissões',
-              enable: true,
-              route: '/rewards',
-              icon: <FiAward color="#fff" />,
-            },
+            // {
+            //   name: 'Comissões',
+            //   enable: true,
+            //   route: '/rewards',
+            //   icon: <FiAward color="#fff" />,
+            // },
             {
               name: 'Serviços',
               enable: true,
