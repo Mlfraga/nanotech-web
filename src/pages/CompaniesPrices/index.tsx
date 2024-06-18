@@ -74,6 +74,7 @@ const CompaniesPrices = () => {
       })
       .then(response => {
         const companyServices = response.data;
+        console.log('🚀 ~ useEffect ~ companyServices:', companyServices);
 
         setCompanyPrices(
           companyServices.sort((a, b) => a.name.localeCompare(b.name)),
@@ -218,10 +219,12 @@ const CompaniesPrices = () => {
                   </span>
 
                   <span>
-                    {Number(row.commission_amount).toLocaleString('pt-br', {
-                      style: 'currency',
-                      currency: 'BRL',
-                    })}
+                    {row.commission_amount
+                      ? Number(row.commission_amount).toLocaleString('pt-br', {
+                          style: 'currency',
+                          currency: 'BRL',
+                        })
+                      : ' - '}
                   </span>
 
                   <Switch

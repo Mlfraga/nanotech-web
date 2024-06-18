@@ -7,7 +7,7 @@ import FirstLogin from '../pages/FirstLogin';
 import Login from '../pages/Login';
 import ProviderSales from '../pages/ProviderSales';
 import Reports from '../pages/Reports';
-import Rewards from '../pages/Rewards';
+// import Rewards from '../pages/Rewards';
 import Sales from '../pages/Sales';
 import SalesRegister from '../pages/SalesRegister';
 import Sellers from '../pages/Sellers';

@@ -241,17 +241,16 @@ const Users = () => {
           xs: '100%',
           sm: '100%',
           md: '100% ',
-          lg: 'calc(100% - 80px)',
+          lg: '100%',
           xl: '100%',
         }}
         ml={{
           xs: '0px',
           sm: '0px',
           md: '0px',
-          lg: '80px',
+          lg: '0px',
           xl: '0px',
         }}
-        paddingX={8}
       >
         <Breadcrumb
           text="Usuários"
@@ -354,7 +353,7 @@ const Users = () => {
               />
             </Stack>
           ) : (
-            <List height={{ lg: '40vh', xl: '55vh' }}>
+            <List height={{ xs: '60vh', sm: '60vh', lg: '50vh', xl: '55vh' }}>
               {formattedUsers.map(user => (
                 <Row>
                   <span>{user.name}</span>
@@ -405,7 +404,11 @@ const Users = () => {
         close={() => setFilterDrawerOpened(false)}
         initialValues={filterValues}
         applyFilter={handleApplyFilters}
-        cleanFilter={() => setFilterValues({} as IUserFilters)}
+        cleanFilter={() => {
+          setFilterValues({} as IUserFilters);
+
+          handleApplyFilters({});
+        }}
       />
       <UpdateUserModal
         isOpen={!!userToUpdate}

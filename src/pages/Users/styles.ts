@@ -27,6 +27,7 @@ export const Content = styled(ChakraBox)`
   }
 `;
 
+
 export const ButtonContainer = styled.div`
   margin-left: auto;
   margin-right: auto;
