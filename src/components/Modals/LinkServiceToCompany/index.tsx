@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FiDollarSign } from 'react-icons/fi';
 
 import {
@@ -10,7 +10,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-  ModalOverlay
+  ModalOverlay,
 } from '@chakra-ui/core';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
@@ -21,9 +21,11 @@ import api from '../../../services/api';
 import getValidationsErrors from '../../../utils/getValidationError';
 import { currencyMasker } from '../../../utils/masks';
 import Input from '../../Input';
+import Select from '../../Select';
+import { IServiceGroup } from '../../../interfaces/service_group';
 
 interface IFormData {
-  name: string;
+  serviceGroup: string;
   price: number;
   commission_amount: number;
 }
@@ -44,10 +46,30 @@ const CreateServicePriceModal: React.FC<ICreateServicePriceModalProps> = ({
   onSave,
   company,
 }) => {
+  const hasAlreadyExecuted = useRef<boolean>(false);
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
 
   const [loading, setLoading] = useState<boolean>(false);
+  const [serviceGroups, setServiceGroups] = useState<IServiceGroup[]>([]);
+
+  useEffect(() => {
+    const fethServiceGroups = async () => {
+      const serviceGroups = await api.get<IServiceGroup[]>('/service-groups', {
+        params: {
+          enabled: true,
+        },
+      });
+
+      setServiceGroups(serviceGroups.data);
+    };
+
+    if (!hasAlreadyExecuted.current) {
+      fethServiceGroups();
+
+      hasAlreadyExecuted.current = true;
+    }
+  }, []);
 
   const handleKeyUp = useCallback(
     (event: React.FormEvent<HTMLInputElement>) => {
@@ -65,7 +87,7 @@ const CreateServicePriceModal: React.FC<ICreateServicePriceModalProps> = ({
         formRef.current?.setErrors({});
 
         const schema = Yup.object().shape({
-          name: Yup.string().required('Nome do serviço obrigatório.'),
+          serviceGroup: Yup.string().required('Serviço obrigatório.'),
           price: Yup.number().required('O valor do serviço é obrigatório.'),
           commission_amount: Yup.number(),
         });
@@ -75,7 +97,7 @@ const CreateServicePriceModal: React.FC<ICreateServicePriceModalProps> = ({
         });
 
         const formData = {
-          name: data.name,
+          service_group_id: data.serviceGroup,
           price: data.price,
           commission_amount: data.commission_amount,
           company_id: company.id,
@@ -124,13 +146,31 @@ const CreateServicePriceModal: React.FC<ICreateServicePriceModalProps> = ({
           maxWidth={900}
           borderRadius="md"
         >
-          <ModalHeader>{`Adicionar serviço a concessionária ${company.name}`}</ModalHeader>
+          <ModalHeader>{`Disponibilizar categoria de serviço a ${company.name}`}</ModalHeader>
           <ModalCloseButton />
 
           <Form ref={formRef} onSubmit={handleSubmit}>
             <ModalBody paddingBottom={4}>
               <Flex direction="column">
-                <Input placeholder="Nome" name="name" />
+                <Select
+                  fontSize={16}
+                  height="48px"
+                  backgroundColor="#1c1c1c"
+                  color="White"
+                  name="serviceGroup"
+                  placeholder="Escolha o serviço a ser disponibilizado"
+                  containerProps={{
+                    height: '52px',
+                    marginBottom: '8px',
+                    background: '#1c1c1c',
+                  }}
+                >
+                  {serviceGroups.map(opt => (
+                    <option key={opt.id} value={opt.id}>
+                      {opt.name}
+                    </option>
+                  ))}
+                </Select>
 
                 <Input
                   placeholder="Preço Nanotech"

@@ -19,10 +19,12 @@ import UpdateCompanyPrices from '../pages/UpdateCompanyPrices';
 import Users from '../pages/Users';
 import Route from './Route';
 import Layout from '../components/Layout';
+import ServicesCatalog from '../pages/ServicesCatalog';
 
 const Routes: React.FC = () => (
   <Switch>
     <Route path="/" exact component={() => <Login />} />
+
     <Route
       path="/home"
       exact
@@ -32,6 +34,7 @@ const Routes: React.FC = () => (
         </Layout>
       )}
     />
+
     <Route
       path="/first-login"
       component={() => (
@@ -41,6 +44,7 @@ const Routes: React.FC = () => (
       )}
       isPrivate
     />
+
     <Route
       path="/rewards"
       component={() => (
@@ -52,6 +56,7 @@ const Routes: React.FC = () => (
       isPrivate
       permissions={['COMMISSIONER', 'MANAGER', 'ADMIN']}
     />
+
     <Route
       path="/services"
       component={() => (
@@ -68,6 +73,7 @@ const Routes: React.FC = () => (
         'COMMISSIONER',
       ]}
     />
+
     <Route
       path="/service/vitrificacao"
       component={() => (
@@ -77,6 +83,7 @@ const Routes: React.FC = () => (
       )}
       isPrivate
     />
+
     <Route
       path="/set-prices"
       component={() => (
@@ -87,6 +94,7 @@ const Routes: React.FC = () => (
       isPrivate
       permissions={['MANAGER']}
     />
+
     <Route
       path="/sales-register"
       component={() => (
@@ -97,6 +105,7 @@ const Routes: React.FC = () => (
       isPrivate
       permissions={['MANAGER', 'SELLER']}
     />
+
     <Route
       path="/sellers"
       component={() => (
@@ -107,6 +116,7 @@ const Routes: React.FC = () => (
       isPrivate
       permissions={['MANAGER']}
     />
+
     <Route
       path="/sellers-register"
       component={() => (
@@ -117,6 +127,7 @@ const Routes: React.FC = () => (
       isPrivate
       permissions={['MANAGER']}
     />
+
     <Route
       path="/sales"
       component={() => (
@@ -133,6 +144,7 @@ const Routes: React.FC = () => (
         'COMMISSIONER',
       ]}
     />
+
     <Route
       path="/sales-by-provider"
       component={() => (
@@ -143,6 +155,7 @@ const Routes: React.FC = () => (
       isPrivate
       permissions={['SERVICE_PROVIDER']}
     />
+
     <Route
       path="/prices"
       component={() => (
@@ -153,6 +166,7 @@ const Routes: React.FC = () => (
       isPrivate
       permissions={['MANAGER']}
     />
+
     <Route
       path="/companies"
       component={() => (
@@ -163,6 +177,7 @@ const Routes: React.FC = () => (
       isPrivate
       permissions={['ADMIN', 'NANOTECH_REPRESENTATIVE']}
     />
+
     <Route
       exact
       path="/company/prices/:id"
@@ -174,6 +189,7 @@ const Routes: React.FC = () => (
       isPrivate
       permissions={['ADMIN', 'NANOTECH_REPRESENTATIVE']}
     />
+
     <Route
       path="/users"
       component={() => (
@@ -184,6 +200,18 @@ const Routes: React.FC = () => (
       isPrivate
       permissions={['ADMIN', 'NANOTECH_REPRESENTATIVE']}
     />
+
+    <Route
+      path="/services-catalog"
+      component={() => (
+        <Layout>
+          <ServicesCatalog />
+        </Layout>
+      )}
+      isPrivate
+      permissions={['ADMIN', 'NANOTECH_REPRESENTATIVE']}
+    />
+
     <Route
       path="/reports"
       component={() => (

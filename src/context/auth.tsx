@@ -12,6 +12,7 @@ import {
   FiFileText,
   FiList,
   FiTag,
+  FiLayers,
   FiUsers,
 } from 'react-icons/fi';
 import { MdBusiness } from 'react-icons/md';
@@ -473,12 +474,12 @@ export const AuthProvider: React.FC = ({ children }) => {
               route: '/reports',
               icon: <FiFileText color="#fff" />,
             },
-            // {
-            //   name: 'Comissões',
-            //   enable: true,
-            //   route: '/rewards',
-            //   icon: <FiAward color="#fff" />,
-            // },
+            {
+              name: 'Catalogo de Serviços Nanotech',
+              enable: true,
+              route: '/services-catalog',
+              icon: <FiLayers color="#fff" />,
+            },
           ];
         }
 
