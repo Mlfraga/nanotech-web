@@ -135,6 +135,8 @@ export const CompanyStamp = styled.div<CompanyStampProps>`
   font: 12px 'Ubuntu', sans-serif;
   font-weight: bold;
   margin: 0px !important;
+  cursor: pointer;
+  transition: background 0.2s;
 `;
 
 export const ButtonArea = styled.div`

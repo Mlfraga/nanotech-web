@@ -17,9 +17,11 @@ import Breadcrumb from '../../components/Breadcrumb';
 
 import { Column, CompanyStamp, Container, Content, List, Row } from './styles';
 import CreateServiceModal from '../../components/Modals/CreateService';
+import { useHistory } from 'react-router-dom';
 
 const ServicesCatalog = () => {
   const { addToast } = useToast();
+  const history = useHistory();
 
   const [
     serviceToToggleStatus,
@@ -84,6 +86,10 @@ const ServicesCatalog = () => {
 
   const handleServiceFormModal = () => {
     setServiceFormModalOpened(!serviceFormModalOpened);
+  };
+
+  const handleGoToCompanyServices = (companyId: string) => {
+    history.push(`/company/prices/${companyId}`);
   };
 
   return (
@@ -201,6 +207,7 @@ const ServicesCatalog = () => {
                       <CompanyStamp
                         rand={Math.floor(Math.random() * 9)}
                         key={company.id}
+                        onClick={() => handleGoToCompanyServices(company.id)}
                       >
                         {company.name}
                       </CompanyStamp>
@@ -247,7 +254,7 @@ const ServicesCatalog = () => {
         isOpen={serviceFormModalOpened}
         onClose={() => setServiceFormModalOpened(false)}
         onSave={() => {
-          console.log('saved');
+          fetchNanotechServices();
         }}
       />
     </Container>

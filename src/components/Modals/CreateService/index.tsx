@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { FiDollarSign, FiTool } from 'react-icons/fi';
+import { FiDollarSign, FiTool, FiX } from 'react-icons/fi';
 
 import {
   Button,
@@ -21,14 +21,34 @@ import api from '../../../services/api';
 import getValidationsErrors from '../../../utils/getValidationError';
 import { currencyMasker } from '../../../utils/masks';
 import Input from '../../Input';
-import Select from '../../Select';
 import { ICompany } from '../../../interfaces/companies';
+import Select from '../../Select';
+import Textarea from '../../Textarea';
+import {
+  LinkToCompaniesContainer,
+  LinkToCompaniesTitle,
+  RemoveCompanyButton,
+  Row,
+  SelectedCompaniesContainer,
+  SelectedCompaniesHeader,
+  SelectedCompaniesHeaderLabel,
+  SelectedCompany,
+  SelectedCompanyLabel,
+  SelectedCompanyValueContainer,
+  SelectedCompanyValueInput,
+} from './styles';
 
 interface IFormData {
-  companies: string[];
   name: string;
   description: string;
   default_nanotech_price?: number;
+}
+
+interface ICompanyToLink {
+  id: string;
+  name: string;
+  price: number;
+  commission: number;
 }
 
 interface ICreateServiceModalProps {
@@ -47,9 +67,8 @@ const CreateServiceModal: React.FC<ICreateServiceModalProps> = ({
   const { addToast } = useToast();
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [companyOptions, setCompanyOptions] = useState<
-    { value: string; label: string }[]
-  >([]);
+  const [companies, setCompanies] = useState<ICompany[]>([]);
+  const [companiesToLink, setCompaniesToLink] = useState<ICompanyToLink[]>([]);
 
   useEffect(() => {
     const fethCompanies = async () => {
@@ -57,12 +76,7 @@ const CreateServiceModal: React.FC<ICreateServiceModalProps> = ({
         '/companies',
       );
 
-      setCompanyOptions(
-        newCompaniesOptions.map(company => ({
-          value: company.id,
-          label: company.name,
-        })),
-      );
+      setCompanies(newCompaniesOptions);
     };
 
     if (!hasAlreadyExecuted.current) {
@@ -88,7 +102,7 @@ const CreateServiceModal: React.FC<ICreateServiceModalProps> = ({
         formRef.current?.setErrors({});
 
         const schema = Yup.object().shape({
-          serviceGroup: Yup.string().required('Serviço obrigatório.'),
+          name: Yup.string().required('Nome do serviço.'),
           price: Yup.number().required('O valor do serviço é obrigatório.'),
           commission_amount: Yup.number(),
         });
@@ -97,19 +111,22 @@ const CreateServiceModal: React.FC<ICreateServiceModalProps> = ({
           abortEarly: false,
         });
 
-        // const response = await api.post('services', formData);
+        const response = await api.post('service-groups', {
+          name: data.name,
+          description: data.description,
+          default_nanotech_price: data.default_nanotech_price,
+          companiesToLink: companiesToLink,
+        });
 
-        // if (response.status === 200) {
-        //   addToast({
-        //     title: 'Cadastro realizado com sucesso.',
-        //     type: 'success',
-        //     description: 'O serviço foi cadastrado com sucesso.',
-        //   });
+        addToast({
+          title: 'Cadastro realizado com sucesso.',
+          type: 'success',
+          description: 'O serviço foi cadastrado com sucesso.',
+        });
 
-        //   onClose();
-        //   onSave();
-        //   setLoading(false);
-        // }
+        onClose();
+        onSave();
+        setLoading(false);
       } catch (err) {
         setLoading(false);
 
@@ -128,8 +145,55 @@ const CreateServiceModal: React.FC<ICreateServiceModalProps> = ({
         });
       }
     },
-    [onClose, onSave, addToast],
+    [addToast, companiesToLink],
   );
+
+  const handleSelectCompany = (e: any) => {
+    const company = companies.find(c => c.id === e.target.value);
+
+    if (!company) {
+      return;
+    }
+
+    const companiesList = [
+      ...companiesToLink,
+      {
+        id: company.id,
+        name: company.name,
+        price: formRef.current?.getFieldValue('price') || 0,
+        commission: 0,
+      },
+    ].sort((a, b) => a.name.localeCompare(b.name));
+
+    setCompaniesToLink(companiesList);
+  };
+
+  const handleRemoveCompany = (companyId: string) => {
+    const company = companiesToLink.find(c => c.id === companyId);
+
+    if (!company) {
+      return;
+    }
+
+    setCompaniesToLink(companiesToLink.filter(c => c.id !== company.id));
+  };
+
+  const handleUpdateCompanyPrice = (
+    e: React.FormEvent<HTMLInputElement>,
+    companyId: string,
+  ) => {
+    formatCurrencyValue(e);
+
+    const updatedCompanies = companiesToLink.map(c => {
+      if (c.id === companyId) {
+        c.price = Number(e.currentTarget.value);
+      }
+
+      return c;
+    });
+
+    setCompaniesToLink(updatedCompanies);
+  };
 
   return (
     <>
@@ -140,44 +204,111 @@ const CreateServiceModal: React.FC<ICreateServiceModalProps> = ({
           maxWidth={900}
           borderRadius="md"
         >
-          <ModalHeader>{`Criar categoria de serviço`}</ModalHeader>
+          <ModalHeader>{`Criar Serviço`}</ModalHeader>
           <ModalCloseButton />
 
           <Form ref={formRef} onSubmit={handleSubmit}>
             <ModalBody paddingBottom={4}>
-              <Flex direction="column">
-                <Input
-                  placeholder="Nome do serviço"
-                  name="name"
-                  icon={FiTool}
+              <Flex direction="column" style={{ gap: '1rem' }}>
+                <Row>
+                  <Input
+                    placeholder="Nome do serviço"
+                    name="name"
+                    icon={FiTool}
+                  />
+
+                  <Input
+                    placeholder="Preço Sugerido Nanotech"
+                    onKeyUp={formatCurrencyValue}
+                    name="price"
+                    icon={FiDollarSign}
+                  />
+                </Row>
+
+                <Textarea
+                  background={'#1c1c1c'}
+                  name="description"
+                  style={{ width: '100%' }}
                 />
+              </Flex>
+
+              <LinkToCompaniesContainer>
+                <LinkToCompaniesTitle>
+                  Vincular serviço a concessionárias
+                </LinkToCompaniesTitle>
 
                 <Select
                   name="serviceGroup"
-                  placeholder="Escolha o serviço a ser disponibilizado"
-                  multiple
+                  placeholder="Selecione as concessionárias"
+                  onSelect={handleSelectCompany}
+                  onChange={handleSelectCompany}
+                  backgroundColor="#1c1c1c"
+                  color="White"
+                  containerProps={{
+                    height: '52px',
+                    marginBottom: '8px',
+                    background: '#1c1c1c',
+                  }}
                 >
-                  {companyOptions.map(company => (
-                    <option key={company.value} value={company.value}>
-                      {company.label}
-                    </option>
-                  ))}
+                  {companies
+                    .filter(c => !companiesToLink.some(ctl => ctl.id === c.id))
+                    .map(company => (
+                      <option key={company.id} value={company.id}>
+                        {company.name}
+                      </option>
+                    ))}
                 </Select>
 
-                <Input
-                  placeholder="Preço Nanotech"
-                  onKeyUp={formatCurrencyValue}
-                  name="price"
-                  icon={FiDollarSign}
-                />
+                <SelectedCompaniesContainer>
+                  <SelectedCompaniesHeader>
+                    <SelectedCompaniesHeaderLabel>
+                      Concessionária
+                    </SelectedCompaniesHeaderLabel>
 
-                <Input
-                  placeholder="Valor da Comissāo"
-                  onKeyUp={formatCurrencyValue}
-                  name="commission_amount"
-                  icon={FiDollarSign}
-                />
-              </Flex>
+                    <SelectedCompaniesHeaderLabel>
+                      Preço Nanotech
+                    </SelectedCompaniesHeaderLabel>
+
+                    <SelectedCompaniesHeaderLabel>
+                      Comissāo
+                    </SelectedCompaniesHeaderLabel>
+                  </SelectedCompaniesHeader>
+
+                  {companiesToLink.map(company => (
+                    <SelectedCompany key={company.id}>
+                      <SelectedCompanyLabel>
+                        {company.name}
+                      </SelectedCompanyLabel>
+
+                      <SelectedCompanyValueContainer>
+                        <SelectedCompanyValueInput
+                          type="text"
+                          defaultValue={company.price}
+                          onChange={e =>
+                            handleUpdateCompanyPrice(e, company.id)
+                          }
+                        ></SelectedCompanyValueInput>
+                      </SelectedCompanyValueContainer>
+
+                      <SelectedCompanyValueContainer>
+                        <SelectedCompanyValueInput
+                          type="text"
+                          defaultValue={company.price}
+                          onChange={e =>
+                            handleUpdateCompanyPrice(e, company.id)
+                          }
+                        ></SelectedCompanyValueInput>
+
+                        <RemoveCompanyButton
+                          onClick={() => handleRemoveCompany(company.id)}
+                        >
+                          <FiX />
+                        </RemoveCompanyButton>
+                      </SelectedCompanyValueContainer>
+                    </SelectedCompany>
+                  ))}
+                </SelectedCompaniesContainer>
+              </LinkToCompaniesContainer>
             </ModalBody>
 
             <ModalFooter>
