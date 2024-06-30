@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import AlertDialog from '../../components/Dialogs/Alert';
 
 import {
@@ -16,6 +16,7 @@ import { IServiceGroup } from '../../interfaces/service_group';
 import Breadcrumb from '../../components/Breadcrumb';
 
 import { Column, CompanyStamp, Container, Content, List, Row } from './styles';
+import CreateServiceModal from '../../components/Modals/CreateService';
 
 const ServicesCatalog = () => {
   const { addToast } = useToast();
@@ -29,6 +30,7 @@ const ServicesCatalog = () => {
   const [disableServiceAlertOpened, setDisableServiceAlertOpened] = useState(
     false,
   );
+  const [serviceFormModalOpened, setServiceFormModalOpened] = useState(false);
 
   const fetchNanotechServices = useCallback(async () => {
     setLoading(true);
@@ -80,6 +82,10 @@ const ServicesCatalog = () => {
       });
   };
 
+  const handleServiceFormModal = () => {
+    setServiceFormModalOpened(!serviceFormModalOpened);
+  };
+
   return (
     <Container>
       <Flex
@@ -109,7 +115,7 @@ const ServicesCatalog = () => {
               >
                 <ChakraButton
                   onClick={() => {
-                    // setOpenCreateUserModal(true);
+                    handleServiceFormModal();
                   }}
                   background="#2f5b9c"
                   _hover={{
@@ -235,6 +241,14 @@ const ServicesCatalog = () => {
             ? 'Essa ação desativará o serviço para todas as concessionárias que o utilizam.'
             : 'Tem Certeza Que Deseja Ativar o Serviço?'
         }
+      />
+
+      <CreateServiceModal
+        isOpen={serviceFormModalOpened}
+        onClose={() => setServiceFormModalOpened(false)}
+        onSave={() => {
+          console.log('saved');
+        }}
       />
     </Container>
   );

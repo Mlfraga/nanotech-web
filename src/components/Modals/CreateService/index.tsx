@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { FiDollarSign } from 'react-icons/fi';
+import { FiDollarSign, FiTool } from 'react-icons/fi';
 
 import {
   Button,
@@ -22,56 +22,57 @@ import getValidationsErrors from '../../../utils/getValidationError';
 import { currencyMasker } from '../../../utils/masks';
 import Input from '../../Input';
 import Select from '../../Select';
-import { IServiceGroup } from '../../../interfaces/service_group';
+import { ICompany } from '../../../interfaces/companies';
 
 interface IFormData {
-  serviceGroup: string;
-  price: number;
-  commission_amount: number;
+  companies: string[];
+  name: string;
+  description: string;
+  default_nanotech_price?: number;
 }
 
-interface ILinkServiceToCompanyProps {
+interface ICreateServiceModalProps {
   isOpen: boolean;
-  company: {
-    id: string;
-    name: string;
-  };
   onClose: () => void;
   onSave: () => void | undefined;
 }
 
-const LinkServiceToCompany: React.FC<ILinkServiceToCompanyProps> = ({
+const CreateServiceModal: React.FC<ICreateServiceModalProps> = ({
   isOpen,
   onClose,
   onSave,
-  company,
 }) => {
   const hasAlreadyExecuted = useRef<boolean>(false);
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [serviceGroups, setServiceGroups] = useState<IServiceGroup[]>([]);
+  const [companyOptions, setCompanyOptions] = useState<
+    { value: string; label: string }[]
+  >([]);
 
   useEffect(() => {
-    const fethServiceGroups = async () => {
-      const serviceGroups = await api.get<IServiceGroup[]>('/service-groups', {
-        params: {
-          enabled: true,
-        },
-      });
+    const fethCompanies = async () => {
+      const { data: newCompaniesOptions } = await api.get<ICompany[]>(
+        '/companies',
+      );
 
-      setServiceGroups(serviceGroups.data);
+      setCompanyOptions(
+        newCompaniesOptions.map(company => ({
+          value: company.id,
+          label: company.name,
+        })),
+      );
     };
 
     if (!hasAlreadyExecuted.current) {
-      fethServiceGroups();
+      fethCompanies();
 
       hasAlreadyExecuted.current = true;
     }
   }, []);
 
-  const handleKeyUp = useCallback(
+  const formatCurrencyValue = useCallback(
     (event: React.FormEvent<HTMLInputElement>) => {
       event.preventDefault();
       currencyMasker(event);
@@ -96,26 +97,19 @@ const LinkServiceToCompany: React.FC<ILinkServiceToCompanyProps> = ({
           abortEarly: false,
         });
 
-        const formData = {
-          service_group_id: data.serviceGroup,
-          price: data.price,
-          commission_amount: data.commission_amount,
-          company_id: company.id,
-        };
+        // const response = await api.post('services', formData);
 
-        const response = await api.post('services', formData);
+        // if (response.status === 200) {
+        //   addToast({
+        //     title: 'Cadastro realizado com sucesso.',
+        //     type: 'success',
+        //     description: 'O serviço foi cadastrado com sucesso.',
+        //   });
 
-        if (response.status === 200) {
-          addToast({
-            title: 'Cadastro realizado com sucesso.',
-            type: 'success',
-            description: 'O serviço foi cadastrado com sucesso.',
-          });
-
-          onClose();
-          onSave();
-          setLoading(false);
-        }
+        //   onClose();
+        //   onSave();
+        //   setLoading(false);
+        // }
       } catch (err) {
         setLoading(false);
 
@@ -134,7 +128,7 @@ const LinkServiceToCompany: React.FC<ILinkServiceToCompanyProps> = ({
         });
       }
     },
-    [onClose, onSave, addToast, company.id],
+    [onClose, onSave, addToast],
   );
 
   return (
@@ -146,42 +140,40 @@ const LinkServiceToCompany: React.FC<ILinkServiceToCompanyProps> = ({
           maxWidth={900}
           borderRadius="md"
         >
-          <ModalHeader>{`Disponibilizar categoria de serviço a ${company.name}`}</ModalHeader>
+          <ModalHeader>{`Criar categoria de serviço`}</ModalHeader>
           <ModalCloseButton />
 
           <Form ref={formRef} onSubmit={handleSubmit}>
             <ModalBody paddingBottom={4}>
               <Flex direction="column">
+                <Input
+                  placeholder="Nome do serviço"
+                  name="name"
+                  icon={FiTool}
+                />
+
                 <Select
-                  fontSize={16}
-                  height="48px"
-                  backgroundColor="#1c1c1c"
-                  color="White"
                   name="serviceGroup"
                   placeholder="Escolha o serviço a ser disponibilizado"
-                  containerProps={{
-                    height: '52px',
-                    marginBottom: '8px',
-                    background: '#1c1c1c',
-                  }}
+                  multiple
                 >
-                  {serviceGroups.map(opt => (
-                    <option key={opt.id} value={opt.id}>
-                      {opt.name}
+                  {companyOptions.map(company => (
+                    <option key={company.value} value={company.value}>
+                      {company.label}
                     </option>
                   ))}
                 </Select>
 
                 <Input
                   placeholder="Preço Nanotech"
-                  onKeyUp={handleKeyUp}
+                  onKeyUp={formatCurrencyValue}
                   name="price"
                   icon={FiDollarSign}
                 />
 
                 <Input
                   placeholder="Valor da Comissāo"
-                  onKeyUp={handleKeyUp}
+                  onKeyUp={formatCurrencyValue}
                   name="commission_amount"
                   icon={FiDollarSign}
                 />
@@ -216,4 +208,4 @@ const LinkServiceToCompany: React.FC<ILinkServiceToCompanyProps> = ({
   );
 };
 
-export default LinkServiceToCompany;
+export default CreateServiceModal;

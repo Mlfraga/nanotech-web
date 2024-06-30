@@ -12,7 +12,6 @@ import {
 } from '@chakra-ui/core';
 
 import Breadcrumb from '../../components/Breadcrumb';
-import Button from '../../components/Button';
 import AlertDialog from '../../components/Dialogs/Alert';
 import CreateService from '../../components/Modals/LinkServiceToCompany';
 import UpdateService from '../../components/Modals/UpdateService';
@@ -110,9 +109,7 @@ const CompaniesPrices = () => {
     try {
       const methodType = disableService.enabled ? 'enable' : 'disable';
 
-      const { status } = await api.patch(
-        `services/${methodType}/${disableService.id}`,
-      );
+      await api.patch(`services/${methodType}/${disableService.id}`);
 
       addToast({
         title: `Serviço ${
