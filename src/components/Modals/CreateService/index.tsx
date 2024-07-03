@@ -111,7 +111,7 @@ const CreateServiceModal: React.FC<ICreateServiceModalProps> = ({
           abortEarly: false,
         });
 
-        const response = await api.post('service-groups', {
+        await api.post('service-groups', {
           name: data.name,
           description: data.description,
           default_nanotech_price: data.default_nanotech_price,
@@ -145,7 +145,7 @@ const CreateServiceModal: React.FC<ICreateServiceModalProps> = ({
         });
       }
     },
-    [addToast, companiesToLink],
+    [addToast, companiesToLink, onClose, onSave],
   );
 
   const handleSelectCompany = (e: any) => {
