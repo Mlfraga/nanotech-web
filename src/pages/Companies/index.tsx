@@ -226,165 +226,158 @@ const Companies = () => {
   );
 
   return (
-    <Container>
-      <Flex
-        direction="column"
-        w={{
-          xs: '100%',
-          sm: '100%',
-          md: '100% ',
-          lg: 'calc(100% - 80px)',
-          xl: '100%',
-        }}
-        ml={{
-          xs: '0px',
-          sm: '0px',
-          md: '0px',
-          lg: '80px',
-          xl: '0px',
-        }}
-        paddingX={8}
-      >
-        <Breadcrumb text="Concessionárias cadastradas" />
+    <Flex direction="column" flex={1} w="100%">
+      <Breadcrumb
+        text="Concessionárias cadastradas"
+        filterButton={
+          <ChakraButton
+            _hover={{
+              bg: '#5580b9',
+              color: '#fff',
+            }}
+            _focusWithin={{
+              border: 0,
+            }}
+            backgroundColor="#355a9d"
+            style={{ padding: 24 }}
+            onClick={handleOpenCreateCompanyModal}
+          >
+            Registrar nova concessionária
+          </ChakraButton>
+        }
+      />
 
-        <Content width="100%" marginTop={4} maxWidth="90vw" overflowX="auto">
-          <div className="boxTitle">
-            <span>Nome</span>
-            <span>Contato</span>
-            <span>CNPJ</span>
-            <span>Id</span>
-          </div>
+      <Content width="100%" marginTop={4} maxWidth="90vw" overflowX="auto">
+        <div className="boxTitle">
+          <span>Nome</span>
+          <span>Contato</span>
+          <span>CNPJ</span>
+          <span>Id</span>
+        </div>
 
-          {loading ? (
-            <Stack marginTop="16px">
-              <Skeleton
-                height="60px"
-                borderRadius="md"
-                colorStart="#505050"
-                colorEnd="#404040"
-                marginTop="8px"
-              />
-              <Skeleton
-                height="60px"
-                borderRadius="md"
-                colorStart="#505050"
-                colorEnd="#404040"
-                marginTop="8px"
-              />
-              <Skeleton
-                height="60px"
-                borderRadius="md"
-                colorStart="#505050"
-                colorEnd="#404040"
-                marginTop="8px"
-              />
-              <Skeleton
-                height="60px"
-                borderRadius="md"
-                colorStart="#505050"
-                colorEnd="#404040"
-                marginTop="8px"
-              />
-              <Skeleton
-                height="60px"
-                borderRadius="md"
-                colorStart="#505050"
-                colorEnd="#404040"
-                marginTop="8px"
-              />
-              <Skeleton
-                height="60px"
-                borderRadius="md"
-                colorStart="#505050"
-                colorEnd="#404040"
-                marginTop="8px"
-              />
-              <Skeleton
-                height="60px"
-                borderRadius="md"
-                colorStart="#505050"
-                colorEnd="#404040"
-                marginTop="8px"
-              />
-            </Stack>
-          ) : (
-            <List height={{ lg: '40vh', xl: '55vh' }}>
-              {formattedCompanies.map(company => (
-                <Box key={company.id}>
-                  <div
-                    className="header"
-                    style={
-                      openedCompanies.includes(company.id)
-                        ? { borderRadius: '15px 15px 0 0' }
-                        : { borderRadius: 15 }
-                    }
-                  >
-                    <span>{company.name}</span>
-                    <span>{company.telephone}</span>
-                    <span>{company.cnpj}</span>
-                    <span>{company.client_identifier}</span>
-                    {company.buttons}
+        {loading ? (
+          <Stack marginTop="16px">
+            <Skeleton
+              height="60px"
+              borderRadius="md"
+              colorStart="#505050"
+              colorEnd="#404040"
+              marginTop="8px"
+            />
+            <Skeleton
+              height="60px"
+              borderRadius="md"
+              colorStart="#505050"
+              colorEnd="#404040"
+              marginTop="8px"
+            />
+            <Skeleton
+              height="60px"
+              borderRadius="md"
+              colorStart="#505050"
+              colorEnd="#404040"
+              marginTop="8px"
+            />
+            <Skeleton
+              height="60px"
+              borderRadius="md"
+              colorStart="#505050"
+              colorEnd="#404040"
+              marginTop="8px"
+            />
+            <Skeleton
+              height="60px"
+              borderRadius="md"
+              colorStart="#505050"
+              colorEnd="#404040"
+              marginTop="8px"
+            />
+            <Skeleton
+              height="60px"
+              borderRadius="md"
+              colorStart="#505050"
+              colorEnd="#404040"
+              marginTop="8px"
+            />
+            <Skeleton
+              height="60px"
+              borderRadius="md"
+              colorStart="#505050"
+              colorEnd="#404040"
+              marginTop="8px"
+            />
+          </Stack>
+        ) : (
+          <List height={{ lg: '40vh', xl: '55vh' }}>
+            {formattedCompanies.map(company => (
+              <Box key={company.id}>
+                <div
+                  className="header"
+                  style={
+                    openedCompanies.includes(company.id)
+                      ? { borderRadius: '15px 15px 0 0' }
+                      : { borderRadius: 15 }
+                  }
+                >
+                  <span>{company.name}</span>
+                  <span>{company.telephone}</span>
+                  <span>{company.cnpj}</span>
+                  <span>{company.client_identifier}</span>
+                  {company.buttons}
 
-                    <ChakraFlex marginRight={8} justifyContent="flex-end">
-                      {openedCompanies.includes(company.id) ? (
-                        <FaArrowAltCircleUp
-                          onClick={() => handleCloseCompanies(company.id)}
-                          style={{ cursor: 'pointer', alignContent: 'right' }}
-                          size={26}
-                        />
-                      ) : (
-                        <FaArrowAltCircleDown
-                          onClick={() => handleOpenCompanies(company.id)}
-                          style={{ cursor: 'pointer', alignSelf: 'right' }}
-                          size={26}
-                        />
-                      )}
-                    </ChakraFlex>
+                  <ChakraFlex marginRight={8} justifyContent="flex-end">
+                    {openedCompanies.includes(company.id) ? (
+                      <FaArrowAltCircleUp
+                        onClick={() => handleCloseCompanies(company.id)}
+                        style={{ cursor: 'pointer', alignContent: 'right' }}
+                        size={26}
+                      />
+                    ) : (
+                      <FaArrowAltCircleDown
+                        onClick={() => handleOpenCompanies(company.id)}
+                        style={{ cursor: 'pointer', alignSelf: 'right' }}
+                        size={26}
+                      />
+                    )}
+                  </ChakraFlex>
+                </div>
+
+                <div
+                  className="dropDown"
+                  hidden={!openedCompanies.includes(company.id)}
+                >
+                  <Separator className="separator">
+                    <span>Unidades</span>
+                    <div />
+                  </Separator>
+
+                  <div className="title">
+                    <span>Nome</span>
+                    <span>Telefone</span>
+                    <span>Identificador</span>
                   </div>
 
-                  <div
-                    className="dropDown"
-                    hidden={!openedCompanies.includes(company.id)}
-                  >
-                    <Separator className="separator">
-                      <span>Unidades</span>
-                      <div />
-                    </Separator>
-
-                    <div className="title">
-                      <span>Nome</span>
-                      <span>Telefone</span>
-                      <span>Identificador</span>
+                  {company.units.map(unit => (
+                    <div className="unit" key={unit.id}>
+                      <span>{unit.name}</span>
+                      <span>{unit.telephone}</span>
+                      <span>{unit.client_identifier}</span>
+                      {unit.button}
                     </div>
+                  ))}
 
-                    {company.units.map(unit => (
-                      <div className="unit" key={unit.id}>
-                        <span>{unit.name}</span>
-                        <span>{unit.telephone}</span>
-                        <span>{unit.client_identifier}</span>
-                        {unit.button}
-                      </div>
-                    ))}
-
-                    <button
-                      className="createNewCompanyLink"
-                      onClick={() => handleOpenCreateUnitModal(company)}
-                    >
-                      <RiAddFill size={18} /> Adicionar nova unidade
-                    </button>
-                  </div>
-                </Box>
-              ))}
-            </List>
-          )}
-        </Content>
-      </Flex>
-
-      <ButtonContainer>
-        <Button maxW="300px" onClick={handleOpenCreateCompanyModal}>
-          Registrar nova concessionária
-        </Button>
-      </ButtonContainer>
+                  <button
+                    className="createNewCompanyLink"
+                    onClick={() => handleOpenCreateUnitModal(company)}
+                  >
+                    <RiAddFill size={18} /> Adicionar nova unidade
+                  </button>
+                </div>
+              </Box>
+            ))}
+          </List>
+        )}
+      </Content>
 
       <CreateCompanyModal
         isOpen={!!createCompanyModalIsOpen}
@@ -412,7 +405,7 @@ const Companies = () => {
         onSave={getCompanies}
         company={companyToUpdate}
       />
-    </Container>
+    </Flex>
   );
 };
 

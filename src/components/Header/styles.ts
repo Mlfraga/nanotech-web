@@ -7,6 +7,8 @@ export const Container = styled(Box)`
 
   z-index: 1000;
   display: flex;
+  position: sticky;
+  top: 0;
   align-items: center;
   height: 80px;
   background: #282828;

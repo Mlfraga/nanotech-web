@@ -97,7 +97,6 @@ const Sidebar: React.FC<ISidebarProps> = ({ disableButton = false }) => {
             </Tooltip>
           ))}
         </Flex>
-
         <Flex
           borderTop="1px solid #545454"
           background="#282828"
