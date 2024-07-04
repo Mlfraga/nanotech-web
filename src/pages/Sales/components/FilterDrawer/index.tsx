@@ -62,16 +62,22 @@ const FilterDrawer: React.FC<IFilterDrawerProps> = ({
   return (
     <Drawer {...rest}>
       <DrawerOverlay />
-      <DrawerContent overflowY="auto" bg="#383838" minW={460}>
+      <DrawerContent overflowY="auto" bg="#383838">
         <DrawerCloseButton />
         <DrawerHeader borderBottomWidth="1px">Filtrar Vendas</DrawerHeader>
 
         <Form
-          style={{ display: 'flex', flex: 1, flexDirection: 'column' }}
+          style={{
+            display: 'flex',
+            flex: 1,
+            flexDirection: 'column',
+            overflow: 'auto',
+            position: 'relative',
+          }}
           ref={formRef}
           onSubmit={handleApplyFilters}
         >
-          <DrawerBody mt={6}>
+          <DrawerBody py={6}>
             <Stack style={{ gap: '24px' }}>
               <DescriptionLabel>Data de disponibilidade</DescriptionLabel>
 
@@ -236,7 +242,16 @@ const FilterDrawer: React.FC<IFilterDrawerProps> = ({
             </Stack>
           </DrawerBody>
 
-          <DrawerFooter borderTopWidth="1px">
+          <DrawerFooter
+            borderTopWidth="1px"
+            pt={6}
+            marginBottom={{
+              base: 20,
+              md: 0,
+              lg: 0,
+              xl: 0,
+            }}
+          >
             <Button variant="outline" mr={3} onClick={handleCleanFilters}>
               Limpar Filtros
             </Button>
