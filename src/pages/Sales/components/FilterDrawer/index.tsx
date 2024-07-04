@@ -71,8 +71,6 @@ const FilterDrawer: React.FC<IFilterDrawerProps> = ({
             display: 'flex',
             flex: 1,
             flexDirection: 'column',
-            overflow: 'auto',
-            position: 'relative',
           }}
           ref={formRef}
           onSubmit={handleApplyFilters}
