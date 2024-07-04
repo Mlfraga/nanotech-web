@@ -506,6 +506,8 @@ const Sales = () => {
   );
 
   const handleCleanFilter = useCallback(async () => {
+    setLoading(true);
+
     const salesWithoutFilter = await api.get('sales', {
       params: { page: currentPage },
     });

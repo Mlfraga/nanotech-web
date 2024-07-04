@@ -195,6 +195,23 @@ const CreateServiceModal: React.FC<ICreateServiceModalProps> = ({
     setCompaniesToLink(updatedCompanies);
   };
 
+  const handleUpdateCompanyCommission = (
+    e: React.FormEvent<HTMLInputElement>,
+    companyId: string,
+  ) => {
+    formatCurrencyValue(e);
+
+    const updatedCompanies = companiesToLink.map(c => {
+      if (c.id === companyId) {
+        c.commission = Number(e.currentTarget.value);
+      }
+
+      return c;
+    });
+
+    setCompaniesToLink(updatedCompanies);
+  };
+
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -293,9 +310,9 @@ const CreateServiceModal: React.FC<ICreateServiceModalProps> = ({
                       <SelectedCompanyValueContainer>
                         <SelectedCompanyValueInput
                           type="text"
-                          defaultValue={company.price}
+                          defaultValue={company.price ? company.price / 10 : 0}
                           onChange={e =>
-                            handleUpdateCompanyPrice(e, company.id)
+                            handleUpdateCompanyCommission(e, company.id)
                           }
                         ></SelectedCompanyValueInput>
 

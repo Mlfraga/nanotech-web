@@ -1,9 +1,8 @@
-import { Box as ChakraBox, Flex } from '@chakra-ui/core';
+import { Flex } from '@chakra-ui/core';
 import styled from 'styled-components';
 
 export const InputContainer = styled(Flex)`
   width: 100%;
-  max-width: 400px;
 
   display: flex;
   flex-direction: column;
@@ -13,6 +12,7 @@ export const InputContainer = styled(Flex)`
 `;
 
 export const Content = styled(Flex)`
+
   form {
     width: 100%;
     display: flex;
@@ -23,26 +23,22 @@ export const Content = styled(Flex)`
 `;
 
 export const ButtonsContainer = styled(Flex)`
-  max-width: 400px;
   width: 100%;
+  flex-direction: column;
+  gap: 8px;
+
+  @media (min-width: 768px){
+    flex-direction: row;
+  }
 
   button {
-    background: transparent;
     border: 2px solid #355a9d;
-
-    & + button {
-      border: 0px;
-      margin-left: 12px;
-      background-color: #355a9d;
-    }
   }
 `;
 
-export const Container = styled(ChakraBox)`
-  /* @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap'); */
-  height: 100vh;
+export const Container = styled(Flex)`
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: '#444242';
 `;

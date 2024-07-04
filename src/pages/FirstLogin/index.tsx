@@ -76,14 +76,8 @@ const FirstLogin: React.FC = () => {
   return (
     <Container>
       <Content
-        width={{
-          xs: '90%',
-          sm: '90%',
-          md: '70%',
-          lg: '60%',
-          xl: '40%',
-        }}
-        height="500px"
+        width={'100%'}
+        maxWidth={'700px'}
         backgroundColor="#1d1d1d"
         borderRadius={26}
         paddingY={{
@@ -94,11 +88,11 @@ const FirstLogin: React.FC = () => {
           xl: 46,
         }}
         paddingX={{
-          xs: 4,
+          xs: 8,
           sm: 8,
-          md: 80,
-          lg: 80,
-          xl: 80,
+          md: 60,
+          lg: 60,
+          xl: 60,
         }}
         alignItems="center"
         justifyContent="center"
@@ -151,7 +145,10 @@ const FirstLogin: React.FC = () => {
             <Button skipButton onClick={() => history.push('/services')}>
               Manter senha atual
             </Button>
-            <Button type="submit">Alterar</Button>
+
+            <Button bg={'#355a9d'} type="submit">
+              Alterar
+            </Button>
           </ButtonsContainer>
         </Form>
       </Content>

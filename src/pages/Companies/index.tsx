@@ -15,7 +15,6 @@ import {
 } from '@chakra-ui/core';
 
 import Breadcrumb from '../../components/Breadcrumb';
-import Button from '../../components/Button';
 import CreateCompanyModal from '../../components/Modals/CreateCompany';
 import CreateUnitModal from '../../components/Modals/CreateUnit';
 import UpdateCompanyModal from '../../components/Modals/UpdateCompany';
@@ -23,15 +22,7 @@ import UpdateUnitModal from '../../components/Modals/UpdateUnit';
 import { ICompany, IFormattedCompany } from '../../interfaces/companies';
 import { IUnit } from '../../interfaces/unit';
 import api from '../../services/api';
-import {
-  Box,
-  ButtonArea,
-  ButtonContainer,
-  Container,
-  Content,
-  List,
-  Separator,
-} from './styles';
+import { Box, ButtonArea, Content, List, Separator } from './styles';
 
 const Companies = () => {
   const [companies, setCompanies] = useState<ICompany[]>([]);

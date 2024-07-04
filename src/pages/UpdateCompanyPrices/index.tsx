@@ -15,7 +15,7 @@ import api from '../../services/api';
 import { currencyMasker } from '../../utils/masks';
 import { Container, Content, List, Box } from './styles';
 
-interface ICompanyService {
+export interface ICompanyService {
   id: string;
   price: number;
   company_price: number;

@@ -48,6 +48,7 @@ const Login = () => {
 
         addToast({ title: 'Login realizado', type: 'success' });
 
+        console.log('🚀 ~ res.user.first_login:', res.user.first_login);
         if (res.user.first_login) {
           history.push({
             pathname: '/first-login',
