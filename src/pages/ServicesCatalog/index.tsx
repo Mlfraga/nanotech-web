@@ -16,7 +16,7 @@ import { IServiceGroup } from '../../interfaces/service_group';
 import Breadcrumb from '../../components/Breadcrumb';
 
 import { Column, CompanyStamp, Container, Content, List, Row } from './styles';
-import CreateServiceModal from '../../components/Modals/CreateService';
+import CreateServiceModal from '../../components/Modals/CreateServiceGroup';
 import { useHistory } from 'react-router-dom';
 import { FiEdit } from 'react-icons/fi';
 import UpdateServiceGroupModal from '../../components/Modals/UpdateServiceGroup';
@@ -209,7 +209,14 @@ const ServicesCatalog = () => {
               {serviceGroups.map(service => (
                 <Row>
                   <Column>
-                    <span>{service.name}</span>
+                    <span>
+                      {`${
+                        service.category?.name
+                          ? `[${service.category.name}] - `
+                          : ''
+                      }
+                      ${service.name}`}
+                    </span>
                   </Column>
 
                   <Column>

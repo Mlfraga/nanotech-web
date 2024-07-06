@@ -37,9 +37,12 @@ import {
   SelectedCompanyValueContainer,
   SelectedCompanyValueInput,
 } from './styles';
+import SelectWithAddOption from '../../SelectWithAddOption';
+import { IServiceGroupCategory } from '../../../interfaces/service_group';
 
 interface IFormData {
   name: string;
+  service_group_category: string;
   description: string;
   default_nanotech_price?: number;
 }
@@ -69,6 +72,9 @@ const CreateServiceModal: React.FC<ICreateServiceModalProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [companies, setCompanies] = useState<ICompany[]>([]);
   const [companiesToLink, setCompaniesToLink] = useState<ICompanyToLink[]>([]);
+  const [serviceGroupsCategories, setServiceGroupsCategories] = useState<
+    IServiceGroupCategory[]
+  >([]);
 
   useEffect(() => {
     const fethCompanies = async () => {
@@ -79,8 +85,17 @@ const CreateServiceModal: React.FC<ICreateServiceModalProps> = ({
       setCompanies(newCompaniesOptions);
     };
 
+    const fetchServiceGroupsCategories = async () => {
+      const { data: newServiceGroupsCategories } = await api.get<
+        IServiceGroupCategory[]
+      >('/service-group-categories');
+
+      setServiceGroupsCategories(newServiceGroupsCategories);
+    };
+
     if (!hasAlreadyExecuted.current) {
       fethCompanies();
+      fetchServiceGroupsCategories();
 
       hasAlreadyExecuted.current = true;
     }
@@ -102,10 +117,17 @@ const CreateServiceModal: React.FC<ICreateServiceModalProps> = ({
         formRef.current?.setErrors({});
 
         const schema = Yup.object().shape({
-          name: Yup.string().required('Nome do serviço.'),
+          service_group_category: Yup.string().required(
+            'Categoria do serviço é obrigatório.',
+          ),
+          name: Yup.string().required('Nome do serviço é obrigatório.'),
           price: Yup.number().required('O valor do serviço é obrigatório.'),
           commission_amount: Yup.number(),
         });
+        console.log(
+          '🚀 ~ data.service_group_category:',
+          data.service_group_category,
+        );
 
         await schema.validate(data, {
           abortEarly: false,
@@ -116,6 +138,7 @@ const CreateServiceModal: React.FC<ICreateServiceModalProps> = ({
           description: data.description,
           default_nanotech_price: data.default_nanotech_price,
           companiesToLink: companiesToLink,
+          category_id: data.service_group_category,
         });
 
         addToast({
@@ -212,6 +235,34 @@ const CreateServiceModal: React.FC<ICreateServiceModalProps> = ({
     setCompaniesToLink(updatedCompanies);
   };
 
+  const handleAddServiceCategory = async (categoryName: string) => {
+    try {
+      const { data: newCategory } = await api.post<{
+        id: string;
+        name: string;
+      }>('/service-group-categories', {
+        name: categoryName,
+      });
+
+      console.log('🚀 ~ handleAddServiceCategory ~ newCategory:', newCategory);
+      formRef.current?.setFieldValue('service_group_category', newCategory.id);
+
+      return {
+        value: newCategory.id,
+        label: newCategory.name,
+      };
+    } catch (error) {
+      addToast({
+        title: 'Erro ao adicionar categoria',
+        description:
+          'Ocorreu um erro ao adicionar a categoria, tente novamente.',
+        type: 'error',
+      });
+
+      return null;
+    }
+  };
+
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -241,6 +292,22 @@ const CreateServiceModal: React.FC<ICreateServiceModalProps> = ({
                     icon={FiDollarSign}
                   />
                 </Row>
+
+                <SelectWithAddOption
+                  name="service_group_category"
+                  addOption={handleAddServiceCategory}
+                  containerProps={{
+                    background: '#1c1c1c',
+                  }}
+                  label="Selecione a categoria do serviço"
+                  entityName="Nova Categoria"
+                >
+                  {serviceGroupsCategories.map(category => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </SelectWithAddOption>
 
                 <Textarea
                   background={'#1c1c1c'}

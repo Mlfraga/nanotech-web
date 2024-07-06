@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import {
   Button,
@@ -19,12 +19,17 @@ import { useToast } from '../../../context/toast';
 import api from '../../../services/api';
 import getValidationErrors from '../../../utils/getValidationError';
 import Input from '../../Input';
-import { IServiceGroup } from '../../../interfaces/service_group';
+import {
+  IServiceGroup,
+  IServiceGroupCategory,
+} from '../../../interfaces/service_group';
 import Textarea from '../../Textarea';
+import SelectWithAddOption from '../../SelectWithAddOption';
 
 interface IFormData {
   name: string;
   description: string;
+  service_group_category: string;
 }
 
 interface IUpdateServiceGroupModalProps {
@@ -43,8 +48,29 @@ const UpdateServiceGroupModal: React.FC<IUpdateServiceGroupModalProps> = ({
   onSave,
   serviceGroup,
 }) => {
+  const hasAlreadyExecuted = useRef<boolean>(false);
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
+
+  const [serviceGroupsCategories, setServiceGroupsCategories] = useState<
+    IServiceGroupCategory[]
+  >([]);
+
+  useEffect(() => {
+    const fetchServiceGroupsCategories = async () => {
+      const { data: newServiceGroupsCategories } = await api.get<
+        IServiceGroupCategory[]
+      >('/service-group-categories');
+
+      setServiceGroupsCategories(newServiceGroupsCategories);
+    };
+
+    if (!hasAlreadyExecuted.current) {
+      fetchServiceGroupsCategories();
+
+      hasAlreadyExecuted.current = true;
+    }
+  }, []);
 
   const handleSubmit = useCallback(
     async (data: IFormData, event) => {
@@ -54,6 +80,9 @@ const UpdateServiceGroupModal: React.FC<IUpdateServiceGroupModalProps> = ({
         const schema = Yup.object().shape({
           name: !data.name
             ? Yup.string().required('Nome obrigatório')
+            : Yup.string(),
+          service_group_category: !data.service_group_category
+            ? Yup.string().required('Categoria do serviço obrigatório')
             : Yup.string(),
           description: !data.name
             ? Yup.string().required('Descriçāo obrigatório')
@@ -65,6 +94,9 @@ const UpdateServiceGroupModal: React.FC<IUpdateServiceGroupModalProps> = ({
         await api.put(`service-groups/${serviceGroup.id}`, {
           ...(data.name && { name: data.name }),
           ...(data.description && { description: data.description }),
+          ...(data.service_group_category && {
+            category_id: data.service_group_category,
+          }),
         });
 
         addToast({
@@ -95,6 +127,34 @@ const UpdateServiceGroupModal: React.FC<IUpdateServiceGroupModalProps> = ({
     [serviceGroup, onClose, onSave, addToast],
   );
 
+  const handleAddServiceCategory = async (categoryName: string) => {
+    try {
+      const { data: newCategory } = await api.post<{
+        id: string;
+        name: string;
+      }>('/service-group-categories', {
+        name: categoryName,
+      });
+
+      console.log('🚀 ~ handleAddServiceCategory ~ newCategory:', newCategory);
+      formRef.current?.setFieldValue('service_group_category', newCategory.id);
+
+      return {
+        value: newCategory.id,
+        label: newCategory.name,
+      };
+    } catch (error) {
+      addToast({
+        title: 'Erro ao adicionar categoria',
+        description:
+          'Ocorreu um erro ao adicionar a categoria, tente novamente.',
+        type: 'error',
+      });
+
+      return null;
+    }
+  };
+
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -121,6 +181,23 @@ const UpdateServiceGroupModal: React.FC<IUpdateServiceGroupModalProps> = ({
                   name="description"
                   defaultValue={serviceGroup.description}
                 />
+
+                <SelectWithAddOption
+                  name="service_group_category"
+                  addOption={handleAddServiceCategory}
+                  containerProps={{
+                    background: '#1c1c1c',
+                  }}
+                  label="Selecione a categoria do serviço"
+                  entityName="Nova Categoria"
+                  defaultValue={serviceGroup.category?.id || ''}
+                >
+                  {serviceGroupsCategories.map(category => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </SelectWithAddOption>
               </Flex>
             </ModalBody>
 
