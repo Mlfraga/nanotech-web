@@ -2,8 +2,8 @@ import axios from 'axios';
 
 const api = axios.create({
   // baseURL: 'https://api.totalcleanbh.com',
-  // baseURL: 'https://nanotech-api-production.up.railway.app/',
-  baseURL: 'http://localhost:3333',
+  baseURL: 'https://nanotech-api-production.up.railway.app/',
+  // baseURL: 'http://localhost:3333',
 });
 
 api.interceptors.request.use(
