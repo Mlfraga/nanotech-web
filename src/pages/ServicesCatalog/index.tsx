@@ -18,6 +18,8 @@ import Breadcrumb from '../../components/Breadcrumb';
 import { Column, CompanyStamp, Container, Content, List, Row } from './styles';
 import CreateServiceModal from '../../components/Modals/CreateService';
 import { useHistory } from 'react-router-dom';
+import { FiEdit } from 'react-icons/fi';
+import UpdateServiceGroupModal from '../../components/Modals/UpdateServiceGroup';
 
 const ServicesCatalog = () => {
   const { addToast } = useToast();
@@ -33,6 +35,14 @@ const ServicesCatalog = () => {
     false,
   );
   const [serviceFormModalOpened, setServiceFormModalOpened] = useState(false);
+  const [
+    updateServiceGroupModalOpened,
+    setUpdateServiceGroupModalOpened,
+  ] = useState(false);
+  const [
+    serviceGroupToUpdate,
+    setServiceGroupToUpdate,
+  ] = useState<IServiceGroup>({} as IServiceGroup);
 
   const fetchNanotechServices = useCallback(async () => {
     setLoading(true);
@@ -226,6 +236,24 @@ const ServicesCatalog = () => {
                         setServiceToToggleStatus(service);
                       }}
                     />
+
+                    <ChakraButton
+                      alignItems="center"
+                      justifyContent="center"
+                      width="20px"
+                      height="20px"
+                      padding="0px"
+                      backgroundColor="transparent"
+                      _hover={{
+                        backgroundColor: '#444444',
+                      }}
+                      onClick={() => {
+                        setServiceGroupToUpdate(service);
+                        setUpdateServiceGroupModalOpened(true);
+                      }}
+                    >
+                      <FiEdit />
+                    </ChakraButton>
                   </Column>
                 </Row>
               ))}
@@ -256,6 +284,15 @@ const ServicesCatalog = () => {
         onSave={() => {
           fetchNanotechServices();
         }}
+      />
+
+      <UpdateServiceGroupModal
+        isOpen={updateServiceGroupModalOpened}
+        onClose={() => setUpdateServiceGroupModalOpened(false)}
+        onSave={() => {
+          fetchNanotechServices();
+        }}
+        serviceGroup={serviceGroupToUpdate}
       />
     </Container>
   );

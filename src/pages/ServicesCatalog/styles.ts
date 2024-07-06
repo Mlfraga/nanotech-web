@@ -86,6 +86,7 @@ export const List = styled(ChakraBox)`
 export const Row = styled.div`
   display: grid;
   position: relative;
+  gap: 1rem;
   width: 100%;
   grid-template-columns: 30% 56% 10%;
   align-items: center;
