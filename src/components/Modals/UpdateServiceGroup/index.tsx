@@ -18,7 +18,6 @@ import * as Yup from 'yup';
 import { useToast } from '../../../context/toast';
 import api from '../../../services/api';
 import getValidationErrors from '../../../utils/getValidationError';
-import { currencyMasker } from '../../../utils/masks';
 import Input from '../../Input';
 import { IServiceGroup } from '../../../interfaces/service_group';
 import Textarea from '../../Textarea';
