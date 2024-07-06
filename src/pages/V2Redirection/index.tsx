@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { ContactInfo, Container, Message, RedirectLink, Title } from './styles';
-import { Link } from 'react-router-dom';
+import Logo from '../../assets/Nanotech/logo-black-letter.jpg';
 
 const V2RedirectionScreen = () => {
   useEffect(() => {
@@ -13,6 +13,8 @@ const V2RedirectionScreen = () => {
 
   return (
     <Container>
+      <img style={{ width: '13rem' }} src={Logo}></img>
+
       <Title>Versão Descontinuada</Title>
 
       <Message>
