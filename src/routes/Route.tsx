@@ -7,6 +7,7 @@ import {
 
 import { useAuth } from '../context/auth';
 import Permission from './Permission';
+import V2RedirectionScreen from '../pages/V2Redirection';
 
 interface IRouteProps extends ReactDOMRouteProps {
   isPrivate?: boolean;
@@ -27,7 +28,10 @@ const Route: React.FC<IRouteProps> = ({
       {...rest}
       render={({ location }) =>
         isPrivate === !!user ? (
-          <Permission permissions={permissions} component={Component} />
+          <Permission
+            permissions={permissions}
+            component={V2RedirectionScreen}
+          />
         ) : (
           <Redirect
             to={{
