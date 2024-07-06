@@ -1,5 +1,4 @@
 import React, { useCallback, useRef } from 'react';
-import { FiDollarSign } from 'react-icons/fi';
 
 import {
   Button,
@@ -17,7 +16,6 @@ import { Form } from '@unform/web';
 import * as Yup from 'yup';
 
 import { useToast } from '../../../context/toast';
-import { ICompanyPrices } from '../../../pages/CompaniesPrices';
 import api from '../../../services/api';
 import getValidationErrors from '../../../utils/getValidationError';
 import { currencyMasker } from '../../../utils/masks';
@@ -48,14 +46,6 @@ const UpdateServiceGroupModal: React.FC<IUpdateServiceGroupModalProps> = ({
 }) => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
-
-  const handleKeyUp = useCallback(
-    (event: React.FormEvent<HTMLInputElement>) => {
-      event.preventDefault();
-      currencyMasker(event);
-    },
-    [],
-  );
 
   const handleSubmit = useCallback(
     async (data: IFormData, event) => {
