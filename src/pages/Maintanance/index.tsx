@@ -12,7 +12,7 @@ const MaintenanceScreen = () => {
       </Message>
       <ContactInfo>
         Se precisar entrar em contato conosco, envie um e-mail para
-        suporte@exemplo.com.
+        operacao@nanotechcardetail.com.br
       </ContactInfo>
     </Container>
   );
