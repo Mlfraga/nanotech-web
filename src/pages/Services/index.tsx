@@ -15,6 +15,7 @@ const Services = () => {
 
   useEffect(() => {
     if (user?.profile.company_id) {
+      console.log('🚀 ~ useEffect ~ user?.role:', user?.role);
       if (user?.role === 'MANAGER') {
         api
           .get(`services/${user.profile.company_id}`, {
@@ -25,6 +26,11 @@ const Services = () => {
               (service: { company_price?: number }) => !service.company_price,
             ).length;
 
+            console.log(
+              '🚀 ~ useEffect ~ servicesWithoutPriceAmount:',
+              servicesWithoutPriceAmount,
+            );
+            console.log('🚀 ~ useEffect ~ response.data:', response.data);
             if (servicesWithoutPriceAmount > 0 || response.data.length < 0) {
               history.push('set-prices');
             }
@@ -41,14 +47,14 @@ const Services = () => {
           xs: '100%',
           sm: '100%',
           md: '100% ',
-          lg: 'calc(100% - 80px)',
+          lg: '100%',
           xl: '100%',
         }}
         ml={{
           xs: '0px',
           sm: '0px',
           md: '0px',
-          lg: '80px',
+          lg: '0px',
           xl: '0px',
         }}
         flex={1}

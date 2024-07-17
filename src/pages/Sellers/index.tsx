@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { Skeleton, Stack, Flex } from '@chakra-ui/core';
+import { Skeleton, Stack, Button as ChakraButton } from '@chakra-ui/core';
 
 import Breadcrumb from '../../components/Breadcrumb';
-import Button from '../../components/Button';
 import api from '../../services/api';
 import { Container, Content, List } from './styles';
 
@@ -44,7 +43,27 @@ const Sellers = () => {
 
   return (
     <Container>
-      <Breadcrumb text="Vendedores" />
+      <Breadcrumb
+        text="Vendedores"
+        filterButton={
+          <ChakraButton
+            _hover={{
+              bg: '#5580b9',
+              color: '#fff',
+            }}
+            _focusWithin={{
+              border: 0,
+            }}
+            backgroundColor="#355a9d"
+            style={{ padding: 24 }}
+            onClick={() => {
+              history.push('sellers-register');
+            }}
+          >
+            Registrar novo vendedor
+          </ChakraButton>
+        }
+      />
 
       <Content width="100%" maxWidth="90vw">
         <div className="boxTitle">
@@ -138,24 +157,6 @@ const Sellers = () => {
           </List>
         )}
       </Content>
-
-      <Flex
-        marginLeft="auto"
-        maxW="90vw"
-        mr="auto"
-        ml="auto"
-        alignItems="flex-end"
-        justifyContent="flex-end"
-      >
-        <Button
-          maxW="300px"
-          onClick={() => {
-            history.push('sellers-register');
-          }}
-        >
-          Registrar novo vendedor
-        </Button>
-      </Flex>
     </Container>
   );
 };

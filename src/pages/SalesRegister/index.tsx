@@ -119,7 +119,7 @@ const SalesRegister = () => {
 
   const sourceCarSelectOption: Array<{ value: string; label: string }> = [
     { value: 'NEW', label: '0 KM' },
-    { value: 'USED', label: 'Semi-novo' },
+    { value: 'USED', label: 'Seminovo' },
     { value: 'WORKSHOP', label: 'Oficina' },
   ];
 

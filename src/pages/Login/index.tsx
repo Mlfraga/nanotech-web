@@ -52,13 +52,14 @@ const Login = () => {
 
   //       addToast({ title: 'Login realizado', type: 'success' });
 
-  //       if (res.user.first_login) {
-  //         history.push({
-  //           pathname: '/first-login',
-  //           state: {
-  //             comingFromLogin: true,
-  //           },
-  //         });
+        console.log('🚀 ~ res.user.first_login:', res.user.first_login);
+        if (res.user.first_login) {
+          history.push({
+            pathname: '/first-login',
+            state: {
+              comingFromLogin: true,
+            },
+          });
 
   //         return;
   //       }

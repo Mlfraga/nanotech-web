@@ -11,7 +11,7 @@ export const Content = styled(ChakraBox)`
   .boxTitle {
     min-width: 800px;
     display: grid;
-    grid-template-columns: 15% 20% 20% 20% 10% 10%;
+    grid-template-columns: 30% 56% 10%;
     align-items: center;
     justify-content: center;
 
@@ -86,14 +86,58 @@ export const List = styled(ChakraBox)`
 export const Row = styled.div`
   display: grid;
   position: relative;
+  gap: 1rem;
   width: 100%;
-  grid-template-columns: 15% 20% 20% 20% 10% 10%;
+  grid-template-columns: 30% 56% 10%;
   align-items: center;
   justify-content: center;
 
   background: #303030;
-  height: 60px;
-  border-radius: 16px
+  min-height: 60px;
+  padding: 12px;
+  border-radius: 16px;
+`;
+
+export const Column = styled.div`
+  display: flex;
+  align-items: center;
+  flex: 1;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0px !important;
+`;
+
+const randomCompanyStampColor: { [k: number]: { bg: string; color: string } } = {
+  0: { bg: '#f4a261', color: '#000000' }, // Laranja claro
+  1: { bg: '#2a9d8f', color: '#ffffff' }, // Verde água
+  2: { bg: '#e76f51', color: '#ffffff' }, // Vermelho claro
+  3: { bg: '#264653', color: '#ffffff' }, // Azul escuro
+  4: { bg: '#e9c46a', color: '#000000' }, // Amarelo mostarda
+  5: { bg: '#f4a261', color: '#000000' }, // Laranja claro
+  6: { bg: '#2a9d8f', color: '#ffffff' }, // Verde água
+  7: { bg: '#e76f51', color: '#ffffff' }, // Vermelho claro
+  8: { bg: '#264653', color: '#ffffff' }, // Azul escuro
+  9: { bg: '#e9c46a', color: '#000000' }, // Amarelo mostarda
+};
+
+interface CompanyStampProps {
+  rand: number;
+}
+
+export const CompanyStamp = styled.div<CompanyStampProps>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: ${props => randomCompanyStampColor[props.rand].bg};
+  color: ${props => randomCompanyStampColor[props.rand].color};
+  border-radius: 6px;
+  border: 1px solid #282828;
+  padding: 8px;
+  font: 12px 'Ubuntu', sans-serif;
+  font-weight: bold;
+  margin: 0px !important;
+  cursor: pointer;
+  transition: background 0.2s;
 `;
 
 export const ButtonArea = styled.div`

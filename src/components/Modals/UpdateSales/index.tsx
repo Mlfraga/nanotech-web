@@ -9,7 +9,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  useToast
+  useToast,
 } from '@chakra-ui/core';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
@@ -57,7 +57,7 @@ const UpdateSalesModal: React.FC<IUpdateSalesModalProps> = ({
 
   const selectOptions: Array<{ value: string; label: string }> = [
     { value: 'NEW', label: '0 KM' },
-    { value: 'USED', label: 'Semi-novo' },
+    { value: 'USED', label: 'Seminovo' },
     { value: 'WORKSHOP', label: 'Oficina' },
   ];
 
@@ -151,14 +151,15 @@ const UpdateSalesModal: React.FC<IUpdateSalesModalProps> = ({
                     defaultValue={sale?.car?.plate || ''}
                     placeholder="Placa ou Chassi do Carro"
                     name="carPlate"
+                    maxLength={7}
                   />
                 </InputContainer>
 
                 <InputContainer>
-                  <Label>Modelo ou Chassi do Carro:</Label>
+                  <Label>Modelo do Carro:</Label>
                   <Input
                     defaultValue={sale?.car?.model || ''}
-                    placeholder="Modelo ou Chassi do Carro"
+                    placeholder="Modelo do Carro"
                     name="carModel"
                   />
                 </InputContainer>

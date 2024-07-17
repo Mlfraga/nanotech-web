@@ -74,6 +74,7 @@ const Sidebar: React.FC<ISidebarProps> = ({ disableButton = false }) => {
               key={button.name}
               label={button.name}
               aria-label={button.name}
+              style={{ zIndex: 10000 }}
             >
               <Button
                 isDisabled={disableButton}
@@ -96,7 +97,6 @@ const Sidebar: React.FC<ISidebarProps> = ({ disableButton = false }) => {
             </Tooltip>
           ))}
         </Flex>
-
         <Flex
           borderTop="1px solid #545454"
           background="#282828"

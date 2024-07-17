@@ -67,11 +67,15 @@ const FilterDrawer: React.FC<IFilterDrawerProps> = ({
         <DrawerHeader borderBottomWidth="1px">Filtrar Vendas</DrawerHeader>
 
         <Form
-          style={{ display: 'flex', flex: 1, flexDirection: 'column' }}
+          style={{
+            display: 'flex',
+            flex: 1,
+            flexDirection: 'column',
+          }}
           ref={formRef}
           onSubmit={handleApplyFilters}
         >
-          <DrawerBody mt={6}>
+          <DrawerBody py={6}>
             <Stack style={{ gap: '24px' }}>
               <DescriptionLabel>Data de disponibilidade</DescriptionLabel>
 
